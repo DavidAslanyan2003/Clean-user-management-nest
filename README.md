@@ -37,7 +37,7 @@ DATABASE_NAME=database
 # App configuration
 DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
 APP_PORT=3000
-APP_URL=http://icketi.local
+APP_URL=http://icketi.local:${APP_PORT}
 NODE_ENV=local
 ```
 
@@ -62,7 +62,7 @@ NODE_ENV=local
    ```
 
 3. **Access the Application**:
-   Open your browser and go to `http://icketi.local`.
+   Open your browser and go to `http://icketi.local:${APP_PORT}`.
 
 ### Additional Makefile Commands
 
@@ -80,7 +80,7 @@ NODE_ENV=local
 
 ### Configuration
 
-- **Hosts File**: The hosts file is modified to add `127.0.0.1 icketi.local`, allowing you to access the app using `http://icketi.local`.
+- **Hosts File**: The hosts file is modified to add `127.0.0.1 icketi.local`, allowing you to access the app using `http://icketi.local:${APP_PORT}`.
 
 ### Notes
 
