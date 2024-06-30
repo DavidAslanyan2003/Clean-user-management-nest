@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  icketi-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always  
+    depends_on:
+      - postgres
+    ports:
+      - "${APP_PORT}:3000"
+    env_file:
+      - .env.${NODE_ENV}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev  
+    
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "${DP_PORT}:5432"
+    env_file:
+      - .env.${NODE_ENV}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

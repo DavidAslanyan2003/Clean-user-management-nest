@@ -1,0 +1,59 @@
+# Variables
+ENV_FILE=.env.local
+DOCKER_COMPOSE=docker-compose -f docker-compose.yml --env-file $(ENV_FILE)
+APP_CONTAINER=icketi-api
+NODE_ENV=local
+
+# Default target
+.PHONY: help
+help:
+	@echo "Usage: make [target]"
+	@echo "Targets:"
+	@echo "  up             - Start the Docker containers"
+	@echo "  down           - Stop the Docker containers"
+	@echo "  build          - Build the Docker containers"
+	@echo "  rebuild        - Rebuild the Docker containers without cache"
+	@echo "  logs           - Show logs from the Docker containers"
+	@echo "  test           - Run unit tests"
+	@echo "  exec           - Enter the app container"
+	@echo "  ps             - List running containers"
+
+# Start the Docker containers
+.PHONY: up
+up:
+	$(DOCKER_COMPOSE) up -d
+
+# Stop the Docker containers
+.PHONY: down
+down:
+	$(DOCKER_COMPOSE) down
+
+# Build the Docker containers
+.PHONY: build
+build:
+	$(DOCKER_COMPOSE) build
+
+# Rebuild the Docker containers without cache
+.PHONY: rebuild
+rebuild:
+	$(DOCKER_COMPOSE) build --no-cache
+
+# Show logs from the Docker containers
+.PHONY: logs
+logs:
+	$(DOCKER_COMPOSE) logs -f
+
+# Run unit tests
+.PHONY: test
+test:
+	$(DOCKER_COMPOSE) exec $(APP_CONTAINER) npm run test
+
+# Enter the app container
+.PHONY: exec
+exec:
+	$(DOCKER_COMPOSE) exec $(APP_CONTAINER) sh
+
+# List running containers
+.PHONY: ps
+ps:
+	$(DOCKER_COMPOSE) ps
