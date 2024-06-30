@@ -1,14 +1,17 @@
 # Variables
-ENV_FILE=.env.local
-DOCKER_COMPOSE=docker-compose -f docker-compose.yml --env-file $(ENV_FILE)
-APP_CONTAINER=icketi-api
-NODE_ENV=local
+ENV ?= local
+ENV_FILE=.env.$(ENV)
+APP_CONTAINER=icketi-api  # Replace with your actual app container name
+DOCKER_COMPOSE=docker-compose --env-file $(ENV_FILE)
+DOMAIN=icketi.local
+HOSTS_FILE=/etc/hosts
 
 # Default target
 .PHONY: help
 help:
-	@echo "Usage: make [target]"
+	@echo "Usage: make [target] [ENV=environment]"
 	@echo "Targets:"
+	@echo "  init           - Initial setup (adds domain to hosts file)"
 	@echo "  up             - Start the Docker containers"
 	@echo "  down           - Stop the Docker containers"
 	@echo "  build          - Build the Docker containers"
@@ -17,6 +20,10 @@ help:
 	@echo "  test           - Run unit tests"
 	@echo "  exec           - Enter the app container"
 	@echo "  ps             - List running containers"
+
+# Initial setup
+.PHONY: init
+init: add-host
 
 # Start the Docker containers
 .PHONY: up
@@ -57,3 +64,14 @@ exec:
 .PHONY: ps
 ps:
 	$(DOCKER_COMPOSE) ps
+
+# Add domain to the hosts file
+.PHONY: add-host
+add-host:
+	@echo "Adding $(DOMAIN) to $(HOSTS_FILE)..."
+	@if ! grep -q $(DOMAIN) $(HOSTS_FILE); then \
+		echo "127.0.0.1 $(DOMAIN)" | sudo tee -a $(HOSTS_FILE); \
+		echo "$(DOMAIN) added to $(HOSTS_FILE)"; \
+	else \
+		echo "$(DOMAIN) is already present in $(HOSTS_FILE)"; \
+	fi
