@@ -1,9 +1,8 @@
 
 ---
 
-# Project Name
+# Icketi Core Services
 
-Icketi Core Services
 
 ## Overview
 
