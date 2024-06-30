@@ -1,73 +1,99 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Project Name
 
-## Description
+Icketi Core Services
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Overview
 
-## Installation
+This project is a Icketi APIs main APP using Nest JS, PostgreSQL, Docker, and a custom domain setup for development, testing, and production environments.
 
-```bash
-$ npm install
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Make](https://www.gnu.org/software/make/)
+
+## Setup
+
+### Environment Files
+
+Create environment files for different environments in the root directory:
+
+- `.env.local`
+- `.env.development`
+- `.env.production`
+
+#### Example `.env` Content
+
+```dotenv
+# PostgreSQL configuration
+DATABASE_HOST=db
+DATABASE_PORT=5432
+DATABASE_USER=user
+DATABASE_PASSWORD=password
+DATABASE_NAME=database
+
+# App configuration
+DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+APP_PORT=3000
+APP_URL=http://icketi.local
+NODE_ENV=local
 ```
 
-## Running the app
+### Initial Setup
 
-```bash
-# development
-$ npm run start
+1. **Run the Initial Setup**:
+   Use the following command to perform the initial setup:
 
-# watch mode
-$ npm run start:dev
+   ```bash
+   make init
+   ```
 
-# production mode
-$ npm run start:prod
-```
+   This command will:
+   - Add `icketi.local` to your hosts file.
 
-## Test
+### Running the Application
 
-```bash
-# unit tests
-$ npm run test
+2. **Start the Application**:
 
-# e2e tests
-$ npm run test:e2e
+   ```bash
+   make up
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+3. **Access the Application**:
+   Open your browser and go to `http://icketi.local`.
 
-## Support
+### Additional Makefile Commands
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Command       | Description                                         |
+|---------------|-----------------------------------------------------|
+| `make init`   | Initial setup (adds domain to hosts file and configures Nginx). |
+| `make up`     | Start the Docker containers.                        |
+| `make down`   | Stop the Docker containers.                         |
+| `make build`  | Build the Docker containers.                        |
+| `make rebuild`| Rebuild the Docker containers without cache.        |
+| `make logs`   | Show logs from the Docker containers.               |
+| `make test`   | Run unit tests inside the app container.            |
+| `make exec`   | Enter the app container's shell.                    |
+| `make ps`     | List running containers.                            |
 
-## Stay in touch
+### Configuration
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Hosts File**: The hosts file is modified to add `127.0.0.1 icketi.local`, allowing you to access the app using `http://icketi.local`.
 
-## License
+### Notes
 
-Nest is [MIT licensed](LICENSE).
+- Ensure your `.env` files are correctly set up and not committed to version control.
+- The `make init` command requires `sudo` privileges to modify the hosts file.
+
+---
+
+### Additional Information
+
+For more details on configuring Docker, Docker Compose, and Make, refer to their official documentation:
+
+- [Docker Documentation](https://docs.docker.com/)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [Make Documentation](https://www.gnu.org/software/make/manual/make.html)
