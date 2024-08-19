@@ -11,7 +11,7 @@ export const createDataSource = (configService: ConfigService): DataSourceOption
   username: configService.get<string>('POSTGRES_USER'),
   password: configService.get<string>('POSTGRES_PASSWORD'),
   database: configService.get<string>('POSTGRES_DB'),
-  synchronize: true,
+  synchronize: false,
   logging: !!configService.get<boolean>('TYPEORM_LOGGING'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
