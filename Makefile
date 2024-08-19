@@ -1,7 +1,7 @@
 # Variables
 ENV ?= local
 ENV_FILE=.env.$(ENV)
-APP_CONTAINER=icketi-api  # Replace with your actual app container name
+APP_CONTAINER=icketi-api
 DOCKER_COMPOSE=docker-compose --env-file $(ENV_FILE)
 DOMAIN=icketi.local
 HOSTS_FILE=/etc/hosts

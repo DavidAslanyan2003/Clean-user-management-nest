@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npm install -g typeorm @nestjs/cli
+
 COPY . .
 
 RUN npm run build
