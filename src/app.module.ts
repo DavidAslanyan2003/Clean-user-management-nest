@@ -12,6 +12,7 @@ import { LocaleMiddleware } from './middlewares/locale.middleware';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/typeorm';
+import { DEFAULT_LANGUAGE } from './helpes/constants/constants';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AppDataSource } from './database/typeorm';
         AppDataSource(configService).options,
     }),
     I18nModule.forRoot({
-      fallbackLanguage: 'en',
+      fallbackLanguage: DEFAULT_LANGUAGE,
       loaderOptions: {
         path: path.join(__dirname, '../src/i18n/'),
         watch: true,
