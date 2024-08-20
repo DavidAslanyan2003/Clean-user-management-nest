@@ -6,10 +6,9 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { IsValidLocaleRecord } from '../../helper/validations/decorators/has-required-locales';
-import { IsValidUrl } from '../../helper/validations/decorators/validate-aws-s3-path';
 import { User } from '../../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { CategoryStatus } from '../../helpes/constants/status';
 
 @Entity({ name: 'category' })
 export class Category {
@@ -28,7 +27,6 @@ export class Category {
     },
     description: 'Name of the category in different languages',
   })
-  @IsValidLocaleRecord()
   @Column({ type: 'jsonb', nullable: false })
   name: Record<string, string>;
 
@@ -40,7 +38,6 @@ export class Category {
     },
     description: 'Description of the category in different languages',
   })
-  @IsValidLocaleRecord()
   @Column({ type: 'jsonb', nullable: true })
   description: Record<string, string>;
 
@@ -48,14 +45,17 @@ export class Category {
     example: 'Active',
     description: 'status of the category',
   })
-  @Column({ type: 'enum', enum: ['Active', 'Inactive'], default: 'Active' })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: CategoryStatus,
+    default: CategoryStatus.Active,
+  })
+  status: CategoryStatus;
 
   @ApiProperty({
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
     description: 'Category image url',
   })
-  @IsValidUrl()
   @Column({ type: 'varchar', nullable: false })
   category_image: string;
 
@@ -63,7 +63,6 @@ export class Category {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
-  @IsValidUrl()
   @Column({ type: 'varchar', nullable: false })
   category_icon: string;
 

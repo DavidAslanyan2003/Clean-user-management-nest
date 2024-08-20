@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { IsValidLocaleRecord } from 'src/helper/validations/decorators/has-required-locales';
-import { IsValidUrl } from 'src/helper/validations/decorators/validate-aws-s3-path';
+import { IsValidLocaleRecord } from 'src/helpes/validations/decorators/validate-locale-record';
+import { IsValidUrl } from 'src/helpes/validations/decorators/validate-url';
 
 export class UpdateCategoryDto {
   @ApiProperty({

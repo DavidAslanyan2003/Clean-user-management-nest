@@ -1,0 +1,5 @@
+{
+    "invalidLocaleRecord": "The {property} must be an object with required keys: {requiredLocales}.",
+    "invalidURL": "Invalid URL format for {property}."
+}
+  

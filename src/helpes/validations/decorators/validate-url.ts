@@ -1,20 +1,29 @@
 import {
   registerDecorator,
+  ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { I18nContext } from 'nestjs-i18n';
 
 @ValidatorConstraint({ async: false })
 export class IsValidPath implements ValidatorConstraintInterface {
-  validate(url: string): boolean {
-    const urlRegex =
-      /^https:\/\/s3\.amazonaws\.com\/[a-zA-Z0-9._-]+\/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}-[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+-(?:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|none)$/;
-    return urlRegex.test(url);
+  validate(url: string, args: ValidationArguments): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
-  defaultMessage(): string {
-    return 'Invalid URL format';
+  defaultMessage(args: ValidationArguments): string {
+    const i18nContext = I18nContext.current();
+    return i18nContext.t('error.invalidURL', {
+      lang: i18nContext.lang,
+      args: { property: args.property },
+    });
   }
 }
 

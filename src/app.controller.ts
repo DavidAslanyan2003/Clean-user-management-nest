@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Req } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly i18n: I18nService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Req() req: Request): string {
+    const lang = req['language'];
+
+    return this.i18n.translate('test.HELLO', { lang });
   }
 }
