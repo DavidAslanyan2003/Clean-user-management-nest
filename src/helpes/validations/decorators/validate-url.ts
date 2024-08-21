@@ -5,7 +5,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { I18nContext } from 'nestjs-i18n';
 
 @ValidatorConstraint({ async: false })
 export class IsValidPath implements ValidatorConstraintInterface {
@@ -19,11 +18,7 @@ export class IsValidPath implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments): string {
-    const i18nContext = I18nContext.current();
-    return i18nContext.t('error.invalidURL', {
-      lang: i18nContext.lang,
-      args: { property: args.property },
-    });
+    return 'error.invalidURL';
   }
 }
 

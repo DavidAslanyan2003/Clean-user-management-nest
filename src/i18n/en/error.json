@@ -1,5 +1,5 @@
 {
-    "invalidLocaleRecord": "The {property} must be an object with required keys: {requiredLocales}.",
-    "invalidURL": "Invalid URL format for {property}."
+    "invalidLocaleRecord": "{property} must contain required keys.",
+    "invalidURL": "Invalid URL format for {property}.",
+    "isEmpty":  "{property} cannot be empty."
 }
-  

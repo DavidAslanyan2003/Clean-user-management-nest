@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 import { IsValidLocaleRecord } from 'src/helpes/validations/decorators/validate-locale-record';
 import { IsValidUrl } from 'src/helpes/validations/decorators/validate-url';
 
@@ -12,7 +13,7 @@ export class UpdateCategoryDto {
     },
     description: 'Name of the category in different languages',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidLocaleRecord()
   name: string;
 
@@ -32,7 +33,7 @@ export class UpdateCategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
     description: 'Category image url',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidUrl()
   category_image: string;
 
@@ -40,7 +41,7 @@ export class UpdateCategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidUrl()
   category_icon: string;
 }

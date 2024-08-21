@@ -1,5 +1,5 @@
 {
-    "invalidLocaleRecord": "{property} должно быть объектом с следующими ключами: {requiredLocales}.",
-    "invalidURL": "Неверный формат URL для {property}."
+    "invalidLocaleRecord": "{property} должно содержать требуемые ключи.",
+    "invalidURL": "Неверный формат URL для {property}.",
+    "isEmpty":  "{property} не может быть пустым."
 }
-  

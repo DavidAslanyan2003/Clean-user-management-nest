@@ -6,7 +6,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { RequiredLocale } from '../../constants/locale';
-import { I18nContext } from 'nestjs-i18n';
 
 @ValidatorConstraint({ name: 'IsValidLocale', async: false })
 class IsValidLocale implements ValidatorConstraintInterface {
@@ -27,15 +26,7 @@ class IsValidLocale implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const i18nContext = I18nContext.current();
-
-    return i18nContext.t('error.invalidLocaleRecord', {
-      lang: i18nContext.lang,
-      args: {
-        property: args.property,
-        requiredLocales: RequiredLocale.join(', '),
-      },
-    });
+    return 'error.invalidLocaleRecord';
   }
 }
 

@@ -12,7 +12,7 @@ export class CreateCategoryDto {
     },
     description: 'Name of the category in different languages',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidLocaleRecord()
   name: Record<string, string>;
 
@@ -32,7 +32,7 @@ export class CreateCategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
     description: 'Category image url',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidUrl()
   category_image: string;
 
@@ -40,7 +40,7 @@ export class CreateCategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'error.isEmpty' })
   @IsValidUrl()
   category_icon: string;
 }
