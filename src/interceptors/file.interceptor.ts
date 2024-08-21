@@ -44,14 +44,12 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
     }
 
     const imagesValidationRule = filesUploadRules[body.type];
-    console.log('imagesValidationRule ', imagesValidationRule);
 
     if (!imagesValidationRule) {
       throw new BadRequestException('Types is not allowed');
     }
 
     const files = this.getFilesFromRequest(request);
-    console.log('Uploaded Files:', files);
 
     const { error: fileValidtionError } = this.validateFilesType(
       files,

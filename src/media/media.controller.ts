@@ -29,12 +29,8 @@ export class MediaController {
     @Body() body,
     @Res() res: Response,
   ) {
-    console.log('FILEES ', files);
-
     const isHasFreeSpace =
       await this.mediaService.checkUserHasAllowedStorageSize(99, files);
-
-    console.log('isHasFreeSpace ', isHasFreeSpace);
 
     if (!isHasFreeSpace) {
       throw new BadRequestException('No free space');

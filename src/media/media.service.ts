@@ -186,7 +186,6 @@ export class MediaService {
         Bucket: this.bucket,
         Prefix: `event-images-test/${clientId}/original/`,
       };
-      console.log('AAAAAAAA');
 
       const listCommand = new ListObjectsV2Command(listParams);
       const listResponse = await this.s3.send(listCommand);
@@ -204,12 +203,10 @@ export class MediaService {
 
           return acc;
         }, 0);
-      console.log('userUsedStorage ', userUsedStorage);
       const freeSpace = this.userSotrageSize - userUsedStorage;
 
       return filesSizes <= freeSpace;
     } catch (error) {
-      console.log('EE', error);
       throw new BadRequestException(error);
     }
   }
