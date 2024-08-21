@@ -13,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/typeorm';
 import { DEFAULT_LANGUAGE } from './helpes/constants/constants';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { DEFAULT_LANGUAGE } from './helpes/constants/constants';
         HeaderResolver,
       ],
     }),
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
