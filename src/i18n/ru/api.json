@@ -1,0 +1,6 @@
+{
+    "FILES_SUCCESS_UPLOAD": "Файлы успешно загружены!",
+    "FILES_DELETE_SUCCESS": "Файл успешно удален",
+    "FREE_SPACE_ERROR": "Нет свободного места",
+    "IMAGE_SAVE_ERROR": "Изображение не сохранено в S3!"
+}

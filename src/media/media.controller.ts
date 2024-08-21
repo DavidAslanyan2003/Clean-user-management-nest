@@ -10,15 +10,20 @@ import {
   HttpCode,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { imagesUploadBodySchema } from './validation-schema/image-upload.schema';
 import { Response } from 'express';
 import { MediaFileUploadInterceptor } from 'src/interceptors/file.interceptor';
+import { I18nService } from 'nestjs-i18n';
 
 @Controller('api/v1/media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(
+    private readonly mediaService: MediaService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Post()
   @UseInterceptors(
@@ -29,15 +34,20 @@ export class MediaController {
     @UploadedFiles()
     files: Express.Multer.File[],
     @Body() body,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const lang = req['language'];
+    //99 is auth userId, now it hardcoded
     const isHasFreeSpace =
       await this.mediaService.checkUserHasAllowedStorageSize(99, files);
 
     if (!isHasFreeSpace) {
-      throw new BadRequestException('No free space');
+      throw new BadRequestException(
+        this.i18n.translate('api.FREE_SPACE_ERROR', { lang }),
+      );
     }
-
+    //99 is auth userId, now it hardcoded
     const results = await this.mediaService.uploadFiles(
       99,
       body.type,
@@ -46,18 +56,24 @@ export class MediaController {
     );
 
     return res.status(HttpStatus.CREATED).json({
-      message: 'Files uploaded successfully',
+      message: this.i18n.translate('api.FILES_SUCCESS_UPLOAD', { lang }),
       data: results,
     });
   }
 
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Query('prefix') prefix: string, @Res() res: Response) {
+  async delete(
+    @Query('prefix') prefix: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const lang = req['language'];
+    //99 is auth userId, now it hardcoded
     await this.mediaService.deleteByPrefix(prefix, 99);
 
     return res.status(HttpStatus.NO_CONTENT).json({
-      message: 'File deleted successfully',
+      message: this.i18n.translate('api.FILES_DELETE_SUCCESS', { lang }),
     });
   }
 }
