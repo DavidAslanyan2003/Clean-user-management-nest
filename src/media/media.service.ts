@@ -5,7 +5,7 @@ import {
   PutObjectCommandInput,
   PutObjectCommandOutput,
   ListObjectsV2Command,
-  DeleteObjectsCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import * as sharp from 'sharp';
@@ -125,7 +125,7 @@ export class MediaService {
       file.originalname,
       path.extname(file.originalname),
     );
-    const fileName = `event-images-test/${clientId}/${size}/${fileUuid}-${type}-${originalname}-${size}-${
+    const fileName = `event-images-test/${clientId}/${size}/${fileUuid}-${type}-${originalname}-${
       eventId || 'none'
     }`;
 
@@ -153,25 +153,22 @@ export class MediaService {
 
   async deleteByPrefix(filePrefix: string, clientId: number): Promise<void> {
     try {
-      const listParams = {
-        Bucket: this.bucket,
-        Prefix: `event-images-test/${clientId}/${filePrefix}`,
-      };
+      const folderNames = ['original', ...Object.keys(this.sizes)];
 
-      const listCommand = new ListObjectsV2Command(listParams);
-      const listResponse = await this.s3.send(listCommand);
+      const deletePromises = [];
 
-      if (listResponse.Contents && listResponse.Contents.length > 0) {
+      for (const folderName of folderNames) {
         const deleteParams = {
           Bucket: this.bucket,
-          Delete: {
-            Objects: listResponse.Contents.map(({ Key }) => ({ Key })),
-          },
+          Key: `event-images-test/${clientId}/${folderName}/${filePrefix}`,
         };
 
-        const deleteCommand = new DeleteObjectsCommand(deleteParams);
-        await this.s3.send(deleteCommand);
+        deletePromises.push(
+          this.s3.send(new DeleteObjectCommand(deleteParams)),
+        );
       }
+
+      await Promise.all(deletePromises);
     } catch (error) {
       throw new BadRequestException(error);
     }

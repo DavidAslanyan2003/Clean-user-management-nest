@@ -8,6 +8,8 @@ import {
   Res,
   HttpStatus,
   HttpCode,
+  Delete,
+  Query,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { imagesUploadBodySchema } from './validation-schema/image-upload.schema';
@@ -46,6 +48,16 @@ export class MediaController {
     return res.status(HttpStatus.CREATED).json({
       message: 'Files uploaded successfully',
       data: results,
+    });
+  }
+
+  @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Query('prefix') prefix: string, @Res() res: Response) {
+    await this.mediaService.deleteByPrefix(prefix, 99);
+
+    return res.status(HttpStatus.NO_CONTENT).json({
+      message: 'File deleted successfully',
     });
   }
 }
