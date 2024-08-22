@@ -9,20 +9,22 @@ import {
 } from 'nestjs-i18n';
 import * as path from 'path';
 import { LocaleMiddleware } from './middlewares/locale.middleware';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/typeorm';
-import { DEFAULT_LANGUAGE } from './helpes/constants/constants';
+import { CategoryModule } from './category/modules/category.module';
+import { UserModule } from './user/user.module';
+import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
 
 @Module({
   imports: [
+    CategoryModule,
+    UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        AppDataSource(configService).options,
+    TypeOrmModule.forRoot({
+      ...AppDataSource.options,
     }),
     I18nModule.forRoot({
       fallbackLanguage: DEFAULT_LANGUAGE,

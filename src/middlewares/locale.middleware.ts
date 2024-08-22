@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { DEFAULT_LANGUAGE } from 'src/helpes/constants/constants';
+import { DEFAULT_LANGUAGE } from 'src/helpers/constants/constants';
 
 @Injectable()
 export class LocaleMiddleware implements NestMiddleware {
