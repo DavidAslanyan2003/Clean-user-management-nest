@@ -8,22 +8,4 @@ import { Category } from '../entities/category.entity';
 @ApiTags('Categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-  @Post()
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Creates a new tag',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid data provided for creating the tag.',
-  })
-  //   @ApiResponse({
-  //     description: 'Response',
-  //     type: BannerType,
-  //   })
-  async create(
-    @Body() createCategoryDto: CreateCategoryDto,
-  ): Promise<Category> {
-    return this.categoryService.createCategories(createCategoryDto);
-  }
 }
