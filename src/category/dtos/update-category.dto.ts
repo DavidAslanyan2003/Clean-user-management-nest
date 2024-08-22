@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
-import { IsValidLocaleRecord } from 'src/helpes/validations/decorators/validate-locale-record';
-import { IsValidUrl } from 'src/helpes/validations/decorators/validate-url';
+import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
+import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
 
 export class UpdateCategoryDto {
   @ApiProperty({

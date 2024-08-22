@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { User } from '../../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { CategoryStatus } from '../../helpes/constants/status';
+import { CategoryStatus } from '../../helpers/constants/status';
 
 @Entity({ name: 'category' })
 export class Category {

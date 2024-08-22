@@ -10,8 +10,9 @@ import { RequiredLocale } from '../../constants/locale';
 @ValidatorConstraint({ name: 'IsValidLocale', async: false })
 class IsValidLocale implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
-    if (typeof value !== 'object' || value === null) return false;
-
+    if (typeof value !== 'object' || value === null) {
+      return false;
+    }
     const keys = Object.keys(value);
 
     const areKeysAndValuesStrings = keys.every(

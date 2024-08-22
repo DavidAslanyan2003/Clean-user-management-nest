@@ -14,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/typeorm';
 import { CategoryModule } from './category/modules/category.module';
 import { UserModule } from './user/user.module';
-import { DEFAULT_LANGUAGE } from './helpes/constants/constants';
+import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
 
 @Module({
   imports: [

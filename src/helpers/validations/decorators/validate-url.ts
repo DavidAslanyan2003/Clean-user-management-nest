@@ -11,6 +11,7 @@ export class IsValidPath implements ValidatorConstraintInterface {
   validate(url: string, args: ValidationArguments): boolean {
     try {
       new URL(url);
+
       return true;
     } catch (_) {
       return false;
