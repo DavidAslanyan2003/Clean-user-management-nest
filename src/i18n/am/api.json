@@ -1,6 +1,6 @@
 {
-    "FILES_SUCCESS_UPLOAD": "Ֆայլերը հաջողությամբ վերբեռնվեցին!",
-    "FILES_DELETE_SUCCESS": "Ֆայլը հաջողությամբ ջնջվել է",
-    "FREE_SPACE_ERROR": "Ազատ տարածք չկա",
-    "IMAGE_SAVE_ERROR": "Պատկերը S3-ում չպահպանվեց!"
+    "FILE_UPLOAD_SUCCESS_MESSAGE": "Ֆայլերը հաջողությամբ վերբեռնվեցին!",
+    "FILE_DELETE_SUCCESS_MESSAGE": "Ֆայլը հաջողությամբ ջնջվել է!",
+    "FREE_SPACE_ERROR_MESSAGE": "Ազատ տարածք չկա!",
+    "IMAGE_SAVE_ERROR_MESSAGE": "Պատկերը չպահպանվեց!"
 }

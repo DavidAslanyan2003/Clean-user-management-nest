@@ -44,7 +44,7 @@ export class MediaController {
 
     if (!isHasFreeSpace) {
       throw new BadRequestException(
-        this.i18n.translate('api.FREE_SPACE_ERROR', { lang }),
+        this.i18n.translate('api.FREE_SPACE_ERROR_MESSAGE', { lang }),
       );
     }
     //99 is auth userId, now it hardcoded
@@ -56,7 +56,7 @@ export class MediaController {
     );
 
     return res.status(HttpStatus.CREATED).json({
-      message: this.i18n.translate('api.FILES_SUCCESS_UPLOAD', { lang }),
+      message: this.i18n.translate('api.FILE_UPLOAD_SUCCESS_MESSAGE', { lang }),
       data: results,
     });
   }
@@ -73,7 +73,7 @@ export class MediaController {
     await this.mediaService.deleteByPrefix(prefix, 99);
 
     return res.status(HttpStatus.NO_CONTENT).json({
-      message: this.i18n.translate('api.FILES_DELETE_SUCCESS', { lang }),
+      message: this.i18n.translate('api.FILE_DELETE_SUCCESS_MESSAGE', { lang }),
     });
   }
 }

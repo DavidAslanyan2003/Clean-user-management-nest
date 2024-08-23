@@ -152,7 +152,7 @@ export class MediaService {
       );
       if (response.$metadata.httpStatusCode !== 200) {
         throw new Error(
-          this.i18n.translate('api.IMAGE_SAVE_ERROR', {
+          this.i18n.translate('api.IMAGE_SAVE_ERROR_MESSAGE', {
             lang: this.request['language'],
           }),
         );

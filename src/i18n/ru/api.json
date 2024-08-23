@@ -1,6 +1,6 @@
 {
-    "FILES_SUCCESS_UPLOAD": "Файлы успешно загружены!",
-    "FILES_DELETE_SUCCESS": "Файл успешно удален",
-    "FREE_SPACE_ERROR": "Нет свободного места",
-    "IMAGE_SAVE_ERROR": "Изображение не сохранено в S3!"
+    "FILE_UPLOAD_SUCCESS_MESSAGE": "Файлы успешно загружены!",
+    "FILE_DELETE_SUCCESS_MESSAGE": "Файл успешно удален!",
+    "FREE_SPACE_ERROR_MESSAGE": "Нет свободного места!",
+    "IMAGE_SAVE_ERROR_MESSAGE": "Изображение не сохранено!"
 }
