@@ -74,13 +74,23 @@ export class CategoryService {
   }
 
   async getCategories(
+    page: number,
+    limit: number,
+    orderBy: string,
+    order: string,
     locale: string,
     name?: any,
-  ): Promise<CustomResponse<Category[]>> {
+  ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    page = page || 1;
+    limit = limit || 10;
+    const offset = (page - 1) * limit;
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
     const i18n = I18nContext.current();
 
@@ -97,7 +107,13 @@ export class CategoryService {
           name,
         });
       }
-      const categories: Category[] = await query.getMany();
+
+      query = query
+        .orderBy(`category.${orderBy}`, sortOrder)
+        .skip(offset)
+        .take(limit);
+
+      const [categories, total] = await query.getManyAndCount();
 
       checkCategoriesExistance(categories, i18n);
 
@@ -109,7 +125,12 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category[]>(message, categories, null, null);
+      return new CustomResponse<{ categories: Category[]; total: number }>(
+        message,
+        { categories, total },
+        null,
+        null,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
@@ -159,21 +180,37 @@ export class CategoryService {
 
   async getInactiveCategories(
     locale: string,
-  ): Promise<CustomResponse<Category[]>> {
+    page: number,
+    limit: number,
+    orderBy: string,
+    order: string,
+  ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    page = page || 1;
+    limit = limit || 10;
+    const offset = (page - 1) * limit;
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
     const i18n = I18nContext.current();
 
     try {
-      const categories = await queryRunner.manager
+      let query = queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
         .where('category.status = :INACTIVE_STATUS', { INACTIVE_STATUS })
-        .andWhere('category.name ? :locale', { locale })
-        .getMany();
+        .andWhere('category.name ? :locale', { locale });
+
+      query = query
+        .orderBy(`category.${orderBy}`, sortOrder)
+        .skip(offset)
+        .take(limit);
+
+      const [categories, total] = await query.getManyAndCount();
 
       checkCategoriesExistance(categories, i18n);
 
@@ -185,7 +222,12 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category[]>(message, categories, null, null);
+      return new CustomResponse<{ categories: Category[]; total: number }>(
+        message,
+        { categories, total },
+        null,
+        null,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
