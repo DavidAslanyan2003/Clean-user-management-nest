@@ -6,6 +6,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { RequiredLocale } from '../../constants/locale';
+import { ERROR_FILE_NAME } from 'src/helpers/constants/constants';
 
 @ValidatorConstraint({ name: 'IsValidLocale', async: false })
 class IsValidLocale implements ValidatorConstraintInterface {
@@ -27,7 +28,7 @@ class IsValidLocale implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return 'error.INVALID_LOCALE_RECORD';
+    return `${ERROR_FILE_NAME}.INVALID_LOCALE_RECORD`;
   }
 }
 
