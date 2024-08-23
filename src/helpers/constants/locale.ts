@@ -7,6 +7,6 @@ export const Locale = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
 
-    return request.headers['accept-language'] || DEFAULT_LANGUAGE;
+    return request.headers['content-language'] || DEFAULT_LANGUAGE;
   },
 );
