@@ -1,16 +1,23 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import {
   S3Client,
   PutObjectCommand,
   PutObjectCommandInput,
   PutObjectCommandOutput,
   ListObjectsV2Command,
-  DeleteObjectsCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import * as sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class MediaService {
@@ -28,7 +35,11 @@ export class MediaService {
   };
   private s3: S3Client;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    @Inject(REQUEST) private readonly request: Request,
+    private configService: ConfigService,
+    private readonly i18n: I18nService,
+  ) {
     this.region = configService.get<string>('S3_REGION') || 'eu-west-1';
     this.accessKey = configService.get<string>('AWS_ACCESS_KEY');
     this.bucket = this.configService.get<string>('S3_BUCKET');
@@ -51,12 +62,12 @@ export class MediaService {
     files: Express.Multer.File[],
     eventId: string | undefined | null,
   ): Promise<object> {
-    const fileUuid = uuidv4();
+    const fileUUID = uuidv4();
     const uploadPromises: Promise<string>[] = [];
 
     for (const [, file] of files.entries()) {
       const uploadPromise = this.uploadFile(
-        fileUuid,
+        fileUUID,
         clientId,
         type,
         file,
@@ -67,22 +78,21 @@ export class MediaService {
 
     const executedPromises = await Promise.allSettled(uploadPromises);
 
+    executedPromises.forEach((e: any) => {
+      console.log(e);
+    });
     return executedPromises;
   }
 
   async uploadFile(
-    fileUuid: string,
+    fileUUID: string,
     clientId: number,
     type: string,
     file: Express.Multer.File,
     eventId: string | undefined | null,
   ): Promise<any> {
-    if (!file || !file.originalname) {
-      throw new Error('Invalid file object or missing originalname');
-    }
-
     const uploadedFile = await this.uploadToS3(
-      fileUuid,
+      fileUUID,
       clientId,
       type,
       'original',
@@ -97,7 +107,7 @@ export class MediaService {
         .toBuffer();
 
       await this.uploadToS3(
-        fileUuid,
+        fileUUID,
         clientId,
         type,
         sizeName,
@@ -114,7 +124,7 @@ export class MediaService {
   }
 
   private async uploadToS3(
-    fileUuid: string,
+    fileUUID: string,
     clientId: number,
     type: string,
     size: string,
@@ -125,7 +135,7 @@ export class MediaService {
       file.originalname,
       path.extname(file.originalname),
     );
-    const fileName = `event-images-test/${clientId}/${size}/${fileUuid}-${type}-${originalname}-${size}-${
+    const fileName = `event-images-test/${clientId}/${size}/${fileUUID}-${type}-${originalname}-${
       eventId || 'none'
     }`;
 
@@ -141,37 +151,34 @@ export class MediaService {
         new PutObjectCommand(input),
       );
       if (response.$metadata.httpStatusCode !== 200) {
-        throw new Error('Image not saved in s3!');
+        throw new Error(
+          this.i18n.translate('api.IMAGE_SAVE_ERROR_MESSAGE', {
+            lang: this.request['language'],
+          }),
+        );
       }
 
       return `${this.s3Url}${fileName}`;
     } catch (error) {
       this.logger.error('Cannot save file to s3');
-      // throw error;
+      throw new BadRequestException(error.message);
     }
   }
 
   async deleteByPrefix(filePrefix: string, clientId: number): Promise<void> {
     try {
-      const listParams = {
-        Bucket: this.bucket,
-        Prefix: `event-images-test/${clientId}/${filePrefix}`,
-      };
+      const folderNames = ['original', ...Object.keys(this.sizes)];
 
-      const listCommand = new ListObjectsV2Command(listParams);
-      const listResponse = await this.s3.send(listCommand);
-
-      if (listResponse.Contents && listResponse.Contents.length > 0) {
+      const deletePromises = folderNames.map((folderName) => {
         const deleteParams = {
           Bucket: this.bucket,
-          Delete: {
-            Objects: listResponse.Contents.map(({ Key }) => ({ Key })),
-          },
+          Key: `event-images-test/${clientId}/${folderName}/${filePrefix}`,
         };
 
-        const deleteCommand = new DeleteObjectsCommand(deleteParams);
-        await this.s3.send(deleteCommand);
-      }
+        return this.s3.send(new DeleteObjectCommand(deleteParams));
+      });
+
+      await Promise.all(deletePromises);
     } catch (error) {
       throw new BadRequestException(error);
     }
