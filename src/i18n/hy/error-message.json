@@ -1,0 +1,13 @@
+{
+  "INVALID_LOCALE_RECORD": "{property}-ը պետք է պարունակի պահանջվող բանալիները:",
+  "INVALID_URL": "URL-ի անվավեր ձևաչափ {property}-ի համար:",
+  "IS_EMPTY":  "{property}-ը չի կարող դատարկ լինել:",
+  "FAILED_CREATE_CATEGORY": "Չհաջողվեց ստեղծել իրադարձության կատեգորիան:",
+  "ERROR_MESSAGE": "սխալ",
+  "ITEM_NOT_FOUND": "Նյութը չի գտնվել:",
+  "FAILED_GET_CATEGORY": "Չհաջողվեց ստանալ իրադարձության կատեգորիաները:",
+  "FAILED_UPDATE_CATEGORY": "Չհաջողվեց թարմացնել իրադարձության կատեգորիան:",
+  "INVALID_STATUS": "Անվավեր կարգավիճակ",
+  "FAILED_UPDATE_STATUS": "Չհաջողվեց թարմացնել կարգավիճակը:"
+}
+  

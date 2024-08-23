@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { i18nValidationMessage } from 'nestjs-i18n';
+import { ERROR_FILE_NAME } from 'src/helpers/constants/constants';
 import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
 import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
 
-export class UpdateCategoryDto {
+export class CategoryDto {
   @ApiProperty({
     example: {
       hy: 'string',
@@ -13,9 +13,9 @@ export class UpdateCategoryDto {
     },
     description: 'Name of the category in different languages',
   })
-  @IsNotEmpty({ message: 'error.isEmpty' })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
   @IsValidLocaleRecord()
-  name: string;
+  name: Record<string, string>;
 
   @ApiProperty({
     example: {
@@ -27,13 +27,13 @@ export class UpdateCategoryDto {
   })
   @IsOptional()
   @IsValidLocaleRecord()
-  description: string;
+  description: Record<string, string>;
 
   @ApiProperty({
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
     description: 'Category image url',
   })
-  @IsNotEmpty({ message: 'error.isEmpty' })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
   @IsValidUrl()
   category_image: string;
 
@@ -41,7 +41,7 @@ export class UpdateCategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
-  @IsNotEmpty({ message: 'error.isEmpty' })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
   @IsValidUrl()
   category_icon: string;
 }

@@ -14,13 +14,12 @@ export class IsValidPath implements ValidatorConstraintInterface {
 
       return true;
     } catch (_) {
-      
       return false;
     }
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return 'error.invalidURL';
+    return 'error.INVALID_URL';
   }
 }
 

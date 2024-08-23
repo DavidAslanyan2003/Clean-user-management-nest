@@ -5,7 +5,7 @@ import {
   I18nModule,
   I18nJsonLoader,
   QueryResolver,
-  HeaderResolver,
+  AcceptLanguageResolver,
 } from 'nestjs-i18n';
 import * as path from 'path';
 import { LocaleMiddleware } from './middlewares/locale.middleware';
@@ -34,8 +34,8 @@ import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
       },
       loader: I18nJsonLoader,
       resolvers: [
-        { use: QueryResolver, options: ['lang', 'locale', 'l'] },
-        HeaderResolver,
+        new QueryResolver(['lang', 'locale', 'l']),
+        AcceptLanguageResolver,
       ],
     }),
   ],

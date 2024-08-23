@@ -27,7 +27,7 @@ class IsValidLocale implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return 'error.invalidLocaleRecord';
+    return 'error.INVALID_LOCALE_RECORD';
   }
 }
 
