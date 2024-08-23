@@ -5,7 +5,7 @@ import { DEFAULT_LANGUAGE } from 'src/helpers/constants/constants';
 @Injectable()
 export class LocaleMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    req['language'] = req.headers['accept-language'] || DEFAULT_LANGUAGE;
+    req['language'] = req.headers['content-language'] || DEFAULT_LANGUAGE;
 
     next();
   }
