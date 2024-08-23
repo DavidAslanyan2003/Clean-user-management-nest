@@ -77,12 +77,9 @@ export class CategoryController {
   })
   async getCategoriesByName(
     @Locale() locale: string,
-    @Param('name') name?: string,
+    @Param('name') name: string,
   ): Promise<CustomResponse<Category[]>> {
-    const dataObject = {
-      name: name,
-    };
-    return this.categoryService.getCategories(locale, dataObject);
+    return this.categoryService.getCategories(locale, name);
   }
 
   @Get('/inactive')
@@ -119,12 +116,9 @@ export class CategoryController {
   })
   async getCategoriesById(
     @Locale() locale: string,
-    @Param('id', CheckUUIDPipe) id?: string,
-  ): Promise<CustomResponse<Category[]>> {
-    const dataObject = {
-      id: id,
-    };
-    return this.categoryService.getCategories(locale, dataObject);
+    @Param('id', CheckUUIDPipe) id: string,
+  ): Promise<CustomResponse<Category>> {
+    return this.categoryService.getCategoryById(locale, id);
   }
 
   @Put(':id')
