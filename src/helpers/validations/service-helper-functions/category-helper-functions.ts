@@ -3,8 +3,8 @@ import { I18nContext } from 'nestjs-i18n';
 import { Category } from 'src/category/entities/category.entity';
 import {
   DEFAULT_LANGUAGE,
-  ERROR_FILE_NAMES_PATH,
-  SUCCESS_FILE_NAMES_PATH,
+  ERROR_FILE_PATH,
+  SUCCESS_FILE_PATH,
 } from 'src/helpers/constants/constants';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 
@@ -13,7 +13,7 @@ export function checkItemExistance(
   i18n: I18nContext<Record<string, any>>,
 ): void {
   if (!item) {
-    const message = i18n.translate(`${ERROR_FILE_NAMES_PATH}.ITEM_NOT_FOUND`, {
+    const message = i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
       lang: i18n.lang,
     });
 
@@ -46,22 +46,22 @@ export function translatedErrorResponse(
   errorName: string,
   error: any,
 ): any {
-  const message = i18n.translate(`${ERROR_FILE_NAMES_PATH}.ERROR_MESSAGE`, {
+  const message = i18n.translate(`${ERROR_FILE_PATH}.ERROR_MESSAGE`, {
     lang: locale,
   });
 
-  const errorMessage = i18n.translate(`${ERROR_FILE_NAMES_PATH}.${errorName}`, {
+  const errorMessage = i18n.translate(`${ERROR_FILE_PATH}.${errorName}`, {
     lang: locale,
   });
 
   return new CustomResponse<Category>(message, error.message, errorMessage);
 }
 
-export function returnSuccessMassage(
+export function createSuccessMessage(
   i18n: I18nContext<Record<string, any>>,
   locale: string,
 ): string {
-  return i18n.translate(`${SUCCESS_FILE_NAMES_PATH}.SUCCESS_MESSAGE`, {
+  return i18n.translate(`${SUCCESS_FILE_PATH}.SUCCESS_MESSAGE`, {
     lang: locale,
   });
 }

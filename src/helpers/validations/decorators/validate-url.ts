@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ERROR_FILE_NAMES_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
 
 @ValidatorConstraint({ async: false })
 export class IsValidPath implements ValidatorConstraintInterface {
@@ -20,7 +20,7 @@ export class IsValidPath implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `${ERROR_FILE_NAMES_PATH}.INVALID_URL`;
+    return `${ERROR_FILE_PATH}.INVALID_URL`;
   }
 }
 

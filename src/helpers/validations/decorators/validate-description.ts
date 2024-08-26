@@ -4,7 +4,7 @@ import {
   ValidationArguments,
   registerDecorator,
 } from 'class-validator';
-import { ERROR_FILE_NAMES_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
 
 @ValidatorConstraint({ async: false })
 export class MatchKeysInNameAndDescription
@@ -21,7 +21,7 @@ export class MatchKeysInNameAndDescription
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${ERROR_FILE_NAMES_PATH}.KEY_MISMATCH`;
+    return `${ERROR_FILE_PATH}.KEY_MISMATCH`;
   }
 }
 
