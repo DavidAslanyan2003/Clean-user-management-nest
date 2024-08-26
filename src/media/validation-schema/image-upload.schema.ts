@@ -24,4 +24,12 @@ export const filesUploadRules = {
     maxFiles: 2,
     maxFileSize: 10 * 1024 * 1024, // 10MB
   },
+  categoryImages: {
+    maxFiles: 1,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  },
+  categoryIcon: {
+    maxFiles: 1,
+    maxFileSize: 3 * 1024 * 1024, // 3MB
+  },
 } as Record<string, FileUploadRule>;

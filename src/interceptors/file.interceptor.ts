@@ -97,7 +97,9 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
       fieldname: Joi.string().valid('images').required(),
       originalname: Joi.string().required(),
       encoding: Joi.string().required(),
-      mimetype: Joi.string().valid('image/jpeg', 'image/png').required(),
+      mimetype: Joi.string()
+        .valid('image/jpeg', 'image/png', 'image/jpg')
+        .required(),
       buffer: Joi.binary().required(),
       size: Joi.number().max(rule.maxFileSize).required(),
     });
