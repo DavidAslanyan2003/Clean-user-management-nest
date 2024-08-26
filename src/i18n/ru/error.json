@@ -1,5 +1,20 @@
 {
     "invalidLocaleRecord": "{property} должно содержать требуемые ключи.",
     "invalidURL": "Неверный формат URL для {property}.",
-    "isEmpty":  "{property} не может быть пустым."
+    "isEmpty": "{property} не может быть пустым.",
+    "imagesFieldnameInvalid": "Недопустимое имя поля для изображений.",
+    "fieldnameRequired": "Имя поля обязательно.",
+    "originalnameRequired": "Оригинальное имя обязательно.",
+    "encodingRequired": "Кодировка обязательна.",
+    "mimetypeInvalid": "Недопустимый тип файла. Допускаются только JPEG, PNG и JPG.",
+    "mimetypeRequired": "Тип файла обязателен.",
+    "bufferRequired": "Буфер обязателен.",
+    "sizeMax": "Размер файла не должен превышать {max} байт.",
+    "sizeRequired": "Размер файла обязателен.",
+    "minFiles": "Требуется как минимум {min} файл(а).",
+    "maxFiles": "Допускается не более {max} файла(ов).",
+    "filesRequired": "Файлы обязательны.",
+    "fileType": "Типы не допускаются",
+    "filesMaxTotalSize": "Максимальный общий размер составляет {totalMaxSize} байт",
+    "noFiles": "Файлы не найдены"
 }

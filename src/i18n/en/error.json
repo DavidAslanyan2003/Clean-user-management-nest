@@ -1,5 +1,20 @@
 {
     "invalidLocaleRecord": "{property} must contain required keys.",
     "invalidURL": "Invalid URL format for {property}.",
-    "isEmpty":  "{property} cannot be empty."
+    "isEmpty":  "{property} cannot be empty.",
+    "imagesFieldnameInvalid": "Invalid field name for images.",
+    "fieldnameRequired": "Field name is required.",
+    "originalnameRequired": "Original name is required.",
+    "encodingRequired": "Encoding is required.",
+    "mimetypeInvalid": "Invalid file type. Only JPEG, PNG, and JPG are allowed.",
+    "mimetypeRequired": "File type is required.",
+    "bufferRequired": "Buffer is required.",
+    "sizeMax": "File size must not exceed {max} bytes.",
+    "sizeRequired": "File size is required.",
+    "minFiles": "At least {{min}} file(s) is required.",
+    "maxFiles": "No more than {max} file(s) is allowed.",
+    "filesRequired": "Files are required.",
+    "fileType": "Types is not allowed",
+    "filesMaxTotalSize": "Max total size is {totalMaxSize} byte",
+    "noFiles": "Files not found"
 }
