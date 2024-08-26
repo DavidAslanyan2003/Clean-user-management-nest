@@ -35,8 +35,8 @@ import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
       },
       loader: I18nJsonLoader,
       resolvers: [
-        { use: QueryResolver, options: ['lang', 'locale', 'l'] },
-        new HeaderResolver(['content-language', 'lang']),
+        new QueryResolver(['lang', 'locale', 'l']),
+        new HeaderResolver(['content-language']),
       ],
     }),
     MediaModule,

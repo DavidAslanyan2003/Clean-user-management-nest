@@ -27,8 +27,8 @@ export class Category {
     },
     description: 'Name of the category in different languages',
   })
-  @Column({ type: 'jsonb', nullable: false })
-  name: Record<string, string>;
+  @Column({ type: 'jsonb', unique: true, nullable: false })
+  name: Record<string, any>;
 
   @ApiProperty({
     example: {
@@ -39,7 +39,7 @@ export class Category {
     description: 'Description of the category in different languages',
   })
   @Column({ type: 'jsonb', nullable: true })
-  description: Record<string, string>;
+  description: Record<string, any>;
 
   @ApiProperty({
     example: 'Active',
