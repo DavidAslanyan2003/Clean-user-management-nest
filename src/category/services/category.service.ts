@@ -27,7 +27,7 @@ export class CategoryService {
   ) {}
   async createCategory(
     locale: string,
-    newCategorie: CategoryDto,
+    newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -40,10 +40,10 @@ export class CategoryService {
       const users = await queryRunner.manager.getRepository(User).find();
 
       const category = queryRunner.manager.getRepository(Category).create({
-        name: newCategorie.name,
-        description: newCategorie.description,
-        category_icon: newCategorie.category_icon,
-        category_image: newCategorie.category_image,
+        name: newCategory.name,
+        description: newCategory.description,
+        category_icon: newCategory.category_icon,
+        category_image: newCategory.category_image,
         user: users[0],
       });
       const savedCategory = await this.categoryRepository.save(category);
@@ -289,7 +289,7 @@ export class CategoryService {
   async updateCategory(
     locale: string,
     id: string,
-    newCategorie: CategoryDto,
+    newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -306,11 +306,11 @@ export class CategoryService {
         });
       checkItemExistance(category, i18n);
 
-      (category.name = newCategorie.name),
-        (category.description = newCategorie.description),
-        (category.category_icon = newCategorie.category_icon),
-        (category.category_image = newCategorie.category_image),
-        (category.updated_at = new Date());
+      category.name = newCategory.name;
+      category.description = newCategory.description;
+      category.category_icon = newCategory.category_icon;
+      category.category_image = newCategory.category_image;
+      category.updated_at = new Date();
 
       const savedCategory = await this.categoryRepository.save(category);
       const resultedCategory = fliterCategoryByLanguage(locale, savedCategory);
