@@ -16,7 +16,7 @@ export class CustomResponse<T> {
   constructor(status: string, data?: T, error?: string, message?: string) {
     this.status = status;
     this.data = data;
-    this.error = error;
-    this.message = message;
+    this.error = error || null;
+    this.message = message || null;
   }
 }

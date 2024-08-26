@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { ERROR_FILE_NAME } from 'src/helpers/constants/constants';
+import { ERROR_FILE_NAMES_PATH } from 'src/helpers/constants/constants';
+import { MatchDescriptionKeysInName } from 'src/helpers/validations/decorators/validate-description';
 import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
 import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
 
@@ -13,7 +14,7 @@ export class CategoryDto {
     },
     description: 'Name of the category in different languages',
   })
-  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAMES_PATH}.IS_EMPTY` })
   @IsValidLocaleRecord()
   name: Record<string, string>;
 
@@ -26,14 +27,14 @@ export class CategoryDto {
     description: 'Description of the category in different languages',
   })
   @IsOptional()
-  @IsValidLocaleRecord()
+  @MatchDescriptionKeysInName('name')
   description: Record<string, string>;
 
   @ApiProperty({
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
     description: 'Category image url',
   })
-  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAMES_PATH}.IS_EMPTY` })
   @IsValidUrl()
   category_image: string;
 
@@ -41,7 +42,7 @@ export class CategoryDto {
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
-  @IsNotEmpty({ message: `${ERROR_FILE_NAME}.IS_EMPTY` })
+  @IsNotEmpty({ message: `${ERROR_FILE_NAMES_PATH}.IS_EMPTY` })
   @IsValidUrl()
   category_icon: string;
 }

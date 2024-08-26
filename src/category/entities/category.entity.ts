@@ -27,7 +27,7 @@ export class Category {
     },
     description: 'Name of the category in different languages',
   })
-  @Column({ type: 'jsonb', nullable: false })
+  @Column({ type: 'jsonb', unique: true, nullable: false })
   name: Record<string, any>;
 
   @ApiProperty({

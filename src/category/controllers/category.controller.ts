@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseBoolPipe,
   Patch,
   Post,
   Put,
@@ -33,7 +34,7 @@ export class CategoryController {
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Creates a new tag',
+    description: 'Creates a new category',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -75,7 +76,7 @@ export class CategoryController {
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
-    return this.categoryService.getCategories(
+    return this.categoryService.getActiveCategories(
       page,
       limit,
       orderBy,
@@ -110,7 +111,7 @@ export class CategoryController {
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
-    return this.categoryService.getCategories(
+    return this.categoryService.getCategoryByName(
       page,
       limit,
       orderBy,
@@ -167,11 +168,13 @@ export class CategoryController {
     type: Category,
   })
   @ApiParam({ name: 'id', required: true })
+  @ApiQuery({ name: 'allLanguages', required: true })
   async getCategoriesById(
     @Locale() locale: string,
     @Param('id', CheckUUIDPipe) id: string,
+    @Query('allLanguages', ParseBoolPipe) allLanguages: boolean,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.getCategoryById(locale, id);
+    return this.categoryService.getCategoryById(locale, id, allLanguages);
   }
 
   @Put(':id')

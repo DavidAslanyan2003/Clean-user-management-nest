@@ -2,17 +2,18 @@ import { BadRequestException } from '@nestjs/common';
 import { I18nContext } from 'nestjs-i18n';
 import { Category } from 'src/category/entities/category.entity';
 import {
-  ERROR_FILE_NAME,
-  SUCCESS_FILE_NAME,
+  DEFAULT_LANGUAGE,
+  ERROR_FILE_NAMES_PATH,
+  SUCCESS_FILE_NAMES_PATH,
 } from 'src/helpers/constants/constants';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 
-export function checkCategoriesExistance(
-  categories: Category[],
+export function checkItemExistance(
+  item: any,
   i18n: I18nContext<Record<string, any>>,
 ): void {
-  if (categories.length === 0) {
-    const message = i18n.translate(`${ERROR_FILE_NAME}.ITEM_NOT_FOUND`, {
+  if (!item) {
+    const message = i18n.translate(`${ERROR_FILE_NAMES_PATH}.ITEM_NOT_FOUND`, {
       lang: i18n.lang,
     });
 
@@ -20,58 +21,47 @@ export function checkCategoriesExistance(
   }
 }
 
-export function checkSingleCategoryExistance(
-  categories: Category,
-  i18n: I18nContext<Record<string, any>>,
-): void {
-  if (!categories) {
-    const message = i18n.translate(`${ERROR_FILE_NAME}.ITEM_NOT_FOUND`, {
-      lang: i18n.lang,
-    });
-
-    throw new BadRequestException(message);
-  }
-}
-
-export function assignLanguageToCategory(
+export function fliterCategoryByLanguage(
   locale: string,
   category: Category,
 ): Category {
-  category.name = category.name[locale];
-  if (category.description) {
-    category.description = category.description[locale];
+  if (category.name[locale]) {
+    category.name = category.name[locale];
+    if (category.description) {
+      category.description = category.description[locale];
+    }
+  } else {
+    category.name = category.name[DEFAULT_LANGUAGE];
+    if (category.description) {
+      category.description = category.description[DEFAULT_LANGUAGE];
+    }
   }
 
   return category;
 }
 
-export function localizedErrorResponse(
+export function translatedErrorResponse(
   i18n: I18nContext<Record<string, any>>,
   locale: string,
   errorName: string,
   error: any,
 ): any {
-  const message = i18n.translate(`${ERROR_FILE_NAME}.ERROR_MESSAGE`, {
+  const message = i18n.translate(`${ERROR_FILE_NAMES_PATH}.ERROR_MESSAGE`, {
     lang: locale,
   });
 
-  const errorMessage = i18n.translate(`${ERROR_FILE_NAME}.${errorName}`, {
+  const errorMessage = i18n.translate(`${ERROR_FILE_NAMES_PATH}.${errorName}`, {
     lang: locale,
   });
 
-  return new CustomResponse<Category>(
-    message,
-    null,
-    error.message,
-    errorMessage,
-  );
+  return new CustomResponse<Category>(message, error.message, errorMessage);
 }
 
-export function successMessage(
+export function returnSuccessMassage(
   i18n: I18nContext<Record<string, any>>,
   locale: string,
 ): string {
-  return i18n.translate(`${SUCCESS_FILE_NAME}.SUCCESS_MESSAGE`, {
+  return i18n.translate(`${SUCCESS_FILE_NAMES_PATH}.SUCCESS_MESSAGE`, {
     lang: locale,
   });
 }

@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ERROR_FILE_NAME } from 'src/helpers/constants/constants';
+import { ERROR_FILE_NAMES_PATH } from 'src/helpers/constants/constants';
 import { ACTIVE_STATUS, INACTIVE_STATUS } from 'src/helpers/constants/status';
 
 @ValidatorConstraint({ async: false })
@@ -22,7 +22,7 @@ export class CheckStatus implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `${ERROR_FILE_NAME}.INVALID_STATUS`;
+    return `${ERROR_FILE_NAMES_PATH}.INVALID_STATUS`;
   }
 }
 

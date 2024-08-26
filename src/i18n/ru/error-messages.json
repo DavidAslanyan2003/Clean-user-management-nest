@@ -8,5 +8,6 @@
     "FAILED_GET_CATEGORY": "Не удалось получить категори событий.",
     "FAILED_UPDATE_CATEGORY": "Не удалось обновить категорию события.",
     "INVALID_STATUS": "Неверный статус",
-    "FAILED_UPDATE_STATUS": "Не удалось обновить статус."
+    "FAILED_UPDATE_STATUS": "Не удалось обновить статус.",
+    "KEY_MISMATCH": "Все ключи в {property} должны присутствовать и в названии."
 }

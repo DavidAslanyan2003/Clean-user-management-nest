@@ -4,15 +4,13 @@ import { Repository } from 'typeorm';
 import { Category } from '../entities/category.entity';
 import { CategoryDto } from '../dtos/category.dto';
 import { I18nContext } from 'nestjs-i18n';
-import { SUCCESS_FILE_NAME } from 'src/helpers/constants/constants';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { User } from 'src/user/user.entity';
 import {
-  assignLanguageToCategory,
-  checkCategoriesExistance,
-  checkSingleCategoryExistance,
-  localizedErrorResponse,
-  successMessage,
+  fliterCategoryByLanguage,
+  checkItemExistance,
+  returnSuccessMassage,
+  translatedErrorResponse,
 } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import {
@@ -39,7 +37,6 @@ export class CategoryService {
     const i18n = I18nContext.current();
 
     try {
-      let savedCategory: Category;
       const users = await queryRunner.manager.getRepository(User).find();
 
       const category = queryRunner.manager.getRepository(Category).create({
@@ -49,20 +46,18 @@ export class CategoryService {
         category_image: newCategorie.category_image,
         user: users[0],
       });
+      const savedCategory = await this.categoryRepository.save(category);
+      const resultedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      savedCategory = await this.categoryRepository.save(category);
-
-      savedCategory = assignLanguageToCategory(locale, savedCategory);
-
-      const message = successMessage(i18n, locale);
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(message, savedCategory, null, null);
+      return new CustomResponse<Category>(message, resultedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return localizedErrorResponse(
+      return translatedErrorResponse(
         i18n,
         locale,
         'FAILED_CREATE_CATEGORY',
@@ -73,13 +68,12 @@ export class CategoryService {
     }
   }
 
-  async getCategories(
+  async getActiveCategories(
     page: number,
     limit: number,
     orderBy: string,
     order: string,
     locale: string,
-    name?: any,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -95,46 +89,98 @@ export class CategoryService {
     const i18n = I18nContext.current();
 
     try {
-      let query = queryRunner.manager
+      const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
         .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
-        .andWhere('category.name ? :locale', { locale });
-
-      if (name) {
-        query = query.andWhere('category.name ->> :locale = :name', {
-          locale,
-          name,
-        });
-      }
-
-      query = query
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
-        .take(limit);
+        .take(limit)
+        .getManyAndCount();
 
-      const [categories, total] = await query.getManyAndCount();
+      const filteredCategories = categories.reduce((acc, category) => {
+        acc.push(fliterCategoryByLanguage(locale, category));
+        return acc;
+      }, []);
 
-      checkCategoriesExistance(categories, i18n);
-
-      for (let category of categories) {
-        category = assignLanguageToCategory(locale, category);
-      }
-
-      const message = successMessage(i18n, locale);
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
       return new CustomResponse<{ categories: Category[]; total: number }>(
         message,
-        { categories, total },
-        null,
-        null,
+        { categories: filteredCategories, total },
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return localizedErrorResponse(i18n, locale, 'FAILED_GET_CATEGORY', error);
+      return translatedErrorResponse(
+        i18n,
+        locale,
+        'FAILED_GET_CATEGORY',
+        error,
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async getCategoryByName(
+    page: number,
+    limit: number,
+    orderBy: string,
+    order: string,
+    locale: string,
+    name: string,
+  ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
+    const queryRunner =
+      this.categoryRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    page = page || 1;
+    limit = limit || 10;
+    const offset = (page - 1) * limit;
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
+    const i18n = I18nContext.current();
+
+    try {
+      const [categories, total] = await queryRunner.manager
+        .getRepository(Category)
+        .createQueryBuilder('category')
+        .where('category.name ->> :locale = :name', {
+          locale,
+          name,
+        })
+        .orderBy(`category.${orderBy}`, sortOrder)
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
+
+      const filteredCategories = categories.reduce((acc, category) => {
+        acc.push(fliterCategoryByLanguage(locale, category));
+        return acc;
+      }, []);
+
+      const message = returnSuccessMassage(i18n, locale);
+
+      await queryRunner.commitTransaction();
+
+      return new CustomResponse<{ categories: Category[]; total: number }>(
+        message,
+        { categories: filteredCategories, total },
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      return translatedErrorResponse(
+        i18n,
+        locale,
+        'FAILED_GET_CATEGORY',
+        error,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -143,6 +189,7 @@ export class CategoryService {
   async getCategoryById(
     locale: string,
     id: string,
+    allLanguages: boolean,
   ): Promise<CustomResponse<Category>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -155,24 +202,26 @@ export class CategoryService {
       let category = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
-        .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
-        .andWhere('category.name ? :locale', { locale })
-        .andWhere('category.id = :id', { id })
+        .where('category.id = :id', { id })
         .getOne();
+      checkItemExistance(category, i18n);
 
-      checkSingleCategoryExistance(category, i18n);
-
-      category = assignLanguageToCategory(locale, category);
-
-      const message = successMessage(i18n, locale);
+      if (allLanguages) {
+        category = fliterCategoryByLanguage(locale, category);
+      }
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(message, category, null, null);
+      return new CustomResponse<Category>(message, category);
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
-      return localizedErrorResponse(i18n, locale, 'FAILED_GET_CATEGORY', error);
+      return translatedErrorResponse(
+        i18n,
+        locale,
+        'FAILED_GET_CATEGORY',
+        error,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -199,39 +248,39 @@ export class CategoryService {
     const i18n = I18nContext.current();
 
     try {
-      let query = queryRunner.manager
+      const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
         .where('category.status = :INACTIVE_STATUS', { INACTIVE_STATUS })
-        .andWhere('category.name ? :locale', { locale });
-
-      query = query
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
-        .take(limit);
+        .take(limit)
+        .getManyAndCount();
 
-      const [categories, total] = await query.getManyAndCount();
+      const filteredCategories = categories.reduce((acc, category) => {
+        acc.push(fliterCategoryByLanguage(locale, category));
+        return acc;
+      }, []);
 
-      checkCategoriesExistance(categories, i18n);
-
-      for (let category of categories) {
-        category = assignLanguageToCategory(locale, category);
-      }
-
-      const message = successMessage(i18n, locale);
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
       return new CustomResponse<{ categories: Category[]; total: number }>(
         message,
-        { categories, total },
+        { categories: filteredCategories, total },
         null,
         null,
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return localizedErrorResponse(i18n, locale, 'FAILED_GET_CATEGORY', error);
+      return translatedErrorResponse(
+        i18n,
+        locale,
+        'FAILED_GET_CATEGORY',
+        error,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -250,14 +299,12 @@ export class CategoryService {
     const i18n = I18nContext.current();
 
     try {
-      let savedCategory: Category;
       const category = await queryRunner.manager
         .getRepository(Category)
         .findOne({
           where: { id: id },
         });
-
-      checkSingleCategoryExistance(category, i18n);
+      checkItemExistance(category, i18n);
 
       (category.name = newCategorie.name),
         (category.description = newCategorie.description),
@@ -265,19 +312,18 @@ export class CategoryService {
         (category.category_image = newCategorie.category_image),
         (category.updated_at = new Date());
 
-      savedCategory = await this.categoryRepository.save(category);
+      const savedCategory = await this.categoryRepository.save(category);
+      const resultedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      savedCategory = assignLanguageToCategory(locale, savedCategory);
-
-      const message = successMessage(i18n, locale);
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(message, savedCategory, null, null);
+      return new CustomResponse<Category>(message, resultedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return localizedErrorResponse(
+      return translatedErrorResponse(
         i18n,
         locale,
         'FAILED_UPDATE_CATEGORY',
@@ -300,14 +346,12 @@ export class CategoryService {
     const i18n = I18nContext.current();
 
     try {
-      let savedCategory: Category;
       const category = await queryRunner.manager
         .getRepository(Category)
         .findOne({
           where: { id: id },
         });
-
-      checkSingleCategoryExistance(category, i18n);
+      checkItemExistance(category, i18n);
 
       (category.status =
         newStatus.status.toLowerCase() === ACTIVE_STATUS.toLowerCase()
@@ -315,19 +359,18 @@ export class CategoryService {
           : CategoryStatus.Inactive),
         (category.updated_at = new Date());
 
-      savedCategory = await this.categoryRepository.save(category);
+      const savedCategory = await this.categoryRepository.save(category);
+      const resultedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      savedCategory = assignLanguageToCategory(locale, savedCategory);
-
-      const message = successMessage(i18n, locale);
+      const message = returnSuccessMassage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(message, savedCategory, null, null);
+      return new CustomResponse<Category>(message, resultedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return localizedErrorResponse(
+      return translatedErrorResponse(
         i18n,
         locale,
         'FAILED_UPDATE_STATUS',
