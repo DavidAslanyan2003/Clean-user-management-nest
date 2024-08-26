@@ -47,7 +47,9 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
 
     const imagesValidationRule = filesUploadRules[body.type];
     if (!imagesValidationRule) {
-      throw new BadRequestException(this.i18n.translate('error.fileType'));
+      throw new BadRequestException(
+        this.i18n.translate('error-messages.FILE_TYPE'),
+      );
     }
 
     const files = this.getFilesFromRequest(request);
@@ -73,7 +75,7 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
 
     if (filesTotalSize > imagesValidationRule.totalMaxSize) {
       throw new BadRequestException(
-        this.i18n.translate('error.filesMaxTotalSize', {
+        this.i18n.translate('error-messages.FILES_MAX_TOTAL_SIZE', {
           args: { totalMaxSize: imagesValidationRule.totalMaxSize },
         }),
       );
@@ -86,7 +88,9 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
     const files = request.files;
 
     if (!files.length) {
-      throw new BadRequestException(this.i18n.translate('error.NoFiles'));
+      throw new BadRequestException(
+        this.i18n.translate('error-messages.NO_FILES'),
+      );
     }
 
     return files as Express.Multer.File[];
@@ -101,39 +105,49 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
         .valid('images')
         .required()
         .messages({
-          'any.only': this.i18n.translate('error.imagesFieldnameInvalid'),
-          'any.required': this.i18n.translate('error.fieldnameRequired'),
+          'any.only': this.i18n.translate(
+            'error-messages.IMAGES_FIELDNAME_INVALID',
+          ),
+          'any.required': this.i18n.translate(
+            'error-messages.FIELDNAME_REQUIRED',
+          ),
         }),
       originalname: Joi.string()
         .required()
         .messages({
-          'any.required': this.i18n.translate('error.originalnameRequired'),
+          'any.required': this.i18n.translate(
+            'error-messages.ORIGINALNAME_REQUIRED',
+          ),
         }),
       encoding: Joi.string()
         .required()
         .messages({
-          'any.required': this.i18n.translate('error.encodingRequired'),
+          'any.required': this.i18n.translate(
+            'error-messages.ENCODING_REQUIRED',
+          ),
         }),
       mimetype: Joi.string()
         .valid('image/jpeg', 'image/png', 'image/jpg')
         .required()
         .messages({
-          'any.only': this.i18n.translate('error.mimetypeInvalid'),
-          'any.required': this.i18n.translate('error.mimetypeRequired'),
+          'any.only': this.i18n.translate('error-messages.MIMETYPE_INVALID'),
+          'any.required': this.i18n.translate(
+            'error-messages.MIMETYPE_REQUIRED',
+          ),
         }),
       buffer: Joi.binary()
         .required()
         .messages({
-          'any.required': this.i18n.translate('error.bufferRequired'),
+          'any.required': this.i18n.translate('error-messages.BUFFER_REQUIRED'),
         }),
       size: Joi.number()
         .max(rule.maxFileSize)
         .required()
         .messages({
-          'number.max': this.i18n.translate('error.sizeMax', {
+          'number.max': this.i18n.translate('error-messages.SIZE_MAX', {
             args: { max: rule.maxFileSize },
           }),
-          'any.required': this.i18n.translate('error.sizeRequired'),
+          'any.required': this.i18n.translate('error-messages.SIZE_REQUIRED'),
         }),
     });
 
@@ -143,13 +157,13 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
       .max(rule.maxFiles)
       .required()
       .messages({
-        'array.min': this.i18n.translate('error.minFiles', {
+        'array.min': this.i18n.translate('error-messages.MIN_FILES', {
           args: { min: 1 },
         }),
-        'array.max': this.i18n.translate('error.maxFiles', {
+        'array.max': this.i18n.translate('error-messages.MAX_FILES', {
           args: { max: rule.maxFiles },
         }),
-        'any.required': this.i18n.translate('error.filesRequired'),
+        'any.required': this.i18n.translate('error-messages.FILES_REQUIRED'),
       });
 
     return filesArraySchema.validate(files);
