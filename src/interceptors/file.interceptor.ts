@@ -38,13 +38,11 @@ export class MediaFileUploadInterceptor implements NestInterceptor {
     const body = request.body;
 
     const { error } = this.bodyValidation.validate(body);
-
     if (error) {
       throw new BadRequestException(`Invalid body: ${error.message}`);
     }
 
     const imagesValidationRule = filesUploadRules[body.type];
-
     if (!imagesValidationRule) {
       throw new BadRequestException('Types is not allowed');
     }
