@@ -1,0 +1,13 @@
+{
+    "INVALID_LOCALE_RECORD": "{property} must contain required keys.",
+    "INVALID_URL": "Invalid URL format for {property}.",
+    "IS_EMPTY":  "{property} cannot be empty.",
+    "FAILED_CREATE_CATEGORY": "Failed to create event category.",
+    "ERROR_MESSAGE": "error",
+    "ITEM_NOT_FOUND": "Item not found.",
+    "FAILED_GET_CATEGORY": "Failed to get event category.",
+    "FAILED_UPDATE_CATEGORY": "Failed to update event category.",
+    "INVALID_STATUS": "Invalid status",
+    "FAILED_UPDATE_STATUS": "Failed to update status.",
+    "KEY_MISMATCH": "All keys in the {property} must also exist in the name."
+}

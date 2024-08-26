@@ -1,0 +1,13 @@
+{
+    "INVALID_LOCALE_RECORD": "{property} должно содержать требуемые ключи.",
+    "INVALID_URL": "Неверный формат URL для {property}.",
+    "IS_EMPTY":  "{property} не может быть пустым.",
+    "FAILED_CREATE_CATEGORY": "Не удалось создать категорию событий.", 
+    "ERROR_MESSAGE": "ошибка",
+    "ITEM_NOT_FOUND": "Элемент не найден.",
+    "FAILED_GET_CATEGORY": "Не удалось получить категори событий.",
+    "FAILED_UPDATE_CATEGORY": "Не удалось обновить категорию события.",
+    "INVALID_STATUS": "Неверный статус",
+    "FAILED_UPDATE_STATUS": "Не удалось обновить статус.",
+    "KEY_MISMATCH": "Все ключи в {property} должны присутствовать и в названии."
+}

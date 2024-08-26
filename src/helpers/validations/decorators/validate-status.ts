@@ -6,32 +6,34 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { ACTIVE_STATUS, INACTIVE_STATUS } from 'src/helpers/constants/status';
 
 @ValidatorConstraint({ async: false })
-export class IsValidPath implements ValidatorConstraintInterface {
-  validate(url: string, args: ValidationArguments): boolean {
-    try {
-      new URL(url);
-
-      return true;
-    } catch (_) {
+export class CheckStatus implements ValidatorConstraintInterface {
+  validate(status: string, args: ValidationArguments): boolean {
+    if (
+      status.toLowerCase() !== INACTIVE_STATUS.toLowerCase() &&
+      status.toLowerCase() !== ACTIVE_STATUS.toLowerCase()
+    ) {
       return false;
     }
+
+    return true;
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `${ERROR_FILE_PATH}.INVALID_URL`;
+    return `${ERROR_FILE_PATH}.INVALID_STATUS`;
   }
 }
 
-export function IsValidUrl(validationOptions?: ValidationOptions) {
+export function IsValidStatus(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
-      validator: IsValidPath,
+      validator: CheckStatus,
     });
   };
 }
