@@ -9,14 +9,15 @@ import { User } from 'src/user/user.entity';
 import {
   fliterCategoryByLanguage,
   checkItemExistance,
-  createSuccessMessage,
   translatedErrorResponse,
+  checkNameUniqueness,
 } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import {
   ACTIVE_STATUS,
   INACTIVE_STATUS,
   CategoryStatus,
+  SUCCESS_MESSAGE,
 } from 'src/helpers/constants/status';
 
 @Injectable()
@@ -39,6 +40,8 @@ export class CategoryService {
     try {
       const users = await queryRunner.manager.getRepository(User).find();
 
+      await checkNameUniqueness(queryRunner, newCategory.name, i18n, locale);
+
       const newCategoryEntity = queryRunner.manager
         .getRepository(Category)
         .create({
@@ -53,11 +56,9 @@ export class CategoryService {
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(successMessage, localizedCategory);
+      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
@@ -107,12 +108,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
       return new CustomResponse<{ categories: Category[]; total: number }>(
-        successMessage,
+        SUCCESS_MESSAGE,
         { categories: localizedCategory, total },
       );
     } catch (error) {
@@ -148,6 +147,8 @@ export class CategoryService {
     orderBy = orderBy || 'id';
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
+    name = name.replaceAll('-', ' ');
+
     const i18n = I18nContext.current();
 
     try {
@@ -168,12 +169,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
       return new CustomResponse<{ categories: Category[]; total: number }>(
-        successMessage,
+        SUCCESS_MESSAGE,
         { categories: localizedCategory, total },
       );
     } catch (error) {
@@ -193,7 +192,7 @@ export class CategoryService {
   async getCategoryById(
     locale: string,
     id: string,
-    allLanguages: boolean,
+    allLanguages: string,
   ): Promise<CustomResponse<Category>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -202,22 +201,23 @@ export class CategoryService {
 
     const i18n = I18nContext.current();
 
+    const hasAllLanguages = allLanguages === 'true' ? true : false;
+
     try {
       let category = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
         .where('category.id = :id', { id })
         .getOne();
-      checkItemExistance(category, i18n);
+      checkItemExistance(category, i18n, locale);
 
-      if (allLanguages) {
+      if (!hasAllLanguages) {
         category = fliterCategoryByLanguage(locale, category);
       }
-      const successMessage = createSuccessMessage(i18n, locale);
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(successMessage, category);
+      return new CustomResponse<Category>(SUCCESS_MESSAGE, category);
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse(
@@ -266,12 +266,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
       return new CustomResponse<{ categories: Category[]; total: number }>(
-        successMessage,
+        SUCCESS_MESSAGE,
         { categories: localizedCategory, total },
         null,
         null,
@@ -308,7 +306,15 @@ export class CategoryService {
         .findOne({
           where: { id: id },
         });
-      checkItemExistance(newCategoryEntity, i18n);
+      checkItemExistance(newCategoryEntity, i18n, locale);
+
+      await checkNameUniqueness(
+        queryRunner,
+        newCategory.name,
+        i18n,
+        locale,
+        newCategoryEntity.id,
+      );
 
       newCategoryEntity.name = newCategory.name;
       newCategoryEntity.description = newCategory.description;
@@ -321,11 +327,9 @@ export class CategoryService {
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(successMessage, localizedCategory);
+      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
@@ -357,7 +361,7 @@ export class CategoryService {
         .findOne({
           where: { id: id },
         });
-      checkItemExistance(newCategoryEntity, i18n);
+      checkItemExistance(newCategoryEntity, i18n, locale);
 
       (newCategoryEntity.status =
         newStatus.status.toLowerCase() === ACTIVE_STATUS.toLowerCase()
@@ -370,11 +374,9 @@ export class CategoryService {
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
-      const successMessage = createSuccessMessage(i18n, locale);
-
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(successMessage, localizedCategory);
+      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
     } catch (error) {
       await queryRunner.rollbackTransaction();
 

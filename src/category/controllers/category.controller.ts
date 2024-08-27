@@ -172,7 +172,7 @@ export class CategoryController {
   async getCategoriesById(
     @Locale() locale: string,
     @Param('id', CheckUUIDPipe) id: string,
-    @Query('allLanguages', ParseBoolPipe) allLanguages: boolean,
+    @Query('allLanguages') allLanguages?: string,
   ): Promise<CustomResponse<Category>> {
     return this.categoryService.getCategoryById(locale, id, allLanguages);
   }
