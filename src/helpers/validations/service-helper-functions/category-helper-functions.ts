@@ -1,18 +1,18 @@
 import { BadRequestException } from '@nestjs/common';
-import { I18nContext } from 'nestjs-i18n';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 import { Category } from 'src/category/entities/category.entity';
 import {
   DEFAULT_LANGUAGE,
   ERROR_FILE_PATH,
   SUCCESS_FILE_PATH,
 } from 'src/helpers/constants/constants';
-import { ERROR_MESSAGE } from 'src/helpers/constants/status';
+import { ERROR_MESSAGE, SUCCESS_MESSAGE } from 'src/helpers/constants/status';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { QueryRunner } from 'typeorm';
 
 export function checkItemExistance(
   item: any,
-  i18n: I18nContext<Record<string, any>>,
+  i18n: I18nService<Record<string, any>>,
   locale: string,
 ): void {
   if (!item) {
@@ -43,27 +43,37 @@ export function fliterCategoryByLanguage(
   return category;
 }
 
-export function translatedErrorResponse(
-  i18n: I18nContext<Record<string, any>>,
+export function translatedSuccessResponse<T>(
+  i18n: I18nService<Record<string, any>>,
   locale: string,
-  errorName: string,
-  error: any,
-): any {
-  const errorMessage = i18n.translate(`${ERROR_FILE_PATH}.${errorName}`, {
+  successName: string,
+  data: any,
+): CustomResponse<T> {
+  const successMessage = i18n.translate(`${SUCCESS_FILE_PATH}.${successName}`, {
     lang: locale,
   });
 
-  return new CustomResponse<Category>(
-    ERROR_MESSAGE,
-    error.message,
-    errorMessage,
-  );
+  return new CustomResponse<T>(SUCCESS_MESSAGE, data, null, successMessage);
+}
+
+export function translatedErrorResponse<T>(
+  i18n: I18nService<Record<string, any>> | I18nContext<Record<string, any>>,
+  locale: string,
+  errorName: string,
+  error?: any,
+): CustomResponse<T> {
+  const errorMessage = i18n.translate(`${ERROR_FILE_PATH}.${errorName}`, {
+    lang: locale,
+  });
+  const message = error ? error.message : null;
+
+  return new CustomResponse<T>(ERROR_MESSAGE, message, errorMessage);
 }
 
 export async function checkNameUniqueness(
   queryRunner: QueryRunner,
   name: Record<string, any>,
-  i18n: I18nContext<Record<string, any>>,
+  i18n: I18nService<Record<string, any>>,
   locale: string,
   id?: string,
 ): Promise<void> {

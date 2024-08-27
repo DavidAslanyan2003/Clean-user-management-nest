@@ -25,5 +25,8 @@
     "FILE_TYPE": "Types is not allowed",
     "FILES_MAX_TOTAL_SIZE": "Max total size is {totalMaxSize} byte",
     "NO_FILES": "Files not found",
-    "DUPLICATE_NAME": "Duplicate names are not allowed."
+    "DUPLICATE_NAME": "Duplicate names are not allowed.",
+    "FILE_UPLOAD_ERROR_MESSAGE": "Failed to upload files.",
+    "FREE_SPACE_ERROR_MESSAGE": "No free space!",
+    "FILE_DELETE_ERROR_MESSAGE": "Failed to delete given file."
 }

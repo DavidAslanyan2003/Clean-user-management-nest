@@ -25,5 +25,9 @@
   "FILE_TYPE": "Տեսակները չեն թույլատրվում",
   "FILES_MAX_TOTAL_SIZE": "Առավելագույն ընդհանուր չափը {totalMaxSize} բայթ է.",
   "NO_FILES": "Ֆայլեր չեն գտնվել",
-  "DUPLICATE_NAME": "Կրկնվող անուններն անթույլատրելի են:"
+  "DUPLICATE_NAME": "Կրկնվող անուններն անթույլատրելի են:",
+  "FILE_UPLOAD_ERROR_MESSAGE": "Չհաջողվեց վերբեռնել ֆայլերը:",
+  "FREE_SPACE_ERROR_MESSAGE": "Ազատ տարածք չկա!",
+  "FILE_DELETE_ERROR_MESSAGE": "Չհաջողվեց ջնջել տվյալ ֆայլը:"
+
 }

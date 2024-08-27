@@ -1,20 +1,18 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Post,
   UploadedFiles,
   UseInterceptors,
-  Res,
   HttpStatus,
   HttpCode,
   Delete,
   Query,
   Req,
+  Param,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { imagesUploadBodySchema } from './validation-schema/image-upload.schema';
-import { Response } from 'express';
 import { MediaFileUploadInterceptor } from 'src/interceptors/file.interceptor';
 import { I18nService } from 'nestjs-i18n';
 import {
@@ -23,8 +21,10 @@ import {
   ApiResponse,
   ApiConsumes,
   ApiBody,
-  ApiQuery,
+  ApiParam,
 } from '@nestjs/swagger';
+import { translatedErrorResponse } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 
 @ApiTags('media')
 @Controller('api/v1/media')
@@ -70,42 +70,39 @@ export class MediaController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Failed to upload files due to lack of space or invalid data.',
   })
-  async UploadFiles(
+  async uploadFiles(
     @UploadedFiles()
     files: Express.Multer.File[],
-    @Body() body,
+    @Body() body: any,
     @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  ): Promise<object> {
     const lang = req['language'];
     //99 is auth userId, now it hardcoded
-    const isHasFreeSpace =
-      await this.mediaService.checkUserHasAllowedStorageSize(99, files);
+    const isHasFreeSpace = (
+      await this.mediaService.checkUserHasAllowedStorageSize(99, files)
+    ).data;
 
     if (!isHasFreeSpace) {
-      throw new BadRequestException(
-        this.i18n.translate('api.FREE_SPACE_ERROR_MESSAGE', { lang }),
+      return translatedErrorResponse(
+        this.i18n,
+        lang,
+        'FREE_SPACE_ERROR_MESSAGE',
       );
     }
     //99 is auth userId, now it hardcoded
-    const results = await this.mediaService.uploadFiles(
+    return await this.mediaService.uploadFiles(
       99,
       body.type,
       files,
       body.eventId,
     );
-
-    return res.status(HttpStatus.CREATED).json({
-      message: this.i18n.translate('api.FILE_UPLOAD_SUCCESS_MESSAGE', { lang }),
-      data: results,
-    });
   }
 
   @Delete()
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete media files by prefix' })
-  @ApiQuery({
-    name: 'prefix',
+  @ApiParam({
+    name: 'fileIdentifier',
     required: true,
     description: 'The prefix used to identify the files to delete',
   })
@@ -119,16 +116,9 @@ export class MediaController {
       'Failed to delete files due to invalid prefix or other issues.',
   })
   async delete(
-    @Query('prefix') prefix: string,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const lang = req['language'];
+    @Param('fileIdentifier') fileIdentifier: string,
+  ): Promise<CustomResponse<void>> {
     //99 is auth userId, now it hardcoded
-    await this.mediaService.deleteByPrefix(prefix, 99);
-
-    return res.status(HttpStatus.NO_CONTENT).json({
-      message: this.i18n.translate('api.FILE_DELETE_SUCCESS_MESSAGE', { lang }),
-    });
+    return await this.mediaService.deleteByPrefix(fileIdentifier, 99);
   }
 }
