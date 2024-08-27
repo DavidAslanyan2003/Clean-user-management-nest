@@ -78,9 +78,6 @@ export class MediaService {
 
     const executedPromises = await Promise.allSettled(uploadPromises);
 
-    executedPromises.forEach((e: any) => {
-      console.log(e);
-    });
     return executedPromises;
   }
 
