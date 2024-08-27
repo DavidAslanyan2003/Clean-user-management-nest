@@ -12,6 +12,7 @@ import {
   PutObjectCommandOutput,
   ListObjectsV2Command,
   DeleteObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import * as sharp from 'sharp';
@@ -23,6 +24,7 @@ import {
   translatedErrorResponse,
   translatedSuccessResponse,
 } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
 
 @Injectable()
 export class MediaService {
@@ -202,16 +204,40 @@ export class MediaService {
     try {
       const folderNames = ['original', ...Object.keys(this.sizes)];
 
-      const deletePromises = folderNames.map((folderName) => {
+      const deletePromises = folderNames.map(async (folderName) => {
         const deleteParams = {
           Bucket: this.bucket,
           Key: `event-images-test/${clientId}/${folderName}/${filePrefix}`,
         };
 
-        return this.s3.send(new DeleteObjectCommand(deleteParams));
+        try {
+          await this.s3.send(
+            new HeadObjectCommand({
+              Bucket: deleteParams.Bucket,
+              Key: deleteParams.Key,
+            }),
+          );
+        } catch (error) {
+          if (error.name === 'NotFound') {
+            const message = this.i18n.translate(
+              `${ERROR_FILE_PATH}.ITEM_NOT_FOUND`,
+              {
+                lang: this.request['language'],
+              },
+            );
+            throw new Error(message);
+          }
+          throw error;
+        }
+
+        const deleteResponse = await this.s3.send(
+          new DeleteObjectCommand(deleteParams),
+        );
+        return deleteResponse;
       });
 
       await Promise.all(deletePromises);
+
       return translatedSuccessResponse<void>(
         this.i18n,
         this.request['language'],

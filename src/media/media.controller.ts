@@ -98,7 +98,7 @@ export class MediaController {
     );
   }
 
-  @Delete()
+  @Delete(':fileIdentifier')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete media files by prefix' })
   @ApiParam({

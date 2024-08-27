@@ -67,7 +67,7 @@ export function translatedErrorResponse<T>(
   });
   const message = error ? error.message : null;
 
-  return new CustomResponse<T>(ERROR_MESSAGE, message, errorMessage);
+  return new CustomResponse<T>(ERROR_MESSAGE, null, message, errorMessage);
 }
 
 export async function checkNameUniqueness(
