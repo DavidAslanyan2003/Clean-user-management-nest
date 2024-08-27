@@ -1,7 +1,7 @@
 {
   "INVALID_LOCALE_RECORD": "{property}-ը պետք է պարունակի պահանջվող բանալիները:",
   "INVALID_URL": "URL-ի անվավեր ձևաչափ {property}-ի համար:",
-  "IS_EMPTY":  "{property}-ը չի կարող դատարկ լինել:",
+  "IS_EMPTY": "{property}-ը չի կարող դատարկ լինել:",
   "FAILED_CREATE_CATEGORY": "Չհաջողվեց ստեղծել իրադարձության կատեգորիան:",
   "ERROR_MESSAGE": "սխալ",
   "ITEM_NOT_FOUND": "Նյութը չի գտնվել:",
@@ -10,6 +10,20 @@
   "INVALID_STATUS": "Անվավեր կարգավիճակ",
   "FAILED_UPDATE_STATUS": "Չհաջողվեց թարմացնել կարգավիճակը:",
   "KEY_MISMATCH": "{property}-ի բոլոր ստեղները պետք է լինեն նաև անվան մեջ:",
+  "IMAGES_FIELDNAME_INVALID": "Սխալ դաշտի անվանում լուսանկարների համար.",
+  "FIELDNAME_REQUIRED": "Դաշտի անվանումը պարտադիր է.",
+  "ORIGINALNAME_REQUIRED": "Առաջին անվանումը պարտադիր է.",
+  "ENCODING_REQUIRED": "Կոդավորումը պարտադիր է.",
+  "MIMETYPE_INVALID": "Սխալ ֆայլի տեսակ: Ներկայումս թույլատրված են միայն JPEG, PNG և JPG տեսակները.",
+  "MIMETYPE_REQUIRED": "Ֆայլի տեսակն անհրաժեշտ է.",
+  "BUFFER_REQUIRED": "Բուֆերն անհրաժեշտ է.",
+  "SIZE_MAX": "Ֆայլի չափը չպետք է գերազանցի {max} բայթ.",
+  "SIZE_REQUIRED": "Ֆայլի չափը պարտադիր է.",
+  "MIN_FILES": "Պարտադիր է առնվազն {{min}} ֆայլ(եր).",
+  "MAX_FILES": "Թույլատրվում է ոչ ավելի քան {max} ֆայլ(եր).",
+  "FILES_REQUIRED": "Ֆայլեր են պահանջվում.",
+  "FILE_TYPE": "Տեսակները չեն թույլատրվում",
+  "FILES_MAX_TOTAL_SIZE": "Առավելագույն ընդհանուր չափը {totalMaxSize} բայթ է.",
+  "NO_FILES": "Ֆայլեր չեն գտնվել",
   "DUPLICATE_NAME": "Կրկնվող անուններն անթույլատրելի են:"
 }
-  

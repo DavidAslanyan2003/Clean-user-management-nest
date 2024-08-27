@@ -5,7 +5,6 @@ import {
   I18nModule,
   I18nJsonLoader,
   QueryResolver,
-  AcceptLanguageResolver,
   HeaderResolver,
 } from 'nestjs-i18n';
 import * as path from 'path';
@@ -13,6 +12,7 @@ import { LocaleMiddleware } from './middlewares/locale.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/typeorm';
+import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/modules/category.module';
 import { UserModule } from './user/user.module';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
@@ -39,6 +39,7 @@ import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
         new HeaderResolver(['content-language']),
       ],
     }),
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
