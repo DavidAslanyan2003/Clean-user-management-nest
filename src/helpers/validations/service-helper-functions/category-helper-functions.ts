@@ -6,15 +6,18 @@ import {
   ERROR_FILE_PATH,
   SUCCESS_FILE_PATH,
 } from 'src/helpers/constants/constants';
+import { ERROR_MESSAGE } from 'src/helpers/constants/status';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+import { QueryRunner } from 'typeorm';
 
 export function checkItemExistance(
   item: any,
   i18n: I18nContext<Record<string, any>>,
+  locale: string,
 ): void {
   if (!item) {
     const message = i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
-      lang: i18n.lang,
+      lang: locale,
     });
 
     throw new BadRequestException(message);
@@ -46,22 +49,42 @@ export function translatedErrorResponse(
   errorName: string,
   error: any,
 ): any {
-  const message = i18n.translate(`${ERROR_FILE_PATH}.ERROR_MESSAGE`, {
-    lang: locale,
-  });
-
   const errorMessage = i18n.translate(`${ERROR_FILE_PATH}.${errorName}`, {
     lang: locale,
   });
 
-  return new CustomResponse<Category>(message, error.message, errorMessage);
+  return new CustomResponse<Category>(
+    ERROR_MESSAGE,
+    error.message,
+    errorMessage,
+  );
 }
 
-export function createSuccessMessage(
+export async function checkNameUniqueness(
+  queryRunner: QueryRunner,
+  name: Record<string, any>,
   i18n: I18nContext<Record<string, any>>,
   locale: string,
-): string {
-  return i18n.translate(`${SUCCESS_FILE_PATH}.SUCCESS_MESSAGE`, {
-    lang: locale,
+  id?: string,
+): Promise<void> {
+  const queryBuilder = queryRunner.manager
+    .getRepository(Category)
+    .createQueryBuilder('category');
+
+  Object.entries(name).forEach(([key, value]) => {
+    queryBuilder.andWhere(`category.name ->> :key = :value`, { key, value });
   });
+
+  if (id) {
+    queryBuilder.andWhere('category.id != :id', { id });
+  }
+  const count = await queryBuilder.getCount();
+
+  if (count > 0) {
+    throw new BadRequestException(
+      i18n.translate(`${ERROR_FILE_PATH}.DUPLICATE_NAME`, {
+        lang: locale,
+      }),
+    );
+  }
 }

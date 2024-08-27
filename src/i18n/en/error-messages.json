@@ -24,5 +24,6 @@
     "FILES_REQUIRED": "Files are required.",
     "FILE_TYPE": "Types is not allowed",
     "FILES_MAX_TOTAL_SIZE": "Max total size is {totalMaxSize} byte",
-    "NO_FILES": "Files not found"
+    "NO_FILES": "Files not found",
+    "DUPLICATE_NAME": "Duplicate names are not allowed."
 }
