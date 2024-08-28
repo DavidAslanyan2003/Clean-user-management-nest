@@ -4,7 +4,6 @@ import {
   Get,
   HttpStatus,
   Param,
-  ParseBoolPipe,
   Patch,
   Post,
   Put,
@@ -20,7 +19,6 @@ import {
 import { CategoryService } from '../services/category.service';
 import { Category } from '../entities/category.entity';
 import { CategoryDto } from '../dtos/category.dto';
-import { Locale } from 'src/helpers/constants/locale';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import { CATEGORY_NOT_FOUND } from 'src/helpers/constants/constants';
@@ -46,10 +44,9 @@ export class CategoryController {
   })
   @ApiBody({ type: CategoryDto })
   async create(
-    @Locale() locale: string,
     @Body() createCategoryDto: CategoryDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.createCategory(locale, createCategoryDto);
+    return this.categoryService.createCategory(createCategoryDto);
   }
 
   @Get()
@@ -70,7 +67,6 @@ export class CategoryController {
   @ApiQuery({ name: 'orderBy', required: false })
   @ApiQuery({ name: 'order', required: false })
   async getAllCategories(
-    @Locale() locale: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('orderBy') orderBy?: string,
@@ -81,7 +77,6 @@ export class CategoryController {
       limit,
       orderBy,
       order,
-      locale,
     );
   }
 
@@ -104,7 +99,6 @@ export class CategoryController {
   @ApiQuery({ name: 'orderBy', required: false })
   @ApiQuery({ name: 'order', required: false })
   async getCategoriesByName(
-    @Locale() locale: string,
     @Param('name') name: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
@@ -116,7 +110,6 @@ export class CategoryController {
       limit,
       orderBy,
       order,
-      locale,
       name,
     );
   }
@@ -139,14 +132,12 @@ export class CategoryController {
   @ApiQuery({ name: 'orderBy', required: false })
   @ApiQuery({ name: 'order', required: false })
   async getInactiveCategories(
-    @Locale() locale: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     return this.categoryService.getInactiveCategories(
-      locale,
       page,
       limit,
       orderBy,
@@ -170,11 +161,10 @@ export class CategoryController {
   @ApiParam({ name: 'id', required: true })
   @ApiQuery({ name: 'allLanguages', required: true })
   async getCategoriesById(
-    @Locale() locale: string,
     @Param('id', CheckUUIDPipe) id: string,
     @Query('allLanguages') allLanguages?: string,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.getCategoryById(locale, id, allLanguages);
+    return this.categoryService.getCategoryById(id, allLanguages);
   }
 
   @Put(':id')
@@ -194,10 +184,9 @@ export class CategoryController {
   @ApiBody({ type: CategoryDto })
   async updateCategory(
     @Param('id', CheckUUIDPipe) id: string,
-    @Locale() locale: string,
     @Body() updateCategoryDto: CategoryDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.updateCategory(locale, id, updateCategoryDto);
+    return this.categoryService.updateCategory(id, updateCategoryDto);
   }
 
   @Patch(':id/status')
@@ -217,9 +206,8 @@ export class CategoryController {
   @ApiBody({ type: UpdateStatusDto })
   async updateStatus(
     @Param('id', CheckUUIDPipe) id: string,
-    @Locale() locale: string,
     @Body() updateStatusDto: UpdateStatusDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.updateStatus(locale, id, updateStatusDto);
+    return this.categoryService.updateStatus(id, updateStatusDto);
   }
 }

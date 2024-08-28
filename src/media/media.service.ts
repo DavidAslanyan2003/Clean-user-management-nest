@@ -12,12 +12,19 @@ import {
   PutObjectCommandOutput,
   ListObjectsV2Command,
   DeleteObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import * as sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { I18nService } from 'nestjs-i18n';
+import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+import {
+  translatedErrorResponse,
+  translatedSuccessResponse,
+} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
 
 @Injectable()
 export class MediaService {
@@ -64,21 +71,36 @@ export class MediaService {
   ): Promise<object> {
     const fileUUID = uuidv4();
     const uploadPromises: Promise<string>[] = [];
+    try {
+      for (const [, file] of files.entries()) {
+        const uploadPromise = this.uploadFile(
+          fileUUID,
+          clientId,
+          type,
+          file,
+          eventId,
+        );
+        uploadPromises.push(uploadPromise);
+      }
 
-    for (const [, file] of files.entries()) {
-      const uploadPromise = this.uploadFile(
-        fileUUID,
-        clientId,
-        type,
-        file,
-        eventId,
+      const executedPromises = (await Promise.allSettled(uploadPromises)).map(
+        (executedPromise) => executedPromise['value'],
       );
-      uploadPromises.push(uploadPromise);
+
+      return translatedSuccessResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_SUCCESS_MESSAGE',
+        executedPromises,
+      );
+    } catch (error) {
+      return translatedErrorResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_ERROR_MESSAGE',
+        error,
+      );
     }
-
-    const executedPromises = await Promise.allSettled(uploadPromises);
-
-    return executedPromises;
   }
 
   async uploadFile(
@@ -88,36 +110,49 @@ export class MediaService {
     file: Express.Multer.File,
     eventId: string | undefined | null,
   ): Promise<any> {
-    const uploadedFile = await this.uploadToS3(
-      fileUUID,
-      clientId,
-      type,
-      'original',
-      file,
-      eventId,
-    );
-
-    for (const [sizeName, width] of Object.entries(this.sizes)) {
-      const resizedBuffer = await sharp(file.buffer)
-        .resize(width)
-        .withMetadata()
-        .toBuffer();
-
-      await this.uploadToS3(
+    try {
+      const uploadedFile = await this.uploadToS3(
         fileUUID,
         clientId,
         type,
-        sizeName,
-        {
-          buffer: resizedBuffer,
-          mimetype: file.mimetype,
-          originalname: file.originalname,
-        },
+        'original',
+        file,
         eventId,
       );
-    }
 
-    return uploadedFile;
+      for (const [sizeName, width] of Object.entries(this.sizes)) {
+        const resizedBuffer = await sharp(file.buffer)
+          .resize(width)
+          .withMetadata()
+          .toBuffer();
+
+        await this.uploadToS3(
+          fileUUID,
+          clientId,
+          type,
+          sizeName,
+          {
+            buffer: resizedBuffer,
+            mimetype: file.mimetype,
+            originalname: file.originalname,
+          },
+          eventId,
+        );
+      }
+      return translatedSuccessResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_SUCCESS_MESSAGE',
+        uploadedFile,
+      );
+    } catch (error) {
+      return translatedErrorResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_ERROR_MESSAGE',
+        error,
+      );
+    }
   }
 
   private async uploadToS3(
@@ -162,29 +197,67 @@ export class MediaService {
     }
   }
 
-  async deleteByPrefix(filePrefix: string, clientId: number): Promise<void> {
+  async deleteByPrefix(
+    filePrefix: string,
+    clientId: number,
+  ): Promise<CustomResponse<void>> {
     try {
       const folderNames = ['original', ...Object.keys(this.sizes)];
 
-      const deletePromises = folderNames.map((folderName) => {
+      const deletePromises = folderNames.map(async (folderName) => {
         const deleteParams = {
           Bucket: this.bucket,
           Key: `event-images-test/${clientId}/${folderName}/${filePrefix}`,
         };
 
-        return this.s3.send(new DeleteObjectCommand(deleteParams));
+        try {
+          await this.s3.send(
+            new HeadObjectCommand({
+              Bucket: deleteParams.Bucket,
+              Key: deleteParams.Key,
+            }),
+          );
+        } catch (error) {
+          if (error.name === 'NotFound') {
+            const message = this.i18n.translate(
+              `${ERROR_FILE_PATH}.ITEM_NOT_FOUND`,
+              {
+                lang: this.request['language'],
+              },
+            );
+            throw new Error(message);
+          }
+          throw error;
+        }
+
+        const deleteResponse = await this.s3.send(
+          new DeleteObjectCommand(deleteParams),
+        );
+        return deleteResponse;
       });
 
       await Promise.all(deletePromises);
+
+      return translatedSuccessResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_DELETE_SUCCESS_MESSAGE',
+        null,
+      );
     } catch (error) {
-      throw new BadRequestException(error);
+      return translatedErrorResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_DELETE_ERROR_MESSAGE',
+        error,
+      );
     }
   }
 
   async checkUserHasAllowedStorageSize(
     clientId: number,
     files: Express.Multer.File[],
-  ): Promise<boolean> {
+  ): Promise<CustomResponse<boolean>> {
     try {
       const listParams = {
         Bucket: this.bucket,
@@ -208,10 +281,19 @@ export class MediaService {
           return acc;
         }, 0);
       const freeSpace = this.userSotrageSize - userUsedStorage;
-
-      return filesSizes <= freeSpace;
+      return translatedSuccessResponse<boolean>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_SUCCESS_MESSAGE',
+        filesSizes <= freeSpace,
+      );
     } catch (error) {
-      throw new BadRequestException(error);
+      return translatedErrorResponse<boolean>(
+        this.i18n,
+        this.request['language'],
+        'FILE_UPLOAD_ERROR_MESSAGE',
+        error,
+      );
     }
   }
 }

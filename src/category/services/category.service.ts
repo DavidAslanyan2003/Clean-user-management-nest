@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from '../entities/category.entity';
 import { CategoryDto } from '../dtos/category.dto';
-import { I18nContext } from 'nestjs-i18n';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { User } from 'src/user/user.entity';
 import {
@@ -11,23 +11,26 @@ import {
   checkItemExistance,
   translatedErrorResponse,
   checkNameUniqueness,
+  translatedSuccessResponse,
 } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import {
   ACTIVE_STATUS,
   INACTIVE_STATUS,
   CategoryStatus,
-  SUCCESS_MESSAGE,
 } from 'src/helpers/constants/status';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @Inject(REQUEST)
+    private readonly request: Request,
+    private readonly i18n: I18nService,
   ) {}
   async createCategory(
-    locale: string,
     newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
     const queryRunner =
@@ -35,12 +38,17 @@ export class CategoryService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     try {
       const users = await queryRunner.manager.getRepository(User).find();
 
-      await checkNameUniqueness(queryRunner, newCategory.name, i18n, locale);
+      await checkNameUniqueness(
+        queryRunner,
+        newCategory.name,
+        this.i18n,
+        locale,
+      );
 
       const newCategoryEntity = queryRunner.manager
         .getRepository(Category)
@@ -58,12 +66,17 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
+      return translatedSuccessResponse<Category>(
+        this.i18n,
+        locale,
+        'CATEGORY_CREATED_SUCCESS',
+        localizedCategory,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<Category>(
+        this.i18n,
         locale,
         'FAILED_CREATE_CATEGORY',
         error,
@@ -78,7 +91,6 @@ export class CategoryService {
     limit: number,
     orderBy: string,
     order: string,
-    locale: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     const queryRunner =
       this.categoryRepository.manager.connection.createQueryRunner();
@@ -91,7 +103,7 @@ export class CategoryService {
     orderBy = orderBy || 'id';
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     try {
       const [categories, total] = await queryRunner.manager
@@ -110,15 +122,18 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<{ categories: Category[]; total: number }>(
-        SUCCESS_MESSAGE,
-        { categories: localizedCategory, total },
-      );
+      return translatedSuccessResponse<{
+        categories: Category[];
+        total: number;
+      }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', {
+        categories: localizedCategory,
+        total,
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<{ categories: Category[]; total: number }>(
+        this.i18n,
         locale,
         'FAILED_GET_CATEGORY',
         error,
@@ -133,7 +148,6 @@ export class CategoryService {
     limit: number,
     orderBy: string,
     order: string,
-    locale: string,
     name: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
     const queryRunner =
@@ -149,7 +163,7 @@ export class CategoryService {
 
     name = name.replaceAll('-', ' ');
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     try {
       const [categories, total] = await queryRunner.manager
@@ -171,15 +185,18 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<{ categories: Category[]; total: number }>(
-        SUCCESS_MESSAGE,
-        { categories: localizedCategory, total },
-      );
+      return translatedSuccessResponse<{
+        categories: Category[];
+        total: number;
+      }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', {
+        categories: localizedCategory,
+        total,
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<{ categories: Category[]; total: number }>(
+        this.i18n,
         locale,
         'FAILED_GET_CATEGORY',
         error,
@@ -190,7 +207,6 @@ export class CategoryService {
   }
 
   async getCategoryById(
-    locale: string,
     id: string,
     allLanguages: string,
   ): Promise<CustomResponse<Category>> {
@@ -199,7 +215,7 @@ export class CategoryService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     const hasAllLanguages = allLanguages === 'true' ? true : false;
 
@@ -209,7 +225,7 @@ export class CategoryService {
         .createQueryBuilder('category')
         .where('category.id = :id', { id })
         .getOne();
-      checkItemExistance(category, i18n, locale);
+      checkItemExistance(category, this.i18n, locale);
 
       if (!hasAllLanguages) {
         category = fliterCategoryByLanguage(locale, category);
@@ -217,11 +233,16 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(SUCCESS_MESSAGE, category);
+      return translatedSuccessResponse<Category>(
+        this.i18n,
+        locale,
+        'CATEGORY_FETCHED_SUCCESS',
+        category,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<Category>(
+        this.i18n,
         locale,
         'FAILED_GET_CATEGORY',
         error,
@@ -232,7 +253,6 @@ export class CategoryService {
   }
 
   async getInactiveCategories(
-    locale: string,
     page: number,
     limit: number,
     orderBy: string,
@@ -249,7 +269,7 @@ export class CategoryService {
     orderBy = orderBy || 'id';
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     try {
       const [categories, total] = await queryRunner.manager
@@ -268,17 +288,18 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<{ categories: Category[]; total: number }>(
-        SUCCESS_MESSAGE,
-        { categories: localizedCategory, total },
-        null,
-        null,
-      );
+      return translatedSuccessResponse<{
+        categories: Category[];
+        total: number;
+      }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', {
+        categories: localizedCategory,
+        total,
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<{ categories: Category[]; total: number }>(
+        this.i18n,
         locale,
         'FAILED_GET_CATEGORY',
         error,
@@ -289,7 +310,6 @@ export class CategoryService {
   }
 
   async updateCategory(
-    locale: string,
     id: string,
     newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
@@ -298,7 +318,7 @@ export class CategoryService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const i18n = I18nContext.current();
+    const locale = this.request['language'];
 
     try {
       const newCategoryEntity = await queryRunner.manager
@@ -306,12 +326,12 @@ export class CategoryService {
         .findOne({
           where: { id: id },
         });
-      checkItemExistance(newCategoryEntity, i18n, locale);
+      checkItemExistance(newCategoryEntity, this.i18n, locale);
 
       await checkNameUniqueness(
         queryRunner,
         newCategory.name,
-        i18n,
+        this.i18n,
         locale,
         newCategoryEntity.id,
       );
@@ -329,12 +349,17 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
+      return translatedSuccessResponse<Category>(
+        this.i18n,
+        locale,
+        'CATEGORY_UPDATED_SUCCESS',
+        localizedCategory,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<Category>(
+        this.i18n,
         locale,
         'FAILED_UPDATE_CATEGORY',
         error,
@@ -345,7 +370,6 @@ export class CategoryService {
   }
 
   async updateStatus(
-    locale: string,
     id: string,
     newStatus: UpdateStatusDto,
   ): Promise<CustomResponse<Category>> {
@@ -353,7 +377,8 @@ export class CategoryService {
       this.categoryRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const i18n = I18nContext.current();
+
+    const locale = this.request['language'];
 
     try {
       const newCategoryEntity = await queryRunner.manager
@@ -361,7 +386,7 @@ export class CategoryService {
         .findOne({
           where: { id: id },
         });
-      checkItemExistance(newCategoryEntity, i18n, locale);
+      checkItemExistance(newCategoryEntity, this.i18n, locale);
 
       (newCategoryEntity.status =
         newStatus.status.toLowerCase() === ACTIVE_STATUS.toLowerCase()
@@ -376,12 +401,17 @@ export class CategoryService {
 
       await queryRunner.commitTransaction();
 
-      return new CustomResponse<Category>(SUCCESS_MESSAGE, localizedCategory);
+      return translatedSuccessResponse<Category>(
+        this.i18n,
+        locale,
+        'CATEGORY_UPDATED_SUCCESS',
+        localizedCategory,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      return translatedErrorResponse(
-        i18n,
+      return translatedErrorResponse<Category>(
+        this.i18n,
         locale,
         'FAILED_UPDATE_STATUS',
         error,

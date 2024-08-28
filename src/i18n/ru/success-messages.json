@@ -1,1 +1,6 @@
-{}
+{
+    "FILE_UPLOAD_SUCCESS_MESSAGE": "Файлы успешно загружены!",
+    "FILE_DELETE_SUCCESS_MESSAGE": "Файл успешно удален!",
+    "CATEGORY_CREATED_SUCCESS": "Категория успешно создана!",
+    "CATEGORY_FETCHED_SUCCESS": "Категория успешно получена!"
+}

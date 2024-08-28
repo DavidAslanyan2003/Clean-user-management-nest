@@ -25,5 +25,8 @@
     "FILE_TYPE": "Типы не разрешены",
     "FILES_MAX_TOTAL_SIZE": "Максимальный общий размер {totalMaxSize} байт.",
     "NO_FILES": "Файлы не найдены",
-    "DUPLICATE_NAME": "Повторяющиеся имена не допускаются."
+    "DUPLICATE_NAME": "Повторяющиеся имена не допускаются.",
+    "FILE_UPLOAD_ERROR_MESSAGE": "Не удалось загрузить файлы.",
+    "FREE_SPACE_ERROR_MESSAGE": "Нет свободного места!",
+    "FILE_DELETE_ERROR_MESSAGE": "Не удалось удалить указанный файл."
 }
