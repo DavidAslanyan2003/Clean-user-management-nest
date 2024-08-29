@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
 
 @ValidatorConstraint({ async: false })
 export class IsValidPath implements ValidatorConstraintInterface {
