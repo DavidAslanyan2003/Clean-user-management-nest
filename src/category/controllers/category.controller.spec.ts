@@ -41,11 +41,7 @@ describe('CategoryController', () => {
     it('should create a new category with content language', async () => {
       jest.spyOn(service, 'createCategory').mockResolvedValue(mockCategory);
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
-
-      const expoectedObject = {
+      const expectedObject = {
         name: 'Electronics',
         description: 'All electronic items',
         status: CategoryStatus.Active,
@@ -63,7 +59,7 @@ describe('CategoryController', () => {
         category_image: mockCategory.category_image,
         category_icon: mockCategory.category_icon,
       };
-      expect(returnedObject).toEqual(expoectedObject);
+      expect(returnedObject).toEqual(expectedObject);
     });
   });
 
@@ -85,9 +81,6 @@ describe('CategoryController', () => {
 
       jest.spyOn(service, 'getActiveCategories').mockResolvedValue(result);
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
       const response = await controller.getAllCategories(1, 10, 'name', 'asc');
       expect(response).toEqual(result);
     });
@@ -111,9 +104,6 @@ describe('CategoryController', () => {
 
       jest.spyOn(service, 'getCategoryByName').mockResolvedValue(result);
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
       const response = await controller.getCategoriesByName('Electronics');
 
       expect(response).toEqual(result);
@@ -123,10 +113,6 @@ describe('CategoryController', () => {
   describe('getCategoryById', () => {
     it('should return a single category with content language', async () => {
       jest.spyOn(service, 'getCategoryById').mockResolvedValue(mockCategory);
-
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
 
       const response = await controller.getCategoriesById(mockCategory.id);
       const result: CustomResponse<Category> = new CustomResponse<Category>(
@@ -153,11 +139,7 @@ describe('CategoryController', () => {
         category_icon: 'https://s3.amazonaws.com/bucket-name/path-to-icon',
       };
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
-
-      const expoectedObject = {
+      const expectedObject = {
         name: 'Electronics1',
         description: 'All electronic items1',
         status: CategoryStatus.Active,
@@ -181,7 +163,7 @@ describe('CategoryController', () => {
         created_at: mockCategory.created_at,
       };
 
-      expect(returnedObject).toEqual(expoectedObject);
+      expect(returnedObject).toEqual(expectedObject);
     });
   });
 
@@ -191,14 +173,11 @@ describe('CategoryController', () => {
         status: CategoryStatus.Inactive,
       };
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
       const newCategoryData = (
         await controller.updateStatus(mockCategory.id, updateStatusDto)
       ).data;
 
-      const expoectedObject = {
+      const expectedObject = {
         name: 'Electronics1',
         description: 'All electronic items1',
         status: CategoryStatus.Inactive,
@@ -219,7 +198,7 @@ describe('CategoryController', () => {
       };
       mockCategory = newCategoryData;
 
-      expect(returnedObject).toEqual(expoectedObject);
+      expect(returnedObject).toEqual(expectedObject);
     });
   });
 
@@ -241,9 +220,6 @@ describe('CategoryController', () => {
 
       jest.spyOn(service, 'getInactiveCategories').mockResolvedValue(result);
 
-      const req = {
-        headers: { 'content-language': 'en' },
-      } as unknown as Request;
       const response = await controller.getInactiveCategories(
         1,
         10,
