@@ -16,6 +16,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('Icketi API')
     .setDescription('The Icketi API documentation')
