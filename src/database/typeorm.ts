@@ -21,6 +21,9 @@ export const createDataSourceOptions = (
   migrations: [join(__dirname, '/../database/migrations/*{.ts,.js}')],
   migrationsTableName: 'migrations',
   migrationsRun: false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const configService = new ConfigService();

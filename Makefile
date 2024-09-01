@@ -25,10 +25,13 @@ help:
 .PHONY: init
 init: add-host
 
-# Start the Docker containers
 .PHONY: up
 up:
-	$(DOCKER_COMPOSE) up -d
+	@if [ "$(ENV)" = "dev" ]; then \
+		$(DOCKER_COMPOSE) up -d icketi-api; \
+	else \
+		$(DOCKER_COMPOSE) up -d; \
+	fi
 
 # Stop the Docker containers
 .PHONY: down
@@ -38,17 +41,20 @@ down:
 # Build the Docker containers
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE) build
+	@if [ "$(ENV)" = "dev" ]; then \
+		$(DOCKER_COMPOSE) build icketi-api; \
+	else \
+		$(DOCKER_COMPOSE) build; \
+	fi
 
 # Rebuild the Docker containers without cache
 .PHONY: rebuild
 rebuild:
-	$(DOCKER_COMPOSE) build --no-cache
-
-# Show logs from the Docker containers
-.PHONY: logs
-logs:
-	$(DOCKER_COMPOSE) logs -f
+	@if [ "$(ENV)" = "dev" ]; then \
+		$(DOCKER_COMPOSE) build --no-cache icketi-api; \
+	else \
+		$(DOCKER_COMPOSE) build --no-cache; \
+	fi
 
 # Run unit tests
 .PHONY: test
