@@ -78,9 +78,13 @@ export class MediaController {
   ): Promise<object> {
     const lang = req['language'];
     //99 is auth userId, now it hardcoded
-    const isHasFreeSpace = (
-      await this.mediaService.checkUserHasAllowedStorageSize(99, files)
-    ).data;
+    const checkUserAllowedSizeResponse =
+      await this.mediaService.checkUserHasAllowedStorageSize(99, files);
+    const isHasFreeSpace = checkUserAllowedSizeResponse.data;
+
+    if (checkUserAllowedSizeResponse.error) {
+      return checkUserAllowedSizeResponse;
+    }
 
     if (!isHasFreeSpace) {
       return translatedErrorResponse(
