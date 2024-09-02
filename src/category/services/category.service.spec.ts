@@ -1,30 +1,42 @@
+import { CategoryService } from '../services/category.service';
 import {
   CategoryStatus,
   SUCCESS_MESSAGE,
 } from '../../helpers/constants/status';
 import { CustomResponse } from '../../helpers/response/custom-response.dto';
-import { CategoryController } from './category.controller';
 import { CategoryDto } from '../dtos/category.dto';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import { Category } from '../entities/category.entity';
 import { setupTestModule } from '../../../test/test.module';
-import { TestingModule } from '@nestjs/testing';
-import { createMockCategoryDto } from '../../helpers/constants/mock-category-data';
-import { QueryRunner, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { QueryRunner, Repository } from 'typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { createMockCategoryDto } from '../../helpers/constants/mock-category-data';
 
 let mockCategory: Category;
 const mockCategoryDto: CategoryDto = createMockCategoryDto();
 
-describe('CategoryController', () => {
-  let controller: CategoryController;
+const mockCategoryWithAllLanguages: Category = {
+  name: mockCategoryDto.name,
+  description: mockCategoryDto.description,
+  category_image: mockCategoryDto.category_image,
+  category_icon: mockCategoryDto.category_icon,
+  updated_at: null,
+  id: '',
+  status: CategoryStatus.Active,
+  created_at: new Date(),
+  user: null,
+};
+
+describe('CategoryService', () => {
+  let service: CategoryService;
+  let repo: Repository<Category>;
   let module: TestingModule;
   let queryRunner: QueryRunner;
-  let repo: Repository<Category>;
 
   beforeAll(async () => {
     module = await setupTestModule();
-    controller = await module.resolve(CategoryController);
+    service = await module.resolve(CategoryService);
     repo = await module.resolve(getRepositoryToken(Category));
     queryRunner = repo.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -41,10 +53,10 @@ describe('CategoryController', () => {
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 
-  describe('create', () => {
+  describe('createCategory', () => {
     it('should create a new category with content language', async () => {
       const expectedObject = {
         name: mockCategoryDto.name.en,
@@ -54,8 +66,9 @@ describe('CategoryController', () => {
         category_icon: mockCategoryDto.category_icon,
       };
 
-      const response = await controller.create(mockCategoryDto);
+      const response = await service.createCategory(mockCategoryDto);
       mockCategory = response.data;
+      mockCategoryWithAllLanguages.id = mockCategory.id;
 
       const returnedObject = {
         name: mockCategory.name,
@@ -84,7 +97,14 @@ describe('CategoryController', () => {
         'Category has been fetched successfully!',
       );
 
-      const response = await controller.getAllCategories(1, 10, 'name', 'asc');
+      jest.spyOn(service, 'getActiveCategories').mockResolvedValue(result);
+
+      const response = await service.getActiveCategories(
+        null,
+        null,
+        null,
+        null,
+      );
       expect(response).toEqual(result);
     });
   });
@@ -105,24 +125,37 @@ describe('CategoryController', () => {
         'Category has been fetched successfully!',
       );
 
-      const response = await controller.getCategoriesByName(
+      jest.spyOn(service, 'getCategoryByName').mockResolvedValue(result);
+
+      const response = await service.getCategoryByName(
+        null,
+        null,
+        null,
+        null,
         `${mockCategory.name}`.replaceAll(' ', '-'),
       );
       expect(response).toEqual(result);
     });
   });
 
-  describe('getCategoryById', () => {
+  describe('getCategoryByIdForOneLanguage', () => {
     it('should return a single category with content language', async () => {
-      const response = await controller.getCategoriesById(mockCategory.id);
-      const result: CustomResponse<Category> = new CustomResponse<Category>(
-        SUCCESS_MESSAGE,
-        mockCategory,
-        null,
-        'Category has been fetched successfully!',
-      );
+      jest.spyOn(service, 'getCategoryById').mockResolvedValue(mockCategory);
 
-      expect(response).toEqual(result);
+      const response = await service.getCategoryById(mockCategory.id, 'false');
+      expect(response).toEqual(mockCategory);
+    });
+  });
+
+  describe('getCategoryByIdForAllLanguages', () => {
+    it('should return a single category with all languages', async () => {
+      jest
+        .spyOn(service, 'getCategoryById')
+        .mockResolvedValue(mockCategoryWithAllLanguages);
+
+      const response = await service.getCategoryById(mockCategory.id, 'true');
+
+      expect(response).toEqual(mockCategoryWithAllLanguages);
     });
   });
 
@@ -141,7 +174,7 @@ describe('CategoryController', () => {
       };
 
       const newCategoryData = (
-        await controller.updateCategory(mockCategory.id, mockUpdateCategoryDto)
+        await service.updateCategory(mockCategory.id, mockUpdateCategoryDto)
       ).data;
 
       const returnedObject = {
@@ -165,7 +198,7 @@ describe('CategoryController', () => {
       };
 
       const newCategoryData = (
-        await controller.updateStatus(mockCategory.id, updateStatusDto)
+        await service.updateStatus(mockCategory.id, updateStatusDto)
       ).data;
 
       const expectedObject = {
@@ -209,7 +242,9 @@ describe('CategoryController', () => {
         'Category has been fetched successfully!',
       );
 
-      const response = await controller.getInactiveCategories(
+      jest.spyOn(service, 'getInactiveCategories').mockResolvedValue(result);
+
+      const response = await service.getInactiveCategories(
         1,
         10,
         'name',
