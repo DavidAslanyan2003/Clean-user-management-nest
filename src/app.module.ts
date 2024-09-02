@@ -16,9 +16,13 @@ import { MediaModule } from './media/media.module';
 import { CategoryModule } from './category/modules/category.module';
 import { UserModule } from './user/user.module';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
+import { BlogPostModule } from './blog-post/modules/blog-post.module';
+import { BlogPostCategoryModule } from './blog-post-category/modules/blog-post-category.module';
 
 @Module({
   imports: [
+    BlogPostModule,
+    BlogPostCategoryModule,
     CategoryModule,
     UserModule,
     ConfigModule.forRoot({
