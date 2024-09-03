@@ -32,4 +32,16 @@ export const filesUploadRules = {
     maxFiles: 1,
     maxFileSize: 3 * 1024 * 1024, // 3MB
   },
+  blogPostBannerImage: {
+    maxFiles: 1,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  },
+  blogPostImage: {
+    maxFiles: 1,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  },
+  blogPostImages: {
+    maxFiles: 5,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  },
 } as Record<string, FileUploadRule>;
