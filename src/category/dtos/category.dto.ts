@@ -36,7 +36,7 @@ export class CategoryDto {
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
-  category_image: string;
+  categoryImage: string;
 
   @ApiProperty({
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
@@ -44,5 +44,5 @@ export class CategoryDto {
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
-  category_icon: string;
+  categoryIcon: string;
 }

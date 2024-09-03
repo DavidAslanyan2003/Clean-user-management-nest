@@ -19,8 +19,8 @@ const mockCategoryDto: CategoryDto = createMockCategoryDto();
 const mockCategoryWithAllLanguages: Category = {
   name: mockCategoryDto.name,
   description: mockCategoryDto.description,
-  category_image: mockCategoryDto.category_image,
-  category_icon: mockCategoryDto.category_icon,
+  category_image: mockCategoryDto.categoryImage,
+  category_icon: mockCategoryDto.categoryIcon,
   updated_at: null,
   id: '',
   status: CategoryStatus.Active,
@@ -62,8 +62,8 @@ describe('CategoryService', () => {
         name: mockCategoryDto.name.en,
         description: mockCategoryDto.description.en,
         status: CategoryStatus.Active,
-        category_image: mockCategoryDto.category_image,
-        category_icon: mockCategoryDto.category_icon,
+        category_image: mockCategoryDto.categoryImage,
+        category_icon: mockCategoryDto.categoryIcon,
       };
 
       const response = await service.createCategory(mockCategoryDto);
@@ -167,8 +167,8 @@ describe('CategoryService', () => {
         name: mockUpdateCategoryDto.name.en,
         description: mockUpdateCategoryDto.description.en,
         status: CategoryStatus.Active,
-        category_image: mockUpdateCategoryDto.category_image,
-        category_icon: mockUpdateCategoryDto.category_icon,
+        category_image: mockUpdateCategoryDto.categoryImage,
+        category_icon: mockUpdateCategoryDto.categoryIcon,
         id: mockCategory.id,
         created_at: mockCategory.created_at,
       };

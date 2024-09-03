@@ -55,8 +55,8 @@ export class CategoryService {
         .create({
           name: newCategory.name,
           description: newCategory.description,
-          category_icon: newCategory.category_icon,
-          category_image: newCategory.category_image,
+          category_icon: newCategory.categoryIcon,
+          category_image: newCategory.categoryImage,
           user: users[0],
         });
       const savedCategory = await this.categoryRepository.save(
@@ -338,8 +338,8 @@ export class CategoryService {
 
       newCategoryEntity.name = newCategory.name;
       newCategoryEntity.description = newCategory.description;
-      newCategoryEntity.category_icon = newCategory.category_icon;
-      newCategoryEntity.category_image = newCategory.category_image;
+      newCategoryEntity.category_icon = newCategory.categoryIcon;
+      newCategoryEntity.category_image = newCategory.categoryImage;
       newCategoryEntity.updated_at = new Date();
 
       const savedCategory = await this.categoryRepository.save(

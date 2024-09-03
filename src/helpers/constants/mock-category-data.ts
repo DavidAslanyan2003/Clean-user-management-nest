@@ -15,8 +15,8 @@ export const createMockCategoryDto = (
       hy: faker.lorem.sentence(),
       ru: faker.lorem.sentence(),
     },
-    category_image: faker.image.url(),
-    category_icon: faker.image.url(),
+    categoryImage: faker.image.url(),
+    categoryIcon: faker.image.url(),
     ...overrides,
   };
 };
