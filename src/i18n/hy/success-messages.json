@@ -2,5 +2,17 @@
     "FILE_DELETE_SUCCESS_MESSAGE": "Ֆայլը հաջողությամբ ջնջվել է!",
     "FILE_UPLOAD_SUCCESS_MESSAGE": "Ֆայլերը հաջողությամբ վերբեռնվեցին!",
     "CATEGORY_CREATED_SUCCESS": "Կատեգորիան հաջողությամբ ստեղծվել է:",
-    "CATEGORY_FETCHED_SUCCESS": "Կատեգորիան հաջողությամբ բեռնվել է:"
+    "CATEGORY_FETCHED_SUCCESS": "Կատեգորիան հաջողությամբ բեռնվել է:",
+    "BLOGS_GET_SUCCESS": "Բոլոր բլոգները հաջողությամբ բեռնվել են!",
+    "BLOG_POST_FETCHED": "Բլոգի գրառումը բերված է",
+    "BLOG_POST_UPDATED": "Բլոգի գրառումը թարմացվել է",
+    "BLOG_POST_CREATED": "Ստեղծվել է բլոգի գրառումը",
+    "BLOG_POST_DELETED": "Բլոգի գրառումը ջնջվել է",
+    "BLOG_ALREADY_PUBLISHED": "Բլոգի գրառումն արդեն հրապարակված է",
+    "BLOG_PUBLISHED": "Բլոգի գրառումը հաջողությամբ հրապարակվեց",
+    "CATEGORY_CREATED": "Ստեղծվել է կատեգորիա",
+    "CATEGORY_UPDATED": "Կատեգորիան թարմացվել է",
+    "CATEGORY_DELETED": "Կատեգորիան ջնջված է",
+    "CATEGORY_FETCHED": "Կատեգորիան բերված է",
+    "CATEGORIES_FETCHED": "Կատեգորիաները բերված են"
 }

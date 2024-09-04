@@ -24,10 +24,9 @@ export class BlogController {
   })
   @ApiOperation({ summary: 'Get all blogs', description: 'Endpoint to get all blogs' })
   async getAllBlogPosts(
-    @Headers() headers: any,
     @Query('short') short?: boolean
   ) {
-    return this.blogService.getAllBlogs(headers.locale, short);
+    return this.blogService.getAllBlogs(short);
   };
 
 

@@ -1,11 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Blog } from "../entities/blog.entity";
 import { Repository } from "typeorm";
-import { ERROR_MESSAGE, SUCCESS_MESSAGE } from "src/helpers/constants/status";
-import { CustomResponse } from "src/helpers/response/custom-response.dto";
 import { BlogStatus } from "src/helpers/enums/blogStatus.enum";
 import { LanguageEnum } from "src/helpers/enums/language.enum";
-import { RESPONSE_MESSAGES } from "src/helpers/response/response-messages";
 import { convertDates } from "src/helpers/validations/service-helper-functions/convertDates";
 import { User } from "src/user/user.entity";
 import { BlogSingleLang } from "src/helpers/interfaces/blogSingleLang.interface";
@@ -13,6 +10,10 @@ import { slugifyText } from "src/helpers/validations/service-helper-functions/sl
 import { UpdateBlogDto } from "../dtos/update-blog.dto";
 import { BlogDto } from "../dtos/blog.dto";
 import { BlogCategory } from "../entities/blog-category.entity";
+import { translatedErrorResponse, translatedSuccessResponse } from "src/helpers/validations/service-helper-functions/category-helper-functions";
+import { Inject } from "@nestjs/common";
+import { REQUEST } from "@nestjs/core";
+import { I18nService } from "nestjs-i18n";
 
 
 export class BlogService {
@@ -22,37 +23,43 @@ export class BlogService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @Inject(REQUEST)
+    private readonly request: Request,
+    private readonly i18n: I18nService,
   ) {};
 
-  async getAllBlogs(language: LanguageEnum, short?: boolean) {
+  async getAllBlogs(short?: boolean) {
     const queryRunner =
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    const locale = this.request['language'];
 
     try {
       const blogPosts = await queryRunner.manager
         .getRepository(Blog)
         .find();
       if (!blogPosts) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'NO_BLOG_POSTS',
           null,
-          null,
-          RESPONSE_MESSAGES.NO_BLOG_POSTS
         );
       }
 
       let filteredBlogPosts = [];
       blogPosts.forEach(async blogPost => {
-        const blogPostResult = await this.filterByLanguage(blogPost, language);
+        const blogPostResult = await this.filterByLanguage(blogPost, locale);
         if (blogPost.updated_at) {
           blogPostResult.updated_at = convertDates(
             blogPost.updated_at,
-            language
+            locale
           );
         }
-        blogPostResult.created_at = convertDates(blogPost.created_at, language);
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
         if (short) {
           delete blogPostResult.description;
         }
@@ -62,18 +69,17 @@ export class BlogService {
         }
       });
 
-      return new CustomResponse(
-        SUCCESS_MESSAGE,
-        filteredBlogPosts,
-        null,
-        RESPONSE_MESSAGES.BLOGS_GET_SUCCESS
-      );
+      return translatedSuccessResponse<{
+        filteredBlogPosts: Blog[];
+      }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
+        filteredBlogPosts: filteredBlogPosts
+      });
     } catch (error) {
-      return new CustomResponse(
-        ERROR_MESSAGE,
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOGS_GET_FAIL',
         error,
-        null,
-        RESPONSE_MESSAGES.BLOGS_GET_FAIL
       );
     } finally {
       await queryRunner.release();
@@ -94,17 +100,19 @@ export class BlogService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    const locale = this.request['language'];
+
     try {
       if (blogPostId) {
         const blogPost = await queryRunner.manager
           .getRepository(Blog)
           .findOne({ where: { id: blogPostId }, relations: ['blog_categories'] });
         if (!blogPost || blogPost.status !== BlogStatus.ACTIVE && blogPost.status !== BlogStatus.DRAFT) {
-          return new CustomResponse(
-            ERROR_MESSAGE,
+          return translatedErrorResponse<Blog>(
+            this.i18n,
+            locale,
+            'BLOG_NOT_FOUND',
             null,
-            null,
-            RESPONSE_MESSAGES.BLOG_NOT_FOUND
           );
         }
 
@@ -126,11 +134,11 @@ export class BlogService {
         }
 
         await queryRunner.commitTransaction();
-        return new CustomResponse(
-          SUCCESS_MESSAGE,
+        return translatedSuccessResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_POST_FETCHED',
           blogPostResult,
-          null,
-          RESPONSE_MESSAGES.BLOG_POST_FETCHED
         );
       }
 
@@ -171,11 +179,11 @@ export class BlogService {
         });
 
         await queryRunner.commitTransaction();
-        return new CustomResponse(
-          SUCCESS_MESSAGE,
+        return translatedSuccessResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_POST_FETCHED',
           filteredBlogPosts,
-          null,
-          RESPONSE_MESSAGES.BLOG_POST_FETCHED
         );
       }
 
@@ -186,20 +194,20 @@ export class BlogService {
         });
 
         if (!user) {
-          return new CustomResponse(
-            ERROR_MESSAGE,
+          return translatedErrorResponse<Blog>(
+            this.i18n,
+            locale,
+            'USER_NOT_FOUND',
             null,
-            null,
-            RESPONSE_MESSAGES.USER_NOT_FOUND
           );
         }
 
         if (user.blogs.length === 0) {
-          return new CustomResponse(
-            ERROR_MESSAGE,
+          return translatedErrorResponse<Blog>(
+            this.i18n,
+            locale,
+            'NO_BLOGS_BY_USER',
             null,
-            null,
-            RESPONSE_MESSAGES.NO_BLOG_POSTS_BY_USER
           );
         }
 
@@ -229,21 +237,20 @@ export class BlogService {
         });
 
         await queryRunner.commitTransaction();
-        return new CustomResponse(
-          SUCCESS_MESSAGE,
+        return translatedSuccessResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_POST_FETCHED',
           filteredBlogPosts,
-          null,
-          RESPONSE_MESSAGES.BLOG_POST_FETCHED
         );
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
-      return new CustomResponse(
-        ERROR_MESSAGE,
-        null,
-        error,
-        RESPONSE_MESSAGES.BLOG_GET_FAIL
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_GET_FAIL',
+        error
       );
     } finally {
       await queryRunner.release();
@@ -259,7 +266,8 @@ export class BlogService {
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+    const locale = this.request['language'];
+    
     try {
       const blogPost = await queryRunner.manager
         .getRepository(Blog)
@@ -269,20 +277,20 @@ export class BlogService {
         });
 
       if (!blogPost) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_NOT_FOUND',
           null,
-          null,
-          RESPONSE_MESSAGES.BLOG_NOT_FOUND
         );
       }
 
       if (!updateBlogPostDto.title.en || !updateBlogPostDto.description.en) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'ENGLISH_ERROR',
           null,
-          null,
-          RESPONSE_MESSAGES.ENGLISH_ERROR
         );
       }
 
@@ -332,18 +340,18 @@ export class BlogService {
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
       await queryRunner.commitTransaction();
-      return new CustomResponse(
-        SUCCESS_MESSAGE,
+      return translatedSuccessResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_POST_UPDATED',
         blogPost,
-        null,
-        RESPONSE_MESSAGES.BLOG_POST_UPDATED
       );
     } catch (error) {
-      return new CustomResponse(
-        ERROR_MESSAGE,
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_UPDATE_FAIL',
         error,
-        null,
-        RESPONSE_MESSAGES.BLOG_UPDATE_FAIL
       );
     }
   };
@@ -354,6 +362,7 @@ export class BlogService {
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const locale = this.request['language'];
 
     try {
       const user = await queryRunner.manager.getRepository(User).findOne({
@@ -362,20 +371,20 @@ export class BlogService {
       });
 
       if (!user) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'USER_NOT_FOUND',
           null,
-          null,
-          RESPONSE_MESSAGES.USER_NOT_FOUND
         );
       }
 
       if (!blogDto.title.en || !blogDto.description.en) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'ENGLISH_ERROR',
           null,
-          null,
-          RESPONSE_MESSAGES.ENGLISH_ERROR
         );
       }
 
@@ -414,11 +423,11 @@ export class BlogService {
 
       if (blogDto.categories.length === 0) {
         await queryRunner.rollbackTransaction();
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_POST_CATEGORIES_EMPTY',
           null,
-          null,
-          RESPONSE_MESSAGES.BLOG_POST_CATEGORIES_EMPTY
         );
       }
 
@@ -436,19 +445,19 @@ export class BlogService {
       await queryRunner.manager.getRepository(User).save(user);
 
       await queryRunner.commitTransaction();
-      return new CustomResponse(
-        SUCCESS_MESSAGE,
+      return translatedSuccessResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_POST_CREATED',
         blogPost,
-        null,
-        RESPONSE_MESSAGES.BLOG_POST_CREATED
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return new CustomResponse(
-        ERROR_MESSAGE,
-        null,
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_POST_FAIL',
         error,
-        RESPONSE_MESSAGES.BLOG_POST_FAIL
       );
     } finally {
       await queryRunner.release();
@@ -461,6 +470,7 @@ export class BlogService {
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const locale = this.request['language'];
 
     try {
       const blogPost = await queryRunner.manager
@@ -468,11 +478,11 @@ export class BlogService {
         .findOne({ where: { id: blogPostId } });
 
       if (!blogPost) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_NOT_FOUND',
           null,
-          null,
-          RESPONSE_MESSAGES.BLOG_NOT_FOUND
         );
       }
 
@@ -481,20 +491,19 @@ export class BlogService {
       await queryRunner.manager.getRepository(Blog).save(blogPost);
 
       await queryRunner.commitTransaction();
-      return new CustomResponse(
-        SUCCESS_MESSAGE,
+      return translatedSuccessResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_POST_DELETEDD',
         blogPost,
-        null,
-        RESPONSE_MESSAGES.BLOG_POST_DELETED
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
-      return new CustomResponse(
-        ERROR_MESSAGE,
-        null,
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_DELETE_FAIL',
         error,
-        RESPONSE_MESSAGES.BLOG_DELETE_FAIL
       );
     } finally {
       await queryRunner.release();
@@ -507,6 +516,7 @@ export class BlogService {
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const locale = this.request['language'];
 
     try {
       const blogPost = await queryRunner.manager
@@ -514,20 +524,20 @@ export class BlogService {
         .findOne({ where: { id: blogPostId } });
 
       if (!blogPost) {
-        return new CustomResponse(
-          ERROR_MESSAGE,
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_NOT_FOUND',
           null,
-          null,
-          RESPONSE_MESSAGES.BLOG_NOT_FOUND
         );
       }
 
       if (blogPost.status === BlogStatus.ACTIVE) {
-        return new CustomResponse(
-          SUCCESS_MESSAGE,
+        return translatedSuccessResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_ALREADY_PUBLISHED',
           blogPost,
-          null,
-          RESPONSE_MESSAGES.BLOG_ALREADY_PUBLISHED
         );
       }
 
@@ -536,21 +546,20 @@ export class BlogService {
       blogPost.updated_at = currentDate;
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
-
       await queryRunner.commitTransaction();
-      return new CustomResponse(
-        SUCCESS_MESSAGE,
+      return translatedSuccessResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_PUBLISHED',
         blogPost,
-        null,
-        RESPONSE_MESSAGES.BLOG_PUBLISHED
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return new CustomResponse(
-        ERROR_MESSAGE,
-        null,
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_PUBLISH_FAIL',
         error,
-        RESPONSE_MESSAGES.BLOG_PUBLISH_FAIL
       );
     } finally {
       await queryRunner.release();

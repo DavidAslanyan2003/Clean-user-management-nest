@@ -28,6 +28,23 @@
   "DUPLICATE_NAME": "Կրկնվող անուններն անթույլատրելի են:",
   "FILE_UPLOAD_ERROR_MESSAGE": "Չհաջողվեց վերբեռնել ֆայլերը:",
   "FREE_SPACE_ERROR_MESSAGE": "Ազատ տարածք չկա!",
-  "FILE_DELETE_ERROR_MESSAGE": "Չհաջողվեց ջնջել տվյալ ֆայլը:"
-
+  "FILE_DELETE_ERROR_MESSAGE": "Չհաջողվեց ջնջել տվյալ ֆայլը:",
+  "BLOGS_GET_FAIL": "Չհաջողվեց ստանալ բոլոր բլոգները",
+  "BLOG_NOT_FOUND": "Բլոգի գրառումը չի գտնվել",
+  "USER_NOT_FOUND" : "Օգտատերը չի գտնվել",
+  "NO_BLOGS_BY_USER": "Այս օգտվողից բլոգային գրառումներ չկան",
+  "BLOG_GET_FAIL": "Չհաջողվեց ստանալ բլոգի գրառում",
+  "ENGLISH_ERROR": "Առնվազն անգլերեն լեզուն պետք է տրամադրվի",
+  "BLOG_UPDATE_FAIL": "Չհաջողվեց թարմացնել բլոգի գրառումը",
+  "BLOG_POST_CATEGORIES_EMPTY": "Կատեգորիաները դատարկ են: Պետք է տրամադրվի առնվազն մեկ կատեգորիա",
+  "BLOG_POST_FAIL": "Չհաջողվեց բլոգ տեղադրել",
+  "BLOG_DELETE_FAIL": "Չհաջողվեց ջնջել բլոգը",
+  "BLOG_PUBLISH_FAIL": "Չհաջողվեց հրապարակել բլոգը",
+  "NO_BLOG_POSTS": "Բլոգի գրառումներ չկան",
+  "CATEGORY_CREATE_FAIL": "Չհաջողվեց ստեղծել կատեգորիա",
+  "CATEGORY_UPDATE_FAIL": "Չհաջողվեց թարմացնել կատեգորիան",
+  "CATEGORY_DELETE_FAIL": "Չհաջողվեց ջնջել կատեգորիան",
+  "CATEGORY_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիան",
+  "CATEGORIES_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիաները",
+  "CATEGORY_NOT_FOUND": "Կատեգորիան չի գտնվել"
 }
