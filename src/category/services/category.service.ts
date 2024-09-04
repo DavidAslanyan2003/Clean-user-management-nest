@@ -62,7 +62,14 @@ export class CategoryService {
       const savedCategory = await this.categoryRepository.save(
         newCategoryEntity,
       );
-      const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
+      const resultedCategory = await this.categoryRepository.findOne({
+        where: { id: savedCategory.id },
+        relations: ['user'],
+      });
+      const localizedCategory = fliterCategoryByLanguage(
+        locale,
+        resultedCategory,
+      );
 
       await queryRunner.commitTransaction();
 
@@ -109,6 +116,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
@@ -169,6 +177,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.name ->> :locale = :name', {
           locale,
           name,
@@ -220,11 +229,10 @@ export class CategoryService {
     const hasAllLanguages = allLanguages === 'true' ? true : false;
 
     try {
-      let category = await queryRunner.manager
-        .getRepository(Category)
-        .createQueryBuilder('category')
-        .where('category.id = :id', { id })
-        .getOne();
+      let category = await queryRunner.manager.getRepository(Category).findOne({
+        where: { id: id },
+        relations: ['user'],
+      });
       checkItemExistance(category, this.i18n, locale);
 
       if (!hasAllLanguages) {
@@ -275,6 +283,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :INACTIVE_STATUS', { INACTIVE_STATUS })
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
@@ -325,6 +334,7 @@ export class CategoryService {
         .getRepository(Category)
         .findOne({
           where: { id: id },
+          relations: ['user'],
         });
       checkItemExistance(newCategoryEntity, this.i18n, locale);
 
@@ -385,6 +395,7 @@ export class CategoryService {
         .getRepository(Category)
         .findOne({
           where: { id: id },
+          relations: ['user'],
         });
       checkItemExistance(newCategoryEntity, this.i18n, locale);
 
