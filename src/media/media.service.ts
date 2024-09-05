@@ -19,12 +19,12 @@ import * as sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { I18nService } from 'nestjs-i18n';
-import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+import { CustomResponse } from '../helpers/response/custom-response.dto';
 import {
   translatedErrorResponse,
   translatedSuccessResponse,
-} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+} from '../helpers/validations/service-helper-functions/category-helper-functions';
+import { ERROR_FILE_PATH } from '../helpers/constants/constants';
 
 @Injectable()
 export class MediaService {

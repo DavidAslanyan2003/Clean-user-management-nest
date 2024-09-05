@@ -1,27 +1,27 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from '../entities/category.entity';
 import { CategoryDto } from '../dtos/category.dto';
-import { I18nContext, I18nService } from 'nestjs-i18n';
-import { CustomResponse } from 'src/helpers/response/custom-response.dto';
-import { User } from 'src/user/user.entity';
+import { I18nService } from 'nestjs-i18n';
+import { CustomResponse } from '../../helpers/response/custom-response.dto';
+import { User } from '../../user/user.entity';
 import {
   fliterCategoryByLanguage,
   checkItemExistance,
   translatedErrorResponse,
   checkNameUniqueness,
   translatedSuccessResponse,
-} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+} from '../../helpers/validations/service-helper-functions/category-helper-functions';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import {
   ACTIVE_STATUS,
   INACTIVE_STATUS,
   CategoryStatus,
-} from 'src/helpers/constants/status';
+} from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
@@ -55,14 +55,21 @@ export class CategoryService {
         .create({
           name: newCategory.name,
           description: newCategory.description,
-          category_icon: newCategory.category_icon,
-          category_image: newCategory.category_image,
+          category_icon: newCategory.categoryIcon,
+          category_image: newCategory.categoryImage,
           user: users[0],
         });
       const savedCategory = await this.categoryRepository.save(
         newCategoryEntity,
       );
-      const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
+      const resultedCategory = await this.categoryRepository.findOne({
+        where: { id: savedCategory.id },
+        relations: ['user'],
+      });
+      const localizedCategory = fliterCategoryByLanguage(
+        locale,
+        resultedCategory,
+      );
 
       await queryRunner.commitTransaction();
 
@@ -109,6 +116,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
@@ -169,6 +177,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.name ->> :locale = :name', {
           locale,
           name,
@@ -220,11 +229,10 @@ export class CategoryService {
     const hasAllLanguages = allLanguages === 'true' ? true : false;
 
     try {
-      let category = await queryRunner.manager
-        .getRepository(Category)
-        .createQueryBuilder('category')
-        .where('category.id = :id', { id })
-        .getOne();
+      let category = await queryRunner.manager.getRepository(Category).findOne({
+        where: { id: id },
+        relations: ['user'],
+      });
       checkItemExistance(category, this.i18n, locale);
 
       if (!hasAllLanguages) {
@@ -275,6 +283,7 @@ export class CategoryService {
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
+        .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :INACTIVE_STATUS', { INACTIVE_STATUS })
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
@@ -325,6 +334,7 @@ export class CategoryService {
         .getRepository(Category)
         .findOne({
           where: { id: id },
+          relations: ['user'],
         });
       checkItemExistance(newCategoryEntity, this.i18n, locale);
 
@@ -338,8 +348,8 @@ export class CategoryService {
 
       newCategoryEntity.name = newCategory.name;
       newCategoryEntity.description = newCategory.description;
-      newCategoryEntity.category_icon = newCategory.category_icon;
-      newCategoryEntity.category_image = newCategory.category_image;
+      newCategoryEntity.category_icon = newCategory.categoryIcon;
+      newCategoryEntity.category_image = newCategory.categoryImage;
       newCategoryEntity.updated_at = new Date();
 
       const savedCategory = await this.categoryRepository.save(
@@ -385,6 +395,7 @@ export class CategoryService {
         .getRepository(Category)
         .findOne({
           where: { id: id },
+          relations: ['user'],
         });
       checkItemExistance(newCategoryEntity, this.i18n, locale);
 

@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { isUUID } from 'class-validator';
 import { I18nContext } from 'nestjs-i18n';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
 
 @Injectable()
 export class CheckUUIDPipe implements PipeTransform<string> {

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { MatchDescriptionKeysInName } from 'src/helpers/validations/decorators/validate-description';
-import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
-import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
+import { ERROR_FILE_PATH } from '../../helpers/constants/constants';
+import { MatchDescriptionKeysInName } from '../../helpers/validations/decorators/validate-description';
+import { IsValidLocaleRecord } from '../../helpers/validations/decorators/validate-locale-record';
+import { IsValidUrl } from '../../helpers/validations/decorators/validate-url';
 
 export class CategoryDto {
   @ApiProperty({
@@ -36,7 +36,7 @@ export class CategoryDto {
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
-  category_image: string;
+  categoryImage: string;
 
   @ApiProperty({
     example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
@@ -44,5 +44,5 @@ export class CategoryDto {
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
-  category_icon: string;
+  categoryIcon: string;
 }
