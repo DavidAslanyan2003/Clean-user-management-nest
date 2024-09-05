@@ -88,7 +88,6 @@ export class BlogService {
 
 
   async getBlog(
-    language: LanguageEnum,
     blogPostId?: string,
     categoryId?: string,
     userId?: string,
@@ -118,16 +117,16 @@ export class BlogService {
 
         let blogPostResult: Blog | BlogSingleLang = blogPost;
         if (!forEdit) {
-          blogPostResult = await this.filterByLanguage(blogPost, language) as unknown as BlogSingleLang;
+          blogPostResult = await this.filterByLanguage(blogPost, locale) as unknown as BlogSingleLang;
         }
 
         if (blogPost.updated_at) {
           blogPostResult.updated_at = convertDates(
             blogPost.updated_at,
-            language
+            locale
           );
         }
-        blogPostResult.created_at = convertDates(blogPost.created_at, language);
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
 
         if (short) {
           delete blogPostResult.description;
@@ -157,17 +156,17 @@ export class BlogService {
         blogPosts.forEach(async blogPost => {
           const blogPostResult = await this.filterByLanguage(
             blogPost,
-            language
+            locale
           );
           if (blogPost.updated_at) {
             blogPostResult.updated_at = convertDates(
               blogPost.updated_at,
-              language
+              locale
             );
           }
           blogPostResult.created_at = convertDates(
             blogPost.created_at,
-            language
+            locale
           );
           if (short) {
             delete blogPostResult.description;
@@ -215,17 +214,17 @@ export class BlogService {
         user.blogs.forEach(async blogPost => {
           const blogPostResult = await this.filterByLanguage(
             blogPost,
-            language
+            locale
           );
           if (blogPost.updated_at) {
             blogPostResult.updated_at = convertDates(
               blogPost.updated_at,
-              language
+              locale
             );
           }
           blogPostResult.created_at = convertDates(
             blogPost.created_at,
-            language
+            locale
           );
           if (short) {
             delete blogPostResult.description;
@@ -300,29 +299,11 @@ export class BlogService {
         currentDate
       );
 
-      const finalTitle: Record<string, string> = {
-        en: updateBlogPostDto.title.en,
-        ru: updateBlogPostDto.title.ru,
-        hy: updateBlogPostDto.title.hy,
-      };
-
-      const finalDescription: Record<string, string> = {
-        en: updateBlogPostDto.description.en,
-        ru: updateBlogPostDto.description.ru,
-        hy: updateBlogPostDto.description.hy,
-      };
-
-      const finalShortDescription: Record<string, string> = {
-        en: updateBlogPostDto.shortDescription.en,
-        ru: updateBlogPostDto.shortDescription.ru,
-        hy: updateBlogPostDto.shortDescription.hy,
-      };
-
       blogPost.updated_at = currentDate;
       blogPost.slug = generatedSlug;
-      blogPost.title = finalTitle;
-      blogPost.description = finalDescription;
-      blogPost.short_description = finalShortDescription;
+      blogPost.title = updateBlogPostDto.title;
+      blogPost.description = updateBlogPostDto.description;
+      blogPost.short_description = updateBlogPostDto.shortDescription;
       blogPost.views_count = updateBlogPostDto.viewsCount;
       blogPost.image_large = updateBlogPostDto.imageLarge;
       blogPost.image_small = updateBlogPostDto.imageSmall;
@@ -391,32 +372,14 @@ export class BlogService {
       const currentDate = new Date();
       const generatedSlug = slugifyText(blogDto.title.en, currentDate);
 
-      const finalTitle: Record<string, string> = {
-        en: blogDto.title.en,
-        ru: blogDto.title.ru,
-        hy: blogDto.title.hy,
-      };
-
-      const finalDescription: Record<string, string> = {
-        en: blogDto.description.en,
-        ru: blogDto.description.ru,
-        hy: blogDto.description.hy,
-      };
-
-      const finalShortDescription: Record<string, string> = {
-        en: blogDto.shortDescription.en,
-        ru: blogDto.shortDescription.ru,
-        hy: blogDto.shortDescription.hy,
-      };
-
       const blogPost = new Blog();
       blogPost.created_at = new Date();
       blogPost.views_count = 0;
       blogPost.user_id = userId;
       blogPost.blog_categories = [];
-      blogPost.title = finalTitle;
-      blogPost.description = finalDescription;
-      blogPost.short_description = finalShortDescription;
+      blogPost.title = blogDto.title;
+      blogPost.description = blogDto.description;
+      blogPost.short_description = blogDto.shortDescription;
       blogPost.slug = generatedSlug;
       blogPost.image_large = blogDto.imageLarge;
       blogPost.image_small = blogDto.imageSmall;

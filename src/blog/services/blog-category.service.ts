@@ -21,7 +21,6 @@ export class BlogCategoryService {
   ) {};
 
   async getBlogCategory(
-    language: LanguageEnum,
     categoryId: string
   ) {
     const queryRunner = this.categoryRepository.manager.connection.createQueryRunner();
@@ -41,7 +40,7 @@ export class BlogCategoryService {
         );
       };
 
-      const filteredCategory = await this.filterByLanguage(singleCategory, language);
+      const filteredCategory = await this.filterByLanguage(singleCategory, locale);
       await queryRunner.commitTransaction();
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
@@ -64,7 +63,7 @@ export class BlogCategoryService {
   };
 
 
-  async getAllBlogCategories(language: LanguageEnum) {
+  async getAllBlogCategories() {
     const queryRunner = this.categoryRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -85,7 +84,7 @@ export class BlogCategoryService {
 
       let filteredCategories = [];
       categories.forEach(async (category) => {
-        const categoryResult = await this.filterByLanguage(category, language);
+        const categoryResult = await this.filterByLanguage(category, locale);
         filteredCategories.push(categoryResult);
       });
 
@@ -127,14 +126,8 @@ export class BlogCategoryService {
       }
 
       const newCateogry = new BlogCategory();
+      newCateogry.category = categoryDto.category;
 
-      const newCategoryTitle: Record<string, string> = {
-        en: categoryDto.category.en,
-        ru: categoryDto.category.ru,
-        hy: categoryDto.category.hy
-      };
-
-      newCateogry.category = newCategoryTitle;
       await queryRunner.manager.getRepository(BlogCategory).save(newCateogry);
       await queryRunner.commitTransaction();
 
@@ -187,13 +180,7 @@ export class BlogCategoryService {
         );
       }
 
-      const newCategoryTitle: Record<string, string> = {
-        en: updateCategoryDto.category.en,
-        ru: updateCategoryDto.category.ru,
-        hy: updateCategoryDto.category.hy
-      };
-
-      singleCategory.category = newCategoryTitle;
+      singleCategory.category = updateCategoryDto.category;
       await queryRunner.manager.getRepository(BlogCategory).save(singleCategory);
       await queryRunner.commitTransaction();
 

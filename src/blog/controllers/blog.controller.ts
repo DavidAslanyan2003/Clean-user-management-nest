@@ -5,6 +5,7 @@ import { RESPONSE_MESSAGES } from "src/helpers/response/response-messages";
 import { Blog } from "../entities/blog.entity";
 import { BlogDto } from "../dtos/blog.dto";
 import { UpdateBlogDto } from "../dtos/update-blog.dto";
+import { CheckUUIDPipe } from "src/helpers/validations/pipes/check-uuid-pipe";
 
 
 @Controller('api/v1/blog')
@@ -46,14 +47,13 @@ export class BlogController {
   @ApiQuery({ name: 'userId', required: false })
   @ApiQuery({ name: 'forEdit', required: false })
   async getBlogPost(
-    @Headers() headers: any,
-    @Query('blogId') blogId?: string,
-    @Query('categoryId') categoryId?: string,
-    @Query('userId') userId?: string,
+    @Query('blogId', CheckUUIDPipe) blogId?: string,
+    @Query('categoryId', CheckUUIDPipe) categoryId?: string,
+    @Query('userId', CheckUUIDPipe) userId?: string,
     @Query('short') short?: boolean,
     @Query('forEdit') forEdit?: boolean
   ) {
-    return this.blogService.getBlog(headers.locale, blogId, categoryId, userId, short, forEdit);
+    return this.blogService.getBlog(blogId, categoryId, userId, short, forEdit);
   };
 
 
@@ -68,7 +68,7 @@ export class BlogController {
     description: RESPONSE_MESSAGES.INVALID_REQUEST 
   })
   @ApiOperation({ summary: 'Create a blog post', description: 'Endpoint to create a blog post' })
-  async createBlogPost(@Request() request: any, @Body() blogDto: BlogDto) {
+  async createBlogPost(@Body() blogDto: BlogDto) {
     const userId = "60bbd60c-ce41-4a71-bd60-ee61648a1bcf"; 
     return this.blogService.createBlog(blogDto, userId);
   };
@@ -86,7 +86,7 @@ export class BlogController {
   })
   @ApiOperation({ summary: 'Publish a blog post', description: 'Endpoint to publish a blog post' })
   async publishBlogPost(
-    @Param('id') blogId: string,
+    @Param('id', CheckUUIDPipe) blogId: string,
   ) {
     return this.blogService.publishBlog(blogId);
   };
@@ -104,7 +104,7 @@ export class BlogController {
   })
   @ApiOperation({ summary: 'Update a blog post', description: 'Endpoint to update a blog post' })
   async updateBlogPost(
-    @Param('id') blogId: string, 
+    @Param('id', CheckUUIDPipe) blogId: string, 
     @Body() updateBlogDto: UpdateBlogDto
   ) {
     return this.blogService.updateBlog(updateBlogDto, blogId);
@@ -122,7 +122,7 @@ export class BlogController {
     description: RESPONSE_MESSAGES.INVALID_REQUEST 
   })
   @ApiOperation({ summary: 'Delete a blog post', description: 'Endpoint to delete a blog post' })
-  async deleteBlogPost(@Param('id') id: string) {
+  async deleteBlogPost(@Param('id', CheckUUIDPipe) id: string) {
     return this.blogService.deleteBlog(id);
   };
 }

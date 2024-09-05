@@ -3,6 +3,7 @@ import { BlogStatus } from "../../helpers/enums/blogStatus.enum";
 import { User } from "../../user/user.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BlogCategory } from "./blog-category.entity";
+import { IsValidLocaleRecord } from "src/helpers/validations/decorators/validate-locale-record";
 
 
 @Entity({ name: 'blog' })
@@ -20,14 +21,17 @@ export class Blog {
 
   @Column({ type: 'jsonb', nullable: false })
   @IsNotEmpty()
+  @IsValidLocaleRecord()
   title: Record<string, string>;
 
   @Column({ type: 'jsonb', nullable: false })
   @IsNotEmpty()
+  @IsValidLocaleRecord()
   short_description: Record<string, string>;
 
   @Column({ type: 'jsonb', nullable: false })
   @IsNotEmpty()
+  @IsValidLocaleRecord()
   description: Record<string, string>;
 
   @Column({ type: 'timestamp', nullable: true })

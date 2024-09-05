@@ -4,6 +4,7 @@ import { ApiBadRequestResponse, ApiOkResponse, ApiOperation } from "@nestjs/swag
 import { RESPONSE_MESSAGES } from "src/helpers/response/response-messages";
 import { BlogCategory } from "../entities/blog-category.entity";
 import { BlogCategoryDto } from "../dtos/blog-category.dto";
+import { CheckUUIDPipe } from "src/helpers/validations/pipes/check-uuid-pipe";
 
 
 @Controller('api/v1/blog-category')
@@ -21,8 +22,8 @@ export class BlogCategoryController {
     description: RESPONSE_MESSAGES.INVALID_REQUEST 
   })
   @ApiOperation({ summary: 'Get categories list', description: 'Endpoint to get categories list' })
-  async getAllCategories(@Headers() headers: any,) {
-    return this.blogCategoryService.getAllBlogCategories(headers.locale);
+  async getAllCategories() {
+    return this.blogCategoryService.getAllBlogCategories();
   };
 
 
@@ -38,10 +39,9 @@ export class BlogCategoryController {
   })
   @ApiOperation({ summary: 'Get a single category', description: 'Endpoint to get a single category' })
   async getCategory(
-    @Headers() headers: any,
-    @Param('id') id: string
+    @Param('id', CheckUUIDPipe) id: string
   ) {
-    return this.blogCategoryService.getBlogCategory(headers.locale, id);
+    return this.blogCategoryService.getBlogCategory(id);
   };
 
 
@@ -73,7 +73,7 @@ export class BlogCategoryController {
   })
   @ApiOperation({ summary: 'Update a category', description: 'Endpoint to update a category' })
   async updateCategory(
-    @Param('id') id: string, 
+    @Param('id', CheckUUIDPipe) id: string, 
     @Body() updateCategoryDto: BlogCategoryDto
   ) {
     return this.blogCategoryService.updateBlogCategory(updateCategoryDto, id);
@@ -91,7 +91,7 @@ export class BlogCategoryController {
     description: RESPONSE_MESSAGES.INVALID_REQUEST 
   })
   @ApiOperation({ summary: 'Delete a category', description: 'Endpoint to delete a category' })
-  async deleteCategory(@Param('id') id: string) {
+  async deleteCategory(@Param('id', CheckUUIDPipe) id: string) {
     return this.blogCategoryService.deleteBlogPostCategory(id)
   };
 
