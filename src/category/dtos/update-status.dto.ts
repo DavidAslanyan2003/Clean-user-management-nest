@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { CategoryStatus } from 'src/helpers/constants/status';
-import { IsValidStatus } from 'src/helpers/validations/decorators/validate-status';
+import { ERROR_FILE_PATH } from '../../helpers/constants/constants';
+import { CategoryStatus } from '../../helpers/constants/status';
+import { IsValidStatus } from '../../helpers/validations/decorators/validate-status';
 
 export class UpdateStatusDto {
   @ApiProperty({

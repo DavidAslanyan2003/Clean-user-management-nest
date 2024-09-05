@@ -4,7 +4,7 @@ import {
   ValidationArguments,
   registerDecorator,
 } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
 
 @ValidatorConstraint({ async: false })
 export class MatchKeysInNameAndDescription

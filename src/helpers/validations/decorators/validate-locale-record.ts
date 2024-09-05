@@ -6,7 +6,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { RequiredLocale } from '../../constants/locale';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
 
 @ValidatorConstraint({ name: 'IsValidLocale', async: false })
 class IsValidLocale implements ValidatorConstraintInterface {

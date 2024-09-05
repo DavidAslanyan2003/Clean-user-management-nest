@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { imagesUploadBodySchema } from './validation-schema/image-upload.schema';
-import { MediaFileUploadInterceptor } from 'src/interceptors/file.interceptor';
+import { MediaFileUploadInterceptor } from '../interceptors/file.interceptor';
 import { I18nService } from 'nestjs-i18n';
 import {
   ApiTags,
@@ -23,8 +23,8 @@ import {
   ApiBody,
   ApiParam,
 } from '@nestjs/swagger';
-import { translatedErrorResponse } from 'src/helpers/validations/service-helper-functions/category-helper-functions';
-import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+import { translatedErrorResponse } from '../helpers/validations/service-helper-functions/category-helper-functions';
+import { CustomResponse } from '../helpers/response/custom-response.dto';
 
 @ApiTags('media')
 @Controller('api/v1/media')

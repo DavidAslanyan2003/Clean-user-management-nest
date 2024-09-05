@@ -5,8 +5,11 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { ACTIVE_STATUS, INACTIVE_STATUS } from 'src/helpers/constants/status';
+import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
+import {
+  ACTIVE_STATUS,
+  INACTIVE_STATUS,
+} from '../../../helpers/constants/status';
 
 @ValidatorConstraint({ async: false })
 export class CheckStatus implements ValidatorConstraintInterface {
