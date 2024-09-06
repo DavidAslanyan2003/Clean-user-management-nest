@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Headers, Param, Post, Body, Put, Delete } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Param, Post, Body, Put, Delete } from "@nestjs/common";
 import { BlogCategoryService } from "../services/blog-category.service";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { RESPONSE_MESSAGES } from "src/helpers/response/response-messages";

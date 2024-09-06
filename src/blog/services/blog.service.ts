@@ -11,7 +11,7 @@ import { UpdateBlogDto } from "../dtos/update-blog.dto";
 import { BlogDto } from "../dtos/blog.dto";
 import { BlogCategory } from "../entities/blog-category.entity";
 import { translatedErrorResponse, translatedSuccessResponse } from "src/helpers/validations/service-helper-functions/category-helper-functions";
-import { Inject } from "@nestjs/common";
+import { BadRequestException, Inject } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { I18nService } from "nestjs-i18n";
 
@@ -88,7 +88,7 @@ export class BlogService {
 
 
   async getBlog(
-    blogPostId?: string,
+    blogId?: string,
     categoryId?: string,
     userId?: string,
     short?: boolean,
@@ -102,10 +102,10 @@ export class BlogService {
     const locale = this.request['language'];
 
     try {
-      if (blogPostId) {
+      if (blogId) {
         const blogPost = await queryRunner.manager
           .getRepository(Blog)
-          .findOne({ where: { id: blogPostId }, relations: ['blog_categories'] });
+          .findOne({ where: { id: blogId }, relations: ['blog_categories'] });
         if (!blogPost || blogPost.status !== BlogStatus.ACTIVE && blogPost.status !== BlogStatus.DRAFT) {
           return translatedErrorResponse<Blog>(
             this.i18n,
@@ -243,6 +243,8 @@ export class BlogService {
           filteredBlogPosts,
         );
       }
+
+      throw new BadRequestException()
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
@@ -405,14 +407,16 @@ export class BlogService {
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
       user.blogs.push(blogPost);
-      await queryRunner.manager.getRepository(User).save(user);
+      const singleLangBlog = await this.filterByLanguage(blogPost, locale);
 
+      await queryRunner.manager.getRepository(User).save(user);
       await queryRunner.commitTransaction();
+
       return translatedSuccessResponse<Blog>(
         this.i18n,
         locale,
         'BLOG_POST_CREATED',
-        blogPost,
+        singleLangBlog,
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -453,12 +457,15 @@ export class BlogService {
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
 
+      const singleLangBlog = await this.filterByLanguage(blogPost, locale);
+
       await queryRunner.commitTransaction();
+      
       return translatedSuccessResponse<Blog>(
         this.i18n,
         locale,
-        'BLOG_POST_DELETEDD',
-        blogPost,
+        'BLOG_POST_DELETED',
+        singleLangBlog,
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -509,12 +516,14 @@ export class BlogService {
       blogPost.updated_at = currentDate;
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
+      const singleLangBlog = await this.filterByLanguage(blogPost, locale);
+      
       await queryRunner.commitTransaction();
       return translatedSuccessResponse<Blog>(
         this.i18n,
         locale,
         'BLOG_PUBLISHED',
-        blogPost,
+        singleLangBlog,
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();

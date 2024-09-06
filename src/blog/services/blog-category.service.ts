@@ -129,13 +129,16 @@ export class BlogCategoryService {
       newCateogry.category = categoryDto.category;
 
       await queryRunner.manager.getRepository(BlogCategory).save(newCateogry);
+
+      const singleLangCategory = await this.filterByLanguage(newCateogry, locale);
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORY_CREATED',
-        newCateogry,
+        singleLangCategory,
       );
     } catch(error) {
       await queryRunner.rollbackTransaction();
@@ -213,7 +216,7 @@ export class BlogCategoryService {
     try {
       const singleCategory = await queryRunner.manager.getRepository(BlogCategory).findOne({ 
         where: { id: categoryId } 
-      })
+      });
 
       if (!singleCategory) {
         return translatedErrorResponse<BlogCategory>(
@@ -226,13 +229,16 @@ export class BlogCategoryService {
 
       singleCategory.status = BlogCategoryStatus.INACTIVE;
       await queryRunner.manager.getRepository(BlogCategory).save(singleCategory);
+
+      const singleLangCategory = await this.filterByLanguage(singleCategory, locale);
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
-        'CATEOGRY_DELETED',
-        singleCategory,
+        'CATEGORY_DELETED',
+        singleLangCategory,
       );
     } catch(error) {
       await queryRunner.rollbackTransaction();
