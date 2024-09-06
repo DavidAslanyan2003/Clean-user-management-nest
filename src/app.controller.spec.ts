@@ -16,7 +16,8 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+      const req = { headers: { language: 'en' } } as unknown as Request;
+      expect(appController.getHello(req)).toBe('Hello World!');
     });
   });
 });

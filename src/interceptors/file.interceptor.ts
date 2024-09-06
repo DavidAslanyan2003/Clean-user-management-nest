@@ -10,9 +10,9 @@ import { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { I18nContext } from 'nestjs-i18n';
 import { Reflector } from '@nestjs/core';
-import { filesUploadRules } from 'src/media/validation-schema/image-upload.schema';
+import { filesUploadRules } from '../media/validation-schema/image-upload.schema';
 import * as Joi from '@hapi/joi';
-import { FileUploadRule } from 'src/media/interfaces/file-upload-rule.interface';
+import { FileUploadRule } from '../media/interfaces/file-upload-rule.interface';
 
 @Injectable()
 export class MediaFileUploadInterceptor implements NestInterceptor {

@@ -21,8 +21,8 @@ import { Category } from '../entities/category.entity';
 import { CategoryDto } from '../dtos/category.dto';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
-import { CATEGORY_NOT_FOUND } from 'src/helpers/constants/constants';
-import { CheckUUIDPipe } from 'src/helpers/validations/pipes/check-uuid-pipe';
+import { CATEGORY_NOT_FOUND } from '../../helpers/constants/constants';
+import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
 
 @Controller('api/v1/category')
 @ApiTags('Categories')

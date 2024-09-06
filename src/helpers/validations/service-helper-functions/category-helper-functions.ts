@@ -1,13 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 import { I18nContext, I18nService } from 'nestjs-i18n';
-import { Category } from 'src/category/entities/category.entity';
+import { Category } from '../../../category/entities/category.entity';
 import {
   DEFAULT_LANGUAGE,
   ERROR_FILE_PATH,
   SUCCESS_FILE_PATH,
-} from 'src/helpers/constants/constants';
-import { ERROR_MESSAGE, SUCCESS_MESSAGE } from 'src/helpers/constants/status';
-import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+} from '../../../helpers/constants/constants';
+import {
+  ERROR_MESSAGE,
+  SUCCESS_MESSAGE,
+} from '../../../helpers/constants/status';
+import { CustomResponse } from '../../../helpers/response/custom-response.dto';
 import { QueryRunner } from 'typeorm';
 
 export function checkItemExistance(
