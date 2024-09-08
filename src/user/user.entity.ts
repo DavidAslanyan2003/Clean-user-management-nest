@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from '../category/entities/category.entity';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Blog } from '../blog/entities/blog.entity';
 
 @Entity('user')
 export class User {
@@ -16,4 +17,7 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
+
+  @OneToMany(() => Blog, blogs => blogs.users)
+  blogs: Blog[] 
 }

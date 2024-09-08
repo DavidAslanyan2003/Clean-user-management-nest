@@ -3,5 +3,17 @@
     "FILE_DELETE_SUCCESS_MESSAGE": "Файл успешно удален!",
     "CATEGORY_CREATED_SUCCESS": "Категория успешно создана!",
     "CATEGORY_FETCHED_SUCCESS": "Категория успешно получена!",
+    "BLOGS_GET_SUCCESS": "Все блоги были успешно получены!",
+    "BLOG_POST_FETCHED": "Запись в блоге извлечена",
+    "BLOG_POST_UPDATED": "Запись в блоге обновлена",
+    "BLOG_POST_CREATED": "Запись в блоге создана",
+    "BLOG_POST_DELETED": "Запись в блоге удалена",
+    "BLOG_ALREADY_PUBLISHED": "Запись в блоге уже опубликована",
+    "BLOG_PUBLISHED": "Запись в блоге успешно опубликована",
+    "CATEGORY_CREATED": "Категория создана",
+    "CATEGORY_UPDATED": "Категория обновлена",
+    "CATEGORY_DELETED": "Категория удалена",
+    "CATEGORY_FETCHED": "Категория извлечена",
+    "CATEGORIES_FETCHED": "Категории извлечены"
     "CATEGORY_UPDATED_SUCCESS": "Категория успешно обновлена!"
 }
