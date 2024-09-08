@@ -15,7 +15,9 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev  
+    command: npm run start:dev
+    networks:
+      - myapp-network  
     
 
   postgres:
@@ -27,6 +29,12 @@ services:
       - .env.${NODE_ENV}
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - myapp-network  
+
+networks:
+  myapp-network:
+    external: true
 
 volumes:
   db_data:
