@@ -5,10 +5,10 @@ import { I18nService } from 'nestjs-i18n';
 export class AppController {
   constructor(private readonly i18n: I18nService) {}
 
-  @Get()
-  getHello(@Req() req: Request): string {
-    const lang = req['language'];
+  // @Get()
+  // getHello(@Req() req: Request): string {
+  //   const lang = req['language'];
 
-    return this.i18n.translate('test.HELLO', { lang });
-  }
+  //   return this.i18n.translate('test.HELLO', { lang });
+  // }
 }
