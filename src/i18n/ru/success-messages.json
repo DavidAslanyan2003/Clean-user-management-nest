@@ -14,6 +14,6 @@
     "CATEGORY_UPDATED": "Категория обновлена",
     "CATEGORY_DELETED": "Категория удалена",
     "CATEGORY_FETCHED": "Категория извлечена",
-    "CATEGORIES_FETCHED": "Категории извлечены"
+    "CATEGORIES_FETCHED": "Категории извлечены",
     "CATEGORY_UPDATED_SUCCESS": "Категория успешно обновлена!"
 }
