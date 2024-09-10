@@ -5,10 +5,8 @@ import { BlogCategoryController } from '../controllers/blog-category.controller'
 import { BlogCategoryService } from '../services/blog-category.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([BlogCategory])
-  ],
+  imports: [TypeOrmModule.forFeature([BlogCategory])],
   controllers: [BlogCategoryController],
-  providers: [BlogCategoryService]
+  providers: [BlogCategoryService],
 })
-export class BlogCategoryModule {};
+export class BlogCategoryModule {}

@@ -18,6 +18,6 @@ export class User {
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
 
-  @OneToMany(() => Blog, blogs => blogs.users)
-  blogs: Blog[] 
+  @OneToMany(() => Blog, (blogs) => blogs.users)
+  blogs: Blog[];
 }

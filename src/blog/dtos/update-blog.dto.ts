@@ -1,8 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsPositive } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsPositive } from 'class-validator';
 import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { IsValidLocaleRecord } from "src/helpers/validations/decorators/validate-locale-record";
-import { IsValidUrl } from "src/helpers/validations/decorators/validate-url";
+import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
+import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
 
 export class UpdateBlogDto {
   @ApiProperty()
@@ -67,6 +67,5 @@ export class UpdateBlogDto {
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
-  imageSmall: string
+  imageSmall: string;
 }
-

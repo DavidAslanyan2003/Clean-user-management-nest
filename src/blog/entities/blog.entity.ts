@@ -1,11 +1,18 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
-import { BlogStatus } from "../../helpers/enums/blogStatus.enum";
-import { User } from "../../user/user.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BlogCategory } from "./blog-category.entity";
-import { IsValidLocaleRecord } from "src/helpers/validations/decorators/validate-locale-record";
-import { ApiProperty } from "@nestjs/swagger";
-
+import { IsNotEmpty, IsOptional } from 'class-validator';
+import { BlogStatus } from '../../helpers/enums/blogStatus.enum';
+import { User } from '../../user/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { BlogCategory } from './blog-category.entity';
+import { IsValidLocaleRecord } from '../../helpers/validations/decorators/validate-locale-record';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'blog' })
 export class Blog {
@@ -118,12 +125,11 @@ export class Blog {
   @Column({ type: 'varchar', default: BlogStatus.DRAFT, nullable: true })
   status: BlogStatus;
 
-  @ManyToOne(() => User, users => users.id)
-  @JoinColumn({ name: "blog_users" })
+  @ManyToOne(() => User, (users) => users.id)
+  @JoinColumn({ name: 'blog_users' })
   users: User[];
-  
-  @ManyToMany(() => BlogCategory, categories => categories.blogs)
-  @JoinTable({ name: "blog_categories" })
-  blog_categories: BlogCategory[];
-};
 
+  @ManyToMany(() => BlogCategory, (categories) => categories.blogs)
+  @JoinTable({ name: 'blog_categories' })
+  blog_categories: BlogCategory[];
+}
