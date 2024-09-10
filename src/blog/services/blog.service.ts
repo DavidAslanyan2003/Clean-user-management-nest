@@ -1,20 +1,22 @@
-import { InjectRepository } from "@nestjs/typeorm";
-import { Blog } from "../entities/blog.entity";
-import { Repository } from "typeorm";
-import { BlogStatus } from "src/helpers/enums/blogStatus.enum";
-import { LanguageEnum } from "src/helpers/enums/language.enum";
-import { convertDates } from "src/helpers/validations/service-helper-functions/convertDates";
-import { User } from "src/user/user.entity";
-import { BlogSingleLang } from "src/helpers/interfaces/blogSingleLang.interface";
-import { slugifyText } from "src/helpers/validations/service-helper-functions/slugify";
-import { UpdateBlogDto } from "../dtos/update-blog.dto";
-import { BlogDto } from "../dtos/blog.dto";
-import { BlogCategory } from "../entities/blog-category.entity";
-import { translatedErrorResponse, translatedSuccessResponse } from "src/helpers/validations/service-helper-functions/category-helper-functions";
-import { BadRequestException, Inject } from "@nestjs/common";
-import { REQUEST } from "@nestjs/core";
-import { I18nService } from "nestjs-i18n";
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Blog } from '../entities/blog.entity';
+import { Repository } from 'typeorm';
+import { BlogStatus } from 'src/helpers/enums/blogStatus.enum';
+import { LanguageEnum } from 'src/helpers/enums/language.enum';
+import { convertDates } from 'src/helpers/validations/service-helper-functions/convertDates';
+import { User } from 'src/user/user.entity';
+import { BlogSingleLang } from 'src/helpers/interfaces/blogSingleLang.interface';
+import { slugifyText } from 'src/helpers/validations/service-helper-functions/slugify';
+import { UpdateBlogDto } from '../dtos/update-blog.dto';
+import { BlogDto } from '../dtos/blog.dto';
+import { BlogCategory } from '../entities/blog-category.entity';
+import {
+  translatedErrorResponse,
+  translatedSuccessResponse,
+} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+import { BadRequestException, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { I18nService } from 'nestjs-i18n';
 
 export class BlogService {
   constructor(
@@ -27,7 +29,7 @@ export class BlogService {
     @Inject(REQUEST)
     private readonly request: Request,
     private readonly i18n: I18nService,
-  ) {};
+  ) {}
 
   async getAllBlogs(short?: boolean) {
     const queryRunner =
@@ -38,9 +40,7 @@ export class BlogService {
     const locale = this.request['language'];
 
     try {
-      const blogPosts = await queryRunner.manager
-        .getRepository(Blog)
-        .find();
+      const blogPosts = await queryRunner.manager.getRepository(Blog).find();
       if (!blogPosts) {
         return translatedErrorResponse<Blog>(
           this.i18n,
@@ -51,13 +51,10 @@ export class BlogService {
       }
 
       let filteredBlogPosts = [];
-      blogPosts.forEach(async blogPost => {
+      blogPosts.forEach(async (blogPost) => {
         const blogPostResult = await this.filterByLanguage(blogPost, locale);
         if (blogPost.updated_at) {
-          blogPostResult.updated_at = convertDates(
-            blogPost.updated_at,
-            locale
-          );
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
         }
         blogPostResult.created_at = convertDates(blogPost.created_at, locale);
         if (short) {
@@ -72,7 +69,7 @@ export class BlogService {
       return translatedSuccessResponse<{
         filteredBlogPosts: Blog[];
       }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
-        filteredBlogPosts: filteredBlogPosts
+        filteredBlogPosts: filteredBlogPosts,
       });
     } catch (error) {
       return translatedErrorResponse<Blog>(
@@ -84,15 +81,14 @@ export class BlogService {
     } finally {
       await queryRunner.release();
     }
-  };
-
+  }
 
   async getBlog(
     blogId?: string,
     categoryId?: string,
     userId?: string,
     short?: boolean,
-    forEdit?: boolean
+    forEdit?: boolean,
   ) {
     const queryRunner =
       this.blogRepository.manager.connection.createQueryRunner();
@@ -106,7 +102,11 @@ export class BlogService {
         const blogPost = await queryRunner.manager
           .getRepository(Blog)
           .findOne({ where: { id: blogId }, relations: ['blog_categories'] });
-        if (!blogPost || blogPost.status !== BlogStatus.ACTIVE && blogPost.status !== BlogStatus.DRAFT) {
+        if (
+          !blogPost ||
+          (blogPost.status !== BlogStatus.ACTIVE &&
+            blogPost.status !== BlogStatus.DRAFT)
+        ) {
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -117,14 +117,14 @@ export class BlogService {
 
         let blogPostResult: Blog | BlogSingleLang = blogPost;
         if (!forEdit) {
-          blogPostResult = await this.filterByLanguage(blogPost, locale) as unknown as BlogSingleLang;
+          blogPostResult = (await this.filterByLanguage(
+            blogPost,
+            locale,
+          )) as unknown as BlogSingleLang;
         }
 
         if (blogPost.updated_at) {
-          blogPostResult.updated_at = convertDates(
-            blogPost.updated_at,
-            locale
-          );
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
         }
         blogPostResult.created_at = convertDates(blogPost.created_at, locale);
 
@@ -148,26 +148,20 @@ export class BlogService {
             'blogPost.blog_categories',
             'category',
             'category.id = :categoryId',
-            { categoryId }
+            { categoryId },
           )
           .getMany();
 
         let filteredBlogPosts = [];
-        blogPosts.forEach(async blogPost => {
-          const blogPostResult = await this.filterByLanguage(
-            blogPost,
-            locale
-          );
+        blogPosts.forEach(async (blogPost) => {
+          const blogPostResult = await this.filterByLanguage(blogPost, locale);
           if (blogPost.updated_at) {
             blogPostResult.updated_at = convertDates(
               blogPost.updated_at,
-              locale
+              locale,
             );
           }
-          blogPostResult.created_at = convertDates(
-            blogPost.created_at,
-            locale
-          );
+          blogPostResult.created_at = convertDates(blogPost.created_at, locale);
           if (short) {
             delete blogPostResult.description;
           }
@@ -211,21 +205,15 @@ export class BlogService {
         }
 
         let filteredBlogPosts = [];
-        user.blogs.forEach(async blogPost => {
-          const blogPostResult = await this.filterByLanguage(
-            blogPost,
-            locale
-          );
+        user.blogs.forEach(async (blogPost) => {
+          const blogPostResult = await this.filterByLanguage(blogPost, locale);
           if (blogPost.updated_at) {
             blogPostResult.updated_at = convertDates(
               blogPost.updated_at,
-              locale
+              locale,
             );
           }
-          blogPostResult.created_at = convertDates(
-            blogPost.created_at,
-            locale
-          );
+          blogPostResult.created_at = convertDates(blogPost.created_at, locale);
           if (short) {
             delete blogPostResult.description;
           }
@@ -244,38 +232,32 @@ export class BlogService {
         );
       }
 
-      throw new BadRequestException()
+      throw new BadRequestException();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
         this.i18n,
         locale,
         'BLOG_GET_FAIL',
-        error
+        error,
       );
     } finally {
       await queryRunner.release();
     }
-  };
+  }
 
-
-  async updateBlog(
-    updateBlogPostDto: UpdateBlogDto,
-    blogPostId: string
-  ) {
+  async updateBlog(updateBlogPostDto: UpdateBlogDto, blogPostId: string) {
     const queryRunner =
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const locale = this.request['language'];
-    
+
     try {
-      const blogPost = await queryRunner.manager
-        .getRepository(Blog)
-        .findOne({
-          where: { id: blogPostId },
-          relations: ['blog_categories'],
-        });
+      const blogPost = await queryRunner.manager.getRepository(Blog).findOne({
+        where: { id: blogPostId },
+        relations: ['blog_categories'],
+      });
 
       if (!blogPost) {
         return translatedErrorResponse<Blog>(
@@ -298,7 +280,7 @@ export class BlogService {
       const currentDate = new Date();
       const generatedSlug = slugifyText(
         updateBlogPostDto.title.en,
-        currentDate
+        currentDate,
       );
 
       blogPost.updated_at = currentDate;
@@ -337,8 +319,7 @@ export class BlogService {
         error,
       );
     }
-  };
-
+  }
 
   async createBlog(blogDto: BlogDto, userId: string) {
     const queryRunner =
@@ -429,8 +410,7 @@ export class BlogService {
     } finally {
       await queryRunner.release();
     }
-  };
-
+  }
 
   async deleteBlog(blogPostId: string) {
     const queryRunner =
@@ -460,7 +440,7 @@ export class BlogService {
       const singleLangBlog = await this.filterByLanguage(blogPost, locale);
 
       await queryRunner.commitTransaction();
-      
+
       return translatedSuccessResponse<Blog>(
         this.i18n,
         locale,
@@ -478,8 +458,7 @@ export class BlogService {
     } finally {
       await queryRunner.release();
     }
-  };
-
+  }
 
   async publishBlog(blogPostId: string) {
     const queryRunner =
@@ -517,7 +496,7 @@ export class BlogService {
 
       await queryRunner.manager.getRepository(Blog).save(blogPost);
       const singleLangBlog = await this.filterByLanguage(blogPost, locale);
-      
+
       await queryRunner.commitTransaction();
       return translatedSuccessResponse<Blog>(
         this.i18n,
@@ -536,9 +515,8 @@ export class BlogService {
     } finally {
       await queryRunner.release();
     }
-  };
+  }
 
-  
   async filterByLanguage(blogPost: Blog, language: LanguageEnum) {
     if (
       blogPost.title[language] &&
@@ -559,5 +537,5 @@ export class BlogService {
       description: blogPost.description[LanguageEnum.EN],
       short_description: blogPost.short_description[LanguageEnum.EN],
     };
-  };
+  }
 }

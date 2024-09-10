@@ -1,7 +1,6 @@
-import { BlogCategory } from "src/blog/entities/blog-category.entity";
-import { User } from "../../user/user.entity";
-import { BlogStatus } from "../enums/blogStatus.enum";
-
+import { BlogCategory } from 'src/blog/entities/blog-category.entity';
+import { User } from '../../user/user.entity';
+import { BlogStatus } from '../enums/blogStatus.enum';
 
 export interface BlogSingleLang {
   title: string;
@@ -18,4 +17,4 @@ export interface BlogSingleLang {
   status: BlogStatus;
   users: User[];
   categories: BlogCategory[];
-};
+}

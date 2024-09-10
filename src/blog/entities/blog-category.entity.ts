@@ -1,9 +1,14 @@
-import { IsNotEmpty } from "class-validator";
-import { Blog } from "./blog.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { BlogCategoryStatus } from "../../helpers/enums/blogCategoryStatus.enum";
-import { ApiProperty } from "@nestjs/swagger";
-
+import { IsNotEmpty } from 'class-validator';
+import { Blog } from './blog.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { BlogCategoryStatus } from '../../helpers/enums/blogCategoryStatus.enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'blog_category' })
 export class BlogCategory {
@@ -30,11 +35,14 @@ export class BlogCategory {
     example: BlogCategoryStatus,
     description: 'Status of the blog category',
   })
-  @Column({ type: 'varchar', default: BlogCategoryStatus.ACTIVE, nullable: true })
+  @Column({
+    type: 'varchar',
+    default: BlogCategoryStatus.ACTIVE,
+    nullable: true,
+  })
   status: BlogCategoryStatus;
 
-  @ManyToMany(() => Blog , blogPosts => blogPosts.blog_categories)
-  @JoinTable({ name: "blog_categories" })
+  @ManyToMany(() => Blog, (blogPosts) => blogPosts.blog_categories)
+  @JoinTable({ name: 'blog_categories' })
   blogs: Blog[];
-};
-
+}

@@ -11,11 +11,10 @@ import { BlogCategoryService } from '../services/blog-category.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forFeature([Blog, User, BlogCategory])
+    TypeOrmModule.forFeature([Blog, User, BlogCategory]),
   ],
   controllers: [BlogController],
   providers: [BlogService, BlogCategoryService],
   exports: [TypeOrmModule],
-
 })
-export class BlogModule {};
+export class BlogModule {}
