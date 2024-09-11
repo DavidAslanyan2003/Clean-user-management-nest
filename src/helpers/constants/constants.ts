@@ -5,4 +5,12 @@ export const CATEGORY_NOT_FOUND = 'Category not found';
 export const ERROR_FILE_PATH = 'error-messages';
 export const SUCCESS_FILE_PATH = 'success-messages';
 
-export const activeCategoriesCacheKey = 'activeCategory:getList';
+export const generateActiveCategoriesCacheKey = (
+  page: number,
+  limit: number,
+  orderBy: string,
+  sortOrder: string,
+  locale: string,
+): string => {
+  return `http://api.icketi.am/api/v1/category?page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
+};

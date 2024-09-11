@@ -20,7 +20,9 @@ import {
   CategoryStatus,
 } from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
-import { activeCategoriesCacheKey } from '../../helpers/constants/constants';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { AddCategoriesToRedisCommand } from '../../helpers/classes/commander/add-categories-to-redis.service';
+import { generateActiveCategoriesCacheKey } from '../../helpers/constants/constants';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -30,7 +32,11 @@ export class CategoryService {
     @Inject(REQUEST)
     private readonly request: Request,
     private readonly i18n: I18nService,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
+    private readonly updateCategoriesCommand: AddCategoriesToRedisCommand,
   ) {}
+
   async createCategory(
     newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
@@ -72,6 +78,8 @@ export class CategoryService {
         resultedCategory,
       );
 
+      await this.updateCategoriesCommand.run();
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<Category>(
@@ -112,14 +120,32 @@ export class CategoryService {
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
     const locale = this.request['language'];
+    const cacheKey = generateActiveCategoriesCacheKey(
+      page,
+      limit,
+      orderBy,
+      sortOrder,
+      locale,
+    );
 
     try {
+      let cachedCategories = await this.cacheManager.get<{
+        categories: Category[];
+        total: number;
+      }>(cacheKey);
+
+      if (cachedCategories) {
+        return translatedSuccessResponse<{
+          categories: Category[];
+          total: number;
+        }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', cachedCategories);
+      }
+
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
         .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
-        .cache(activeCategoriesCacheKey)
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
         .take(limit)
@@ -129,6 +155,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.cacheManager.set(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -359,6 +390,8 @@ export class CategoryService {
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
+      await this.updateCategoriesCommand.run();
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<Category>(
@@ -411,6 +444,8 @@ export class CategoryService {
         newCategoryEntity,
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
+
+      await this.updateCategoriesCommand.run();
 
       await queryRunner.commitTransaction();
 

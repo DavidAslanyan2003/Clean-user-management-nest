@@ -18,6 +18,9 @@ import { UserModule } from './user/user.module';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
 import { BlogModule } from './blog/modules/blog.module';
 import { BlogCategoryModule } from './blog/modules/blog-category.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { AddCategoriesToRedisModule } from './helpers/classes/commander/update-categories.module';
 
 @Module({
   imports: [
@@ -25,6 +28,7 @@ import { BlogCategoryModule } from './blog/modules/blog-category.module';
     BlogCategoryModule,
     CategoryModule,
     UserModule,
+    AddCategoriesToRedisModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -42,6 +46,13 @@ import { BlogCategoryModule } from './blog/modules/blog-category.module';
         new QueryResolver(['lang', 'locale', 'l']),
         new HeaderResolver(['content-language']),
       ],
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      ttl: 0,
     }),
     MediaModule,
   ],

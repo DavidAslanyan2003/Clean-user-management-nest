@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AddCategoriesToRedisCommand } from './helpers/classes/commander/add-categories-to-redis.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +28,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  const updateCategoriesCommand = app.get(AddCategoriesToRedisCommand);
+  await updateCategoriesCommand.run();
 
   await app.listen(3000);
 }
