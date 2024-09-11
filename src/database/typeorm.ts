@@ -28,9 +28,9 @@ export const createDataSourceOptions = (
     type: 'redis',
     options: {
       host: configService.get<string>('REDIS_HOST'),
-      port: configService.get<string>('REDIS_PORT'),
-      username: 'my-redis',
-      password: 'my-redis',
+      port: configService.get<number>('REDIS_PORT'),
+      username: configService.get<string>('REDIS_USERNAME'),
+      password: configService.get<string>('REDIS_PASSWORD'),
     },
     duration: configService.get<number>('REDIS_DURATION'),
   },
