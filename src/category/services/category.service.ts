@@ -20,6 +20,7 @@ import {
   CategoryStatus,
 } from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
+import { activeCategoriesCacheKey } from '../../helpers/constants/constants';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -118,6 +119,7 @@ export class CategoryService {
         .createQueryBuilder('category')
         .leftJoinAndSelect('category.user', 'user')
         .where('category.status = :ACTIVE_STATUS', { ACTIVE_STATUS })
+        .cache(activeCategoriesCacheKey)
         .orderBy(`category.${orderBy}`, sortOrder)
         .skip(offset)
         .take(limit)

@@ -24,6 +24,16 @@ export const createDataSourceOptions = (
   ssl: {
     rejectUnauthorized: false,
   },
+  cache: {
+    type: 'redis',
+    options: {
+      host: configService.get<string>('REDIS_HOST'),
+      port: configService.get<string>('REDIS_PORT'),
+      username: 'my-redis',
+      password: 'my-redis',
+    },
+    duration: configService.get<number>('REDIS_DURATION'),
+  },
 });
 
 const configService = new ConfigService();
