@@ -1,14 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migration1725979019765 implements MigrationInterface {
-  name = 'Migration1725979019765';
+export class Migration1725446949189 implements MigrationInterface {
+  name = 'Migration1725446949189';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "public"."category_status_enum" AS ENUM('Active', 'Inactive')`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "category" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" jsonb NOT NULL, "description" jsonb, "status" "public"."category_status_enum" NOT NULL DEFAULT 'Active', "category_image" character varying NOT NULL, "category_icon" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP, "created_by" uuid, CONSTRAINT "UQ_23c05c292c439d77b0de816b500" UNIQUE ("name"), CONSTRAINT "PK_9c4e4a89e3674fc9f382d733f03" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "contact_us" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "subject" character varying(255) NOT NULL, "message" text NOT NULL, CONSTRAINT "PK_b61766a4d93470109266b976cfe" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "blog_category" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "category" jsonb, "status" character varying DEFAULT 'active', CONSTRAINT "PK_32b67ddf344608b5c2fb95bc90c" PRIMARY KEY ("id"))`,
@@ -17,13 +14,7 @@ export class Migration1725979019765 implements MigrationInterface {
       `CREATE TABLE "blog" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "slug" character varying(255), "title" jsonb NOT NULL, "short_description" jsonb NOT NULL, "description" jsonb NOT NULL, "created_at" TIMESTAMP, "updated_at" TIMESTAMP, "image_large" character varying(255), "image_small" character varying(255), "views_count" integer NOT NULL DEFAULT '0', "status" character varying DEFAULT 'draft', "blog_users" uuid, CONSTRAINT "UQ_0dc7e58d73a1390874a663bd599" UNIQUE ("slug"), CONSTRAINT "PK_85c6532ad065a448e9de7638571" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
       `CREATE TABLE "news_letter" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, CONSTRAINT "PK_5580de0d5d97a9eb6527d290ff9" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "contact_us" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "subject" character varying(255) NOT NULL, "message" text NOT NULL, CONSTRAINT "PK_b61766a4d93470109266b976cfe" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "blog_categories" ("blogCategoryId" uuid NOT NULL, "blogId" uuid NOT NULL, CONSTRAINT "PK_3ca690885f506055a9e39922cf2" PRIMARY KEY ("blogCategoryId", "blogId"))`,
@@ -33,9 +24,6 @@ export class Migration1725979019765 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_5ec8c5775ab43ef27089ed84fe" ON "blog_categories" ("blogId") `,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "category" ADD CONSTRAINT "FK_68c078584a67703b28a510583de" FOREIGN KEY ("created_by") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "blog" ADD CONSTRAINT "FK_56f234ee05739e81a1e7c892a49" FOREIGN KEY ("blog_users") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -59,21 +47,15 @@ export class Migration1725979019765 implements MigrationInterface {
       `ALTER TABLE "blog" DROP CONSTRAINT "FK_56f234ee05739e81a1e7c892a49"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "category" DROP CONSTRAINT "FK_68c078584a67703b28a510583de"`,
-    );
-    await queryRunner.query(
       `DROP INDEX "public"."IDX_5ec8c5775ab43ef27089ed84fe"`,
     );
     await queryRunner.query(
       `DROP INDEX "public"."IDX_f8f1135a6f13571fe33d7f982f"`,
     );
     await queryRunner.query(`DROP TABLE "blog_categories"`);
-    await queryRunner.query(`DROP TABLE "contact_us"`);
     await queryRunner.query(`DROP TABLE "news_letter"`);
-    await queryRunner.query(`DROP TABLE "user"`);
     await queryRunner.query(`DROP TABLE "blog"`);
     await queryRunner.query(`DROP TABLE "blog_category"`);
-    await queryRunner.query(`DROP TABLE "category"`);
-    await queryRunner.query(`DROP TYPE "public"."category_status_enum"`);
+    await queryRunner.query(`DROP TABLE "contact_us"`);
   }
 }
