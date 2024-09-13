@@ -18,12 +18,14 @@ import { UserModule } from './user/user.module';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
 import { BlogModule } from './blog/modules/blog.module';
 import { BlogCategoryModule } from './blog/modules/blog-category.module';
+import { FormsModule } from './forms/modules/forms.module';
 
 @Module({
   imports: [
     BlogModule,
     BlogCategoryModule,
     CategoryModule,
+    FormsModule,
     UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
