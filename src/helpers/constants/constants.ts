@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export const DEFAULT_LANGUAGE = 'en';
 
 export const CATEGORY_NOT_FOUND = 'Category not found';
@@ -35,3 +37,10 @@ export const generateInactiveCategoriesCacheKey = (
 ): string => {
   return `http://api.icketi.am/api/v1/category/inactive?page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
 };
+
+export const activeCategoryParamsFilePath =
+  'src/helpers/constants/active-category-params.json';
+export const categoriesWithGivenNameParamsFilePath =
+  'src/helpers/constants/category-with-given-name-params.json';
+export const inactiveCategoryParamsFilePath =
+  'src/helpers/constants/inactive-category-params.json';

@@ -1,22 +1,7 @@
 {
-    "paramBasicVersions": [
-      {
-        "page": 1,
-        "limit": 10,
-        "orderBy": "id",
-        "order": "",
-        "locale": "en",
-        "name": "music"
-
-      },
-      {
-        "page": 2,
-        "limit": 20,
-        "orderBy": "id",
-        "order": "descend",
-        "locale": "ru",
-        "name": "sport"
-      }
-    ]
-  }
-  
+  "page": 1,
+  "limit": 10,
+  "orderBy": "id",
+  "locale": "ru",
+  "name": "Описание-категории-на-русском31"
+}

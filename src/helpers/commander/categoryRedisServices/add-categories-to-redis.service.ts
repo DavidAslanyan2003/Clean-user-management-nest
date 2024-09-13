@@ -3,7 +3,6 @@ import { Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { promises as fs } from 'fs';
-import * as path from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryRunner } from 'typeorm';
 import { Category } from '../../../category/entities/category.entity';
@@ -11,6 +10,9 @@ import {
   generateActiveCategoriesCacheKey,
   generateInactiveCategoriesCacheKey,
   generateCategoriesWithGivenNameCacheKey,
+  activeCategoryParamsFilePath,
+  inactiveCategoryParamsFilePath,
+  categoriesWithGivenNameParamsFilePath,
 } from 'src/helpers/constants/constants';
 import {
   ACTIVE_STATUS,
@@ -23,16 +25,6 @@ import { fliterCategoryByLanguage } from '../../../helpers/validations/service-h
   description: 'Fetch active categories from DB and store them in cache',
 })
 export class UpdateCategoriesCacheCommand extends CommandRunner {
-  private activeCategoryParamsFilePath = path.join(
-    'src/helpers/constants/active-category-params.json',
-  );
-  private categoriesWithGivenNameParamsFilePath = path.join(
-    'src/helpers/constants/named-category-params.json',
-  );
-  private inactiveCategoryParamsFilePath = path.join(
-    'src/helpers/constants/inactive-category-params.json',
-  );
-
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
@@ -55,7 +47,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     try {
       if (updateActiveCategories) {
         const activeCategoryParams = await this.loadCategoryParamsConfig(
-          this.activeCategoryParamsFilePath,
+          activeCategoryParamsFilePath,
         );
 
         for (const params of activeCategoryParams.paramBasicVersions) {
@@ -64,7 +56,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
       }
       if (updateInactiveCategories) {
         const inactiveCategoriesParams = await this.loadCategoryParamsConfig(
-          this.inactiveCategoryParamsFilePath,
+          inactiveCategoryParamsFilePath,
         );
 
         for (const params of inactiveCategoriesParams.paramBasicVersions) {
@@ -74,7 +66,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
       if (updateCategoriesWithGivenNamed) {
         const categoriesWithGivenNameParams =
           await this.loadCategoryParamsConfig(
-            this.categoriesWithGivenNameParamsFilePath,
+            categoriesWithGivenNameParamsFilePath,
           );
 
         for (const params of categoriesWithGivenNameParams.paramBasicVersions) {

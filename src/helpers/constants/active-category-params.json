@@ -1,19 +1,6 @@
 {
-    "paramBasicVersions": [
-      {
-        "page": 1,
-        "limit": 10,
-        "orderBy": "id",
-        "order": "",
-        "locale": "en"
-      },
-      {
-        "page": 2,
-        "limit": 20,
-        "orderBy": "id",
-        "order": "descend",
-        "locale": "ru"
-      }
-    ]
-  }
-  
+  "page": 1,
+  "limit": "2",
+  "orderBy": "id",
+  "locale": "ru"
+}

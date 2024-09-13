@@ -22,11 +22,14 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import {
+  activeCategoryParamsFilePath,
+  categoriesWithGivenNameParamsFilePath,
   generateActiveCategoriesCacheKey,
   generateCategoriesWithGivenNameCacheKey,
   generateInactiveCategoriesCacheKey,
 } from '../../helpers/constants/constants';
 import { UpdateCategoriesCacheCommand } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.service';
+import { promises as fs } from 'fs';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -169,6 +172,13 @@ export class CategoryService {
         total,
       });
 
+      const categoryData = JSON.stringify(
+        { page, limit, orderBy, order, locale },
+        null,
+        2,
+      );
+      await fs.writeFile(activeCategoryParamsFilePath, categoryData, 'utf8');
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<{
@@ -257,6 +267,19 @@ export class CategoryService {
         categories: localizedCategory,
         total,
       });
+
+      name = name.replaceAll(' ', '-');
+
+      const categoryData = JSON.stringify(
+        { page, limit, orderBy, order, locale, name },
+        null,
+        2,
+      );
+      await fs.writeFile(
+        categoriesWithGivenNameParamsFilePath,
+        categoryData,
+        'utf8',
+      );
 
       await queryRunner.commitTransaction();
 
@@ -384,6 +407,17 @@ export class CategoryService {
         categories: localizedCategory,
         total,
       });
+
+      const categoryData = JSON.stringify(
+        { page, limit, orderBy, order, locale },
+        null,
+        2,
+      );
+      await fs.writeFile(
+        categoriesWithGivenNameParamsFilePath,
+        categoryData,
+        'utf8',
+      );
 
       await queryRunner.commitTransaction();
 
