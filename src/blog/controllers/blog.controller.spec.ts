@@ -228,6 +228,29 @@ describe('BlogController', () => {
   });
 
 
+  describe('getBlogsByCategoryId', () => {
+    it('Should return an array of blogs with the same category id', async () => {
+      const { created_at, updated_at, ...restOfMockBlog } = mockBlog;
+      const blogCategoryId = ((await controller.getBlogPost(mockBlog.id)).data.blog_categories[0].id);
+      const response = await controller.getBlogPost(null, blogCategoryId);
+
+      expect(response).toEqual(
+        expect.objectContaining({
+          data:  expect.arrayContaining([
+              expect.objectContaining({
+                ...restOfMockBlog,
+                created_at: expect.any(String),
+                updated_at: expect.any(String),
+              }),
+            ]),
+          message: 'Blog post fetched',
+          error: null,
+        })
+      );
+    });
+  });
+  
+
   describe('getBlogsByUserId', () => {
     it('Should return an array of blogs with the same user id', async () => {
       const { created_at, updated_at, ...restOfMockBlog } = mockBlog;

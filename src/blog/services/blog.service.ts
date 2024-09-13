@@ -146,7 +146,7 @@ export class BlogService {
         const blogPosts = await queryRunner.manager
           .createQueryBuilder(Blog, 'blog')
           .innerJoinAndSelect(
-            'blogPost.blog_categories',
+            'blog.blog_categories',
             'category',
             'category.id = :categoryId',
             { categoryId },
