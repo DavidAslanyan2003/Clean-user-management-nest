@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { UpdateCategoriesCacheCommand } from './helpers/classes/commander/categoryRedisServices/add-categories-to-redis.service';
+import { UpdateCategoriesCacheCommand } from './helpers/commander/categoryRedisServices/add-categories-to-redis.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

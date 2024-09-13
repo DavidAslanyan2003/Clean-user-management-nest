@@ -21,12 +21,12 @@ import {
 } from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { UpdateCategoriesCacheCommand } from '../../helpers/classes/commander/categoryRedisServices/add-categories-to-redis.service';
 import {
   generateActiveCategoriesCacheKey,
-  generateNamedCategoriesCacheKey,
+  generateCategoriesWithGivenNameCacheKey,
   generateInactiveCategoriesCacheKey,
 } from '../../helpers/constants/constants';
+import { UpdateCategoriesCacheCommand } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -213,7 +213,7 @@ export class CategoryService {
     name = name.replaceAll('-', ' ');
 
     const locale = this.request['language'];
-    const cacheKey = generateNamedCategoriesCacheKey(
+    const cacheKey = generateCategoriesWithGivenNameCacheKey(
       page,
       limit,
       orderBy,
@@ -252,6 +252,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.cacheManager.set(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -374,6 +379,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.cacheManager.set(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 

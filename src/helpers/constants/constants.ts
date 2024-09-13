@@ -15,7 +15,7 @@ export const generateActiveCategoriesCacheKey = (
   return `http://api.icketi.am/api/v1/category?page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
 };
 
-export const generateNamedCategoriesCacheKey = (
+export const generateCategoriesWithGivenNameCacheKey = (
   page: number,
   limit: number,
   orderBy: string,

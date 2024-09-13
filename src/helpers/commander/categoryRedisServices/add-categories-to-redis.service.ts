@@ -4,16 +4,19 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { Category } from '../../../../category/entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryRunner } from 'typeorm';
-import { ACTIVE_STATUS, INACTIVE_STATUS } from '../../../constants/status';
-import { fliterCategoryByLanguage } from '../../../validations/service-helper-functions/category-helper-functions';
+import { Category } from '../../../category/entities/category.entity';
 import {
   generateActiveCategoriesCacheKey,
-  generateNamedCategoriesCacheKey,
   generateInactiveCategoriesCacheKey,
-} from '../../../constants/constants';
+  generateCategoriesWithGivenNameCacheKey,
+} from 'src/helpers/constants/constants';
+import {
+  ACTIVE_STATUS,
+  INACTIVE_STATUS,
+} from '../../../helpers/constants/status';
+import { fliterCategoryByLanguage } from '../../../helpers/validations/service-helper-functions/category-helper-functions';
 
 @Command({
   name: 'update-categories',
@@ -23,7 +26,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
   private activeCategoryParamsFilePath = path.join(
     'src/helpers/constants/active-category-params.json',
   );
-  private namedCategoryParamsPath = path.join(
+  private categoriesWithGivenNameParamsFilePath = path.join(
     'src/helpers/constants/named-category-params.json',
   );
   private inactiveCategoryParamsFilePath = path.join(
@@ -45,35 +48,37 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const updateActive = passedParams.includes('--active');
-    const updateInactive = passedParams.includes('--inactive');
-    const updateNamed = passedParams.includes('--named');
+    const updateActiveCategories = passedParams.includes('--active');
+    const updateInactiveCategories = passedParams.includes('--inactive');
+    const updateCategoriesWithGivenNamed = passedParams.includes('--named');
 
     try {
-      if (updateActive) {
+      if (updateActiveCategories) {
         const activeCategoryParams = await this.loadCategoryParamsConfig(
           this.activeCategoryParamsFilePath,
         );
 
         for (const params of activeCategoryParams.paramBasicVersions) {
-          await this.saveActiveCategories(params, queryRunner);
+          await this.updateActiveCategories(params, queryRunner);
         }
       }
-      if (updateInactive) {
+      if (updateInactiveCategories) {
         const inactiveCategoriesParams = await this.loadCategoryParamsConfig(
           this.inactiveCategoryParamsFilePath,
         );
 
         for (const params of inactiveCategoriesParams.paramBasicVersions) {
-          await this.saveInactiveCategories(params, queryRunner);
+          await this.updateInactiveCategories(params, queryRunner);
         }
       }
-      if (updateNamed) {
+      if (updateCategoriesWithGivenNamed) {
         const categoriesWithGivenNameParams =
-          await this.loadCategoryParamsConfig(this.namedCategoryParamsPath);
+          await this.loadCategoryParamsConfig(
+            this.categoriesWithGivenNameParamsFilePath,
+          );
 
         for (const params of categoriesWithGivenNameParams.paramBasicVersions) {
-          await this.saveNamedCategroies(params, queryRunner);
+          await this.updateCategroiesWithGivenName(params, queryRunner);
         }
       }
 
@@ -93,7 +98,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     return JSON.parse(data);
   }
 
-  private async saveActiveCategories(params: any, queryRunner: QueryRunner) {
+  private async updateActiveCategories(params: any, queryRunner: QueryRunner) {
     const { page, limit, orderBy, order, locale } = params;
 
     const offset = (page - 1) * limit;
@@ -128,7 +133,10 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     });
   }
 
-  private async saveInactiveCategories(params: any, queryRunner: QueryRunner) {
+  private async updateInactiveCategories(
+    params: any,
+    queryRunner: QueryRunner,
+  ) {
     const { page, limit, orderBy, order, locale } = params;
 
     const offset = (page - 1) * limit;
@@ -163,12 +171,15 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     });
   }
 
-  private async saveNamedCategroies(params: any, queryRunner: QueryRunner) {
+  private async updateCategroiesWithGivenName(
+    params: any,
+    queryRunner: QueryRunner,
+  ) {
     const { page, limit, orderBy, order, locale, name } = params;
 
     const offset = (page - 1) * limit;
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
-    const cacheKey = generateNamedCategoriesCacheKey(
+    const cacheKey = generateCategoriesWithGivenNameCacheKey(
       page,
       limit,
       orderBy,
