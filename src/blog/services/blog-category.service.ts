@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BlogCategory } from '../entities/blog-category.entity';
-import { LanguageEnum } from 'src/helpers/enums/language.enum';
+import { LanguageEnum } from '../../helpers/enums/language.enum';
 import { BlogCategoryStatus } from '../../helpers/enums/blogCategoryStatus.enum';
 import { BlogCategoryDto } from '../dtos/blog-category.dto';
 import { REQUEST } from '@nestjs/core';
@@ -10,7 +10,7 @@ import { I18nService } from 'nestjs-i18n';
 import {
   translatedErrorResponse,
   translatedSuccessResponse,
-} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+} from '../../helpers/validations/service-helper-functions/category-helper-functions';
 
 export class BlogCategoryService {
   constructor(

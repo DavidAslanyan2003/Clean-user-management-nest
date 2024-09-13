@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { Blog } from '../entities/blog.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { User } from 'src/user/user.entity';
+import { User } from '../../user/user.entity';
 import { BlogController } from '../controllers/blog.controller';
 import { BlogService } from '../services/blog.service';
 import { BlogCategory } from '../entities/blog-category.entity';

@@ -1,22 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from '../entities/blog.entity';
 import { Repository } from 'typeorm';
-import { BlogStatus } from 'src/helpers/enums/blogStatus.enum';
-import { LanguageEnum } from 'src/helpers/enums/language.enum';
-import { convertDates } from 'src/helpers/validations/service-helper-functions/convertDates';
-import { User } from 'src/user/user.entity';
-import { BlogSingleLang } from 'src/helpers/interfaces/blogSingleLang.interface';
-import { slugifyText } from 'src/helpers/validations/service-helper-functions/slugify';
+import { BlogStatus } from '../../helpers/enums/blogStatus.enum';
+import { LanguageEnum } from '../../helpers/enums/language.enum';
+import { convertDates } from '../../helpers/validations/service-helper-functions/convertDates';
+import { User } from '../../user/user.entity';
+import { BlogSingleLang } from '../../helpers/interfaces/blogSingleLang.interface';
+import { slugifyText } from '../../helpers/validations/service-helper-functions/slugify';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { BlogDto } from '../dtos/blog.dto';
 import { BlogCategory } from '../entities/blog-category.entity';
 import {
   translatedErrorResponse,
   translatedSuccessResponse,
-} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
+} from '../../helpers/validations/service-helper-functions/category-helper-functions';
 import { BadRequestException, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
+
 
 export class BlogService {
   constructor(
@@ -400,6 +401,8 @@ export class BlogService {
         singleLangBlog,
       );
     } catch (error) {
+      console.log("here is the error: ",error);
+      
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
         this.i18n,

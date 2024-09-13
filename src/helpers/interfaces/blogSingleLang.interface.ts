@@ -1,4 +1,4 @@
-import { BlogCategory } from 'src/blog/entities/blog-category.entity';
+import { BlogCategory } from '../../blog/entities/blog-category.entity';
 import { User } from '../../user/user.entity';
 import { BlogStatus } from '../enums/blogStatus.enum';
 

@@ -2,11 +2,9 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Headers,
   Query,
   Post,
   Body,
-  Request,
   Param,
   Put,
   Delete,
@@ -19,11 +17,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { BlogService } from '../services/blog.service';
-import { RESPONSE_MESSAGES } from 'src/helpers/response/response-messages';
+import { RESPONSE_MESSAGES } from '../../helpers/response/response-messages';
 import { Blog } from '../entities/blog.entity';
 import { BlogDto } from '../dtos/blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
-import { CheckUUIDPipe } from 'src/helpers/validations/pipes/check-uuid-pipe';
+import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
 
 @Controller('api/v1/blog')
 @ApiTags('Blog')
