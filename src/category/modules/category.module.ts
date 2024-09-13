@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../user/user.entity';
 import { CategoryService } from '../services/category.service';
 import { CategoryController } from '../controllers/category.controller';
-import { AddCategoriesToRedisModule } from '../../helpers/classes/commander/update-categories.module';
+import { AddCategoriesToRedisModule } from '../../helpers/classes/commander/categoryRedisServices/update-categories.module';
 
 @Module({
   imports: [

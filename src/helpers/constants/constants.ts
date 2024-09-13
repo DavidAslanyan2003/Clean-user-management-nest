@@ -14,3 +14,24 @@ export const generateActiveCategoriesCacheKey = (
 ): string => {
   return `http://api.icketi.am/api/v1/category?page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
 };
+
+export const generateNamedCategoriesCacheKey = (
+  page: number,
+  limit: number,
+  orderBy: string,
+  sortOrder: string,
+  locale: string,
+  name: string,
+): string => {
+  return `http://api.icketi.am/api/v1/category/${name}/page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
+};
+
+export const generateInactiveCategoriesCacheKey = (
+  page: number,
+  limit: number,
+  orderBy: string,
+  sortOrder: string,
+  locale: string,
+): string => {
+  return `http://api.icketi.am/api/v1/category/inactive?page=${page}&limit=${limit}&orderBy=${orderBy}&order=${sortOrder}&locale=${locale}`;
+};

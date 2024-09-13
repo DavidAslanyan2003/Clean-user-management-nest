@@ -20,7 +20,7 @@ import { BlogModule } from './blog/modules/blog.module';
 import { BlogCategoryModule } from './blog/modules/blog-category.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import { AddCategoriesToRedisModule } from './helpers/classes/commander/update-categories.module';
+import { AddCategoriesToRedisModule } from './helpers/classes/commander/categoryRedisServices/update-categories.module';
 
 @Module({
   imports: [
