@@ -129,7 +129,7 @@ export class Blog {
   @JoinColumn({ name: 'blog_users' })
   users: User[];
 
-  @ManyToMany(() => BlogCategory, (categories) => categories.blogs)
+  @ManyToMany(() => BlogCategory, (categories) => categories.blogs, { cascade: true, onDelete: 'CASCADE' })
   @JoinTable({ name: 'blog_categories' })
   blog_categories: BlogCategory[];
 }

@@ -15,10 +15,10 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { RESPONSE_MESSAGES } from 'src/helpers/response/response-messages';
+import { RESPONSE_MESSAGES } from '../../helpers/response/response-messages';
 import { BlogCategory } from '../entities/blog-category.entity';
 import { BlogCategoryDto } from '../dtos/blog-category.dto';
-import { CheckUUIDPipe } from 'src/helpers/validations/pipes/check-uuid-pipe';
+import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
 
 @Controller('api/v1/blog-category')
 @ApiTags('Blog-Category')

@@ -5,9 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContactUsDto } from '../dtos/contact-us.dto';
 import { ContactUs } from '../entities/contact-us.entity';
-import { CustomResponse } from 'src/helpers/response/custom-response.dto';
-import { ERROR_MESSAGE, SUCCESS_MESSAGE } from 'src/helpers/constants/status';
-import { RESPONSE_MESSAGES } from 'src/helpers/response/response-messages';
+import { CustomResponse } from '../../helpers/response/custom-response.dto';
+import { ERROR_MESSAGE, SUCCESS_MESSAGE } from '../../helpers/constants/status';
+import { RESPONSE_MESSAGES } from '../../helpers/response/response-messages';
 
 @Injectable()
 export class FormsService {
