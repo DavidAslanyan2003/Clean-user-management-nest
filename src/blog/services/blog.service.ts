@@ -401,8 +401,6 @@ export class BlogService {
         singleLangBlog,
       );
     } catch (error) {
-      console.log("here is the error: ",error);
-      
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
         this.i18n,
