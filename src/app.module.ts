@@ -21,6 +21,7 @@ import { BlogCategoryModule } from './blog/modules/blog-category.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { UpdateCategoriesCacheModule } from './helpers/commander/categoryRedisServices/add-categories-to-redis.module';
+import { RedisModule } from './helpers/redis/redis.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { UpdateCategoriesCacheModule } from './helpers/commander/categoryRedisSe
       ttl: 0,
     }),
     MediaModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -20,16 +20,13 @@ import {
   CategoryStatus,
 } from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { UpdateCategoriesCacheCommand } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.service';
 import {
-  activeCategoryParamsFilePath,
-  categoriesWithGivenNameParamsFilePath,
   generateActiveCategoriesCacheKey,
   generateCategoriesWithGivenNameCacheKey,
   generateInactiveCategoriesCacheKey,
-} from '../../helpers/constants/constants';
-import { UpdateCategoriesCacheCommand } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.service';
-import { promises as fs } from 'fs';
+} from '../../helpers/commander/categoryRedisServices/category-redis-helpers';
+import { RedisService } from '../../helpers/redis/redis.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -39,8 +36,7 @@ export class CategoryService {
     @Inject(REQUEST)
     private readonly request: Request,
     private readonly i18n: I18nService,
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
+    private readonly redisService: RedisService,
     private readonly updateCategoriesCommand: UpdateCategoriesCacheCommand,
   ) {}
 
@@ -85,11 +81,7 @@ export class CategoryService {
         resultedCategory,
       );
 
-      await this.updateCategoriesCommand.run([
-        '--active',
-        '--inactive',
-        '--named',
-      ]);
+      await this.updateCategoriesCommand.run(['--active', '', '--named']);
 
       await queryRunner.commitTransaction();
 
@@ -140,10 +132,7 @@ export class CategoryService {
     );
 
     try {
-      let cachedCategories = await this.cacheManager.get<{
-        categories: Category[];
-        total: number;
-      }>(cacheKey);
+      const cachedCategories = await this.redisService.getCache(cacheKey);
 
       if (cachedCategories) {
         return translatedSuccessResponse<{
@@ -167,17 +156,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.cacheManager.set(cacheKey, {
+      await this.redisService.setCache(cacheKey, {
         categories: localizedCategory,
         total,
       });
-
-      const categoryData = JSON.stringify(
-        { page, limit, orderBy, order, locale },
-        null,
-        2,
-      );
-      await fs.writeFile(activeCategoryParamsFilePath, categoryData, 'utf8');
 
       await queryRunner.commitTransaction();
 
@@ -220,8 +202,6 @@ export class CategoryService {
     orderBy = orderBy || 'id';
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
-    name = name.replaceAll('-', ' ');
-
     const locale = this.request['language'];
     const cacheKey = generateCategoriesWithGivenNameCacheKey(
       page,
@@ -232,11 +212,10 @@ export class CategoryService {
       name,
     );
 
+    name = name.replaceAll('-', ' ');
+
     try {
-      let cachedCategories = await this.cacheManager.get<{
-        categories: Category[];
-        total: number;
-      }>(cacheKey);
+      const cachedCategories = await this.redisService.getCache(cacheKey);
 
       if (cachedCategories) {
         return translatedSuccessResponse<{
@@ -263,23 +242,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.cacheManager.set(cacheKey, {
+      await this.redisService.setCache(cacheKey, {
         categories: localizedCategory,
         total,
       });
-
-      name = name.replaceAll(' ', '-');
-
-      const categoryData = JSON.stringify(
-        { page, limit, orderBy, order, locale, name },
-        null,
-        2,
-      );
-      await fs.writeFile(
-        categoriesWithGivenNameParamsFilePath,
-        categoryData,
-        'utf8',
-      );
 
       await queryRunner.commitTransaction();
 
@@ -376,10 +342,7 @@ export class CategoryService {
     );
 
     try {
-      let cachedCategories = await this.cacheManager.get<{
-        categories: Category[];
-        total: number;
-      }>(cacheKey);
+      const cachedCategories = await this.redisService.getCache(cacheKey);
 
       if (cachedCategories) {
         return translatedSuccessResponse<{
@@ -403,21 +366,10 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.cacheManager.set(cacheKey, {
+      await this.redisService.setCache(cacheKey, {
         categories: localizedCategory,
         total,
       });
-
-      const categoryData = JSON.stringify(
-        { page, limit, orderBy, order, locale },
-        null,
-        2,
-      );
-      await fs.writeFile(
-        categoriesWithGivenNameParamsFilePath,
-        categoryData,
-        'utf8',
-      );
 
       await queryRunner.commitTransaction();
 

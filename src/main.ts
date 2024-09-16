@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { UpdateCategoriesCacheCommand } from './helpers/commander/categoryRedisServices/add-categories-to-redis.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,8 +27,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  const updateCategoriesCommand = app.get(UpdateCategoriesCacheCommand);
-  await updateCategoriesCommand.run(['--active', '--inactive', '--named']);
 
   await app.listen(3000);
 }

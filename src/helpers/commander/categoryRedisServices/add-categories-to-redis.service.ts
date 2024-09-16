@@ -1,24 +1,20 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import { promises as fs } from 'fs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryRunner } from 'typeorm';
 import { Category } from '../../../category/entities/category.entity';
-import {
-  generateActiveCategoriesCacheKey,
-  generateInactiveCategoriesCacheKey,
-  generateCategoriesWithGivenNameCacheKey,
-  activeCategoryParamsFilePath,
-  inactiveCategoryParamsFilePath,
-  categoriesWithGivenNameParamsFilePath,
-} from 'src/helpers/constants/constants';
 import {
   ACTIVE_STATUS,
   INACTIVE_STATUS,
 } from '../../../helpers/constants/status';
 import { fliterCategoryByLanguage } from '../../../helpers/validations/service-helper-functions/category-helper-functions';
+import {
+  generateActiveCategoriesCacheKey,
+  generateInactiveCategoriesCacheKey,
+  generateCategoriesWithGivenNameCacheKey,
+  extractParamsFromUrl,
+  extractParamsFromUrlWithName,
+} from './category-redis-helpers';
+import { RedisService } from '../../../helpers/redis/redis.service';
 
 @Command({
   name: 'update-categories',
@@ -28,8 +24,7 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
+    private readonly redisService: RedisService,
   ) {
     super();
   }
@@ -44,32 +39,25 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     const updateInactiveCategories = passedParams.includes('--inactive');
     const updateCategoriesWithGivenNamed = passedParams.includes('--named');
 
-    try {
-      if (updateActiveCategories) {
-        const activeCategoryParams = await this.loadCategoryParamsConfig(
-          activeCategoryParamsFilePath,
-        );
+    const { activeKeys, inactiveKeys, givenByNameKeys } =
+      await this.categorizeRedisKeys();
 
-        for (const params of activeCategoryParams.paramBasicVersions) {
+    try {
+      if (updateActiveCategories && activeKeys.length) {
+        for (const key of activeKeys) {
+          const params = extractParamsFromUrl(key);
           await this.updateActiveCategories(params, queryRunner);
         }
       }
-      if (updateInactiveCategories) {
-        const inactiveCategoriesParams = await this.loadCategoryParamsConfig(
-          inactiveCategoryParamsFilePath,
-        );
-
-        for (const params of inactiveCategoriesParams.paramBasicVersions) {
+      if (updateInactiveCategories && inactiveKeys.length) {
+        for (const key of inactiveKeys) {
+          const params = extractParamsFromUrl(key);
           await this.updateInactiveCategories(params, queryRunner);
         }
       }
-      if (updateCategoriesWithGivenNamed) {
-        const categoriesWithGivenNameParams =
-          await this.loadCategoryParamsConfig(
-            categoriesWithGivenNameParamsFilePath,
-          );
-
-        for (const params of categoriesWithGivenNameParams.paramBasicVersions) {
+      if (updateCategoriesWithGivenNamed && givenByNameKeys.length) {
+        for (const key of givenByNameKeys) {
+          const params = extractParamsFromUrlWithName(key);
           await this.updateCategroiesWithGivenName(params, queryRunner);
         }
       }
@@ -81,13 +69,6 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  private async loadCategoryParamsConfig(paramsFilePath: string): Promise<{
-    paramBasicVersions: any[];
-  } | null> {
-    const data = await fs.readFile(paramsFilePath, 'utf8');
-    return JSON.parse(data);
   }
 
   private async updateActiveCategories(params: any, queryRunner: QueryRunner) {
@@ -119,10 +100,13 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
       return acc;
     }, []);
 
-    await this.cacheManager.set(cacheKey, {
-      categories: localizedCategory,
-      total,
-    });
+    await this.redisService.setCache(
+      cacheKey,
+      JSON.stringify({
+        categories: localizedCategory,
+        total,
+      }),
+    );
   }
 
   private async updateInactiveCategories(
@@ -157,10 +141,13 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
       return acc;
     }, []);
 
-    await this.cacheManager.set(cacheKey, {
-      categories: localizedCategory,
-      total,
-    });
+    await this.redisService.setCache(
+      cacheKey,
+      JSON.stringify({
+        categories: localizedCategory,
+        total,
+      }),
+    );
   }
 
   private async updateCategroiesWithGivenName(
@@ -198,9 +185,50 @@ export class UpdateCategoriesCacheCommand extends CommandRunner {
       return acc;
     }, []);
 
-    await this.cacheManager.set(cacheKey, {
-      categories: localizedCategory,
-      total,
+    await this.redisService.setCache(
+      cacheKey,
+      JSON.stringify({
+        categories: localizedCategory,
+        total,
+      }),
+    );
+  }
+
+  private async categorizeRedisKeys(): Promise<{
+    activeKeys: string[];
+    inactiveKeys: string[];
+    givenByNameKeys: string[];
+  }> {
+    const redis = this.redisService.getClient();
+
+    const allKeys: string[] = [];
+
+    let cursor = '0';
+    do {
+      const [newCursor, keys] = await redis.scan(
+        cursor,
+        'MATCH',
+        'http://api.icketi.am/api/v1/category*',
+        'COUNT',
+        100,
+      );
+      cursor = newCursor;
+      allKeys.push(...keys);
+    } while (cursor !== '0');
+
+    const activeKeys: string[] = [];
+    const inactiveKeys: string[] = [];
+    const givenByNameKeys: string[] = [];
+
+    allKeys.forEach((key) => {
+      if (key.includes('/inactive')) {
+        inactiveKeys.push(key);
+      } else if (key.includes('/category/')) {
+        givenByNameKeys.push(key);
+      } else {
+        activeKeys.push(key);
+      }
     });
+    return { activeKeys, inactiveKeys, givenByNameKeys };
   }
 }
