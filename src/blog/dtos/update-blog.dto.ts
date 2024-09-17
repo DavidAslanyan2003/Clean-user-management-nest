@@ -1,13 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsPositive } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
-import { IsValidUrl } from 'src/helpers/validations/decorators/validate-url';
+import { ERROR_FILE_PATH } from '../../helpers/constants/constants';
+import { IsValidLocaleRecord } from '../../helpers/validations/decorators/validate-locale-record';
+import { IsValidUrl } from '../../helpers/validations/decorators/validate-url';
 
 export class UpdateBlogDto {
-  @ApiProperty()
-  slug: string;
-
   @ApiProperty({
     example: {
       hy: 'string',

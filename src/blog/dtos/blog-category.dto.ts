@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
-import { IsValidLocaleRecord } from 'src/helpers/validations/decorators/validate-locale-record';
+import { ERROR_FILE_PATH } from '../../helpers/constants/constants';
+import { IsValidLocaleRecord } from '../../helpers/validations/decorators/validate-locale-record';
 
 export class BlogCategoryDto {
   @ApiProperty({

@@ -22,12 +22,14 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { UpdateCategoriesCacheModule } from './helpers/commander/categoryRedisServices/add-categories-to-redis.module';
 import { RedisModule } from './helpers/redis/redis.module';
+import { FormsModule } from './forms/modules/forms.module';
 
 @Module({
   imports: [
     BlogModule,
     BlogCategoryModule,
     CategoryModule,
+    FormsModule,
     UserModule,
     UpdateCategoriesCacheModule,
     ConfigModule.forRoot({
