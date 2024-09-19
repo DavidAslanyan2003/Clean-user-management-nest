@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from '../entities/blog.entity';
 import { Repository } from 'typeorm';
-import { BlogStatus } from '../../helpers/enums/blogStatus.enum';
+import { BlogStatus, BlogUpdateStatus } from '../../helpers/enums/blogStatus.enum';
 import { LanguageEnum } from '../../helpers/enums/language.enum';
 import { convertDates } from '../../helpers/validations/service-helper-functions/convertDates';
 import { User } from '../../user/user.entity';
@@ -17,6 +17,7 @@ import {
 import { BadRequestException, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
+import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
 
 
 export class BlogService {
@@ -538,5 +539,58 @@ export class BlogService {
       description: blogPost.description[LanguageEnum.EN],
       short_description: blogPost.short_description[LanguageEnum.EN],
     };
+  }
+
+  async updateBlogStatus(blogPostId: string, updateStatusDto: UpdateBlogStatusDto) {
+    const queryRunner =
+      this.blogRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const locale = this.request['language'];
+
+    try {
+      const blogPost = await queryRunner.manager
+        .getRepository(Blog)
+        .findOne({ where: { id: blogPostId } });
+
+      if (!blogPost) {
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'BLOG_NOT_FOUND',
+          null,
+        );
+      }
+
+      if (updateStatusDto.status === BlogUpdateStatus.ACTIVE) {
+        blogPost.status = BlogStatus.ACTIVE;
+      } else {
+        blogPost.status = BlogStatus.INACTIVE;
+      }
+
+      const currentDate = new Date();
+      blogPost.updated_at = currentDate;
+
+      await queryRunner.manager.getRepository(Blog).save(blogPost);
+      const singleLangBlog = await this.filterByLanguage(blogPost, locale);
+
+      await queryRunner.commitTransaction();
+      return translatedSuccessResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_POST_UPDATED',
+        singleLangBlog,
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOG_UPDATE_FAIL',
+        error,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -4,3 +4,8 @@ export enum BlogStatus {
   DRAFT = 'draft',
   DELETED = 'deleted',
 }
+
+export enum BlogUpdateStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}
