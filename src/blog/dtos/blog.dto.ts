@@ -61,4 +61,13 @@ export class BlogDto {
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
   @IsValidUrl()
   imageSmall: string;
+
+  @ApiProperty({
+    example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
+    description: 'Blog images urls',
+  })
+  @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
+  @IsValidUrl()
+  @IsArray()
+  images: string[];
 }
