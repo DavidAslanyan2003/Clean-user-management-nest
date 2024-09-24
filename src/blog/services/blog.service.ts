@@ -42,7 +42,9 @@ export class BlogService {
     const locale = this.request['language'];
 
     try {
-      const blogPosts = await queryRunner.manager.getRepository(Blog).find();
+      const blogPosts = await queryRunner.manager.getRepository(Blog).find({
+        relations: ['blog_categories']
+      });
       if (!blogPosts) {
         return translatedErrorResponse<Blog>(
           this.i18n,
@@ -293,6 +295,7 @@ export class BlogService {
       blogPost.views_count = updateBlogPostDto.viewsCount;
       blogPost.image_large = updateBlogPostDto.imageLarge;
       blogPost.image_small = updateBlogPostDto.imageSmall;
+      blogPost.images = updateBlogPostDto.images;
       blogPost.blog_categories = [];
 
       for (const category of updateBlogPostDto.categories) {
@@ -368,6 +371,7 @@ export class BlogService {
       blogPost.slug = generatedSlug;
       blogPost.image_large = blogDto.imageLarge;
       blogPost.image_small = blogDto.imageSmall;
+      blogPost.images = blogDto.images;
 
       if (blogDto.categories.length === 0) {
         await queryRunner.rollbackTransaction();

@@ -110,6 +110,9 @@ export class Blog {
   @IsOptional()
   image_small: string;
 
+  @Column({ type: 'varchar', array: true, nullable: true})
+  images: string[];
+
   @ApiProperty({
     example: '10',
     description: 'Views count of the blog',
