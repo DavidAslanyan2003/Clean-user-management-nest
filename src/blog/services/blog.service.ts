@@ -34,15 +34,10 @@ export class BlogService {
   ) {}
 
   async getAllBlogs(short?: boolean) {
-    const queryRunner =
-      this.blogRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     const locale = this.request['language'];
 
     try {
-      const blogPosts = await queryRunner.manager.getRepository(Blog).find({
+      const blogPosts = await this.blogRepository.find({
         relations: ['blog_categories']
       });
       if (!blogPosts) {
@@ -82,8 +77,6 @@ export class BlogService {
         'BLOGS_GET_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
     }
   }
 
