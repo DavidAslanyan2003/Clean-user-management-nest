@@ -49,6 +49,24 @@ export class BlogController {
     return this.blogService.getAllBlogs(short);
   }
 
+  @Get('inactives')
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_SUCCESS,
+    type: Blog,
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_FAIL,
+  })
+  @ApiOperation({
+    summary: 'Get all inacitve blogs',
+    description: 'Endpoint to get all inactive blogs',
+  })
+  async getAllInacitveBlogs() {
+    return this.blogService.getAllInactiveBlogs();
+  }
+
   @Get()
   @ApiOkResponse({
     status: HttpStatus.CREATED,

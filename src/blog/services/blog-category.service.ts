@@ -23,16 +23,10 @@ export class BlogCategoryService {
   ) {}
 
   async getBlogCategory(categoryId: string) {
-    const queryRunner =
-      this.categoryRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     const locale = this.request['language'];
 
     try {
-      const singleCategory = await queryRunner.manager
-        .getRepository(BlogCategory)
-        .findOne({ where: { id: categoryId } });
+      const singleCategory = await this.categoryRepository.findOne({ where: { id: categoryId } });
 
       if (
         !singleCategory ||
@@ -50,7 +44,6 @@ export class BlogCategoryService {
         singleCategory,
         locale,
       );
-      await queryRunner.commitTransaction();
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
@@ -58,31 +51,21 @@ export class BlogCategoryService {
         filteredCategory,
       );
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-
       return translatedErrorResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCH_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
-    }
+    } 
   }
 
   async getAllBlogCategories() {
-    const queryRunner =
-      this.categoryRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     const locale = this.request['language'];
 
     try {
       const conditions = { where: { status: BlogCategoryStatus.ACTIVE } };
-      const categories = await queryRunner.manager
-        .getRepository(BlogCategory)
-        .find(conditions);
+      const categories = await this.categoryRepository.find(conditions);
 
       if (!categories) {
         return translatedErrorResponse<BlogCategory>(
@@ -99,7 +82,6 @@ export class BlogCategoryService {
         filteredCategories.push(categoryResult);
       });
 
-      await queryRunner.commitTransaction();
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
@@ -107,15 +89,12 @@ export class BlogCategoryService {
         filteredCategories,
       );
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       return translatedErrorResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCH_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
     }
   }
 
