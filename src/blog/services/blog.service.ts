@@ -14,7 +14,7 @@ import {
   translatedErrorResponse,
   translatedSuccessResponse,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
-import { BadRequestException, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
 import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
@@ -38,6 +38,7 @@ export class BlogService {
 
     try {
       const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.ACTIVE },
         relations: ['blog_categories']
       });
       if (!blogPosts) {
@@ -50,20 +51,19 @@ export class BlogService {
       }
 
       let filteredBlogPosts = [];
-      blogPosts.forEach(async (blogPost) => {
+      for (const blogPost of blogPosts) {
         const blogPostResult = await this.filterByLanguage(blogPost, locale);
         if (blogPost.updated_at) {
           blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
         }
         blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+
         if (short) {
           delete blogPostResult.description;
         }
-
-        if (blogPostResult.status === BlogStatus.ACTIVE) {
-          filteredBlogPosts.push(blogPostResult);
-        }
-      });
+      
+        filteredBlogPosts.push(blogPostResult); 
+      }
 
       return translatedSuccessResponse<{
         filteredBlogPosts: Blog[];
@@ -71,6 +71,49 @@ export class BlogService {
         filteredBlogPosts: filteredBlogPosts,
       });
     } catch (error) {
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOGS_GET_FAIL',
+        error,
+      );
+    }
+  }
+
+  async getAllInactiveBlogs() {
+    const locale = this.request['language'];
+    try {
+      const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.INACTIVE },
+        relations: ['blog_categories']
+      });
+
+      if (!blogPosts) {
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'NO_BLOG_POSTS',
+          null,
+        );
+      }
+
+      let filteredBlogPosts = [];
+      for (const blogPost of blogPosts) {
+        const blogPostResult = await this.filterByLanguage(blogPost, locale);
+        if (blogPost.updated_at) {
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
+        }
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+      
+        filteredBlogPosts.push(blogPostResult); 
+      }
+
+      return translatedSuccessResponse<{
+        filteredBlogPosts: Blog[];
+      }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
+        filteredBlogPosts: filteredBlogPosts,
+      });
+    } catch(error) {
       return translatedErrorResponse<Blog>(
         this.i18n,
         locale,
@@ -104,6 +147,7 @@ export class BlogService {
           (blogPost.status !== BlogStatus.ACTIVE &&
             blogPost.status !== BlogStatus.DRAFT)
         ) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -184,6 +228,7 @@ export class BlogService {
         });
 
         if (!user) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -193,6 +238,7 @@ export class BlogService {
         }
 
         if (user.blogs.length === 0) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -229,7 +275,6 @@ export class BlogService {
         );
       }
 
-      throw new BadRequestException();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
