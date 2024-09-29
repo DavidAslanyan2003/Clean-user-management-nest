@@ -40,15 +40,11 @@ export class BlogCategoryService {
         );
       }
 
-      const filteredCategory = await this.filterByLanguage(
-        singleCategory,
-        locale,
-      );
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORY_FETCHED',
-        filteredCategory,
+        singleCategory,
       );
     } catch (error) {
       return translatedErrorResponse<BlogCategory>(
