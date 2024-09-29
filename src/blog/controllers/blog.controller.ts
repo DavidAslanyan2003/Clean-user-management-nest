@@ -23,8 +23,8 @@ import { Blog } from '../entities/blog.entity';
 import { BlogDto } from '../dtos/blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
-import { BlogStatus, BlogUpdateStatus } from 'src/helpers/enums/blogStatus.enum';
 import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
+
 
 @Controller('api/v1/blog')
 @ApiTags('Blog')
@@ -45,8 +45,12 @@ export class BlogController {
     summary: 'Get all blogs',
     description: 'Endpoint to get all blogs',
   })
-  async getAllBlogPosts(@Query('short') short?: boolean) {
-    return this.blogService.getAllBlogs(short);
+  async getAllBlogPosts(
+    @Query('short') short?: boolean,
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllBlogs(orderBy, order, short);
   }
 
   @Get('inactives')
@@ -63,8 +67,11 @@ export class BlogController {
     summary: 'Get all inacitve blogs',
     description: 'Endpoint to get all inactive blogs',
   })
-  async getAllInacitveBlogs() {
-    return this.blogService.getAllInactiveBlogs();
+  async getAllInacitveBlogs(
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllInactiveBlogs(orderBy, order);
   }
 
   @Get()

@@ -33,13 +33,23 @@ export class BlogService {
     private readonly i18n: I18nService,
   ) {}
 
-  async getAllBlogs(short?: boolean) {
+  async getAllBlogs(
+    orderBy: string,
+    order: string,
+    short?: boolean,
+  ) {
     const locale = this.request['language'];
+
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
     try {
       const blogPosts = await this.blogRepository.find({
         where: { status: BlogStatus.ACTIVE },
-        relations: ['blog_categories']
+        relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder
+        },
       });
       if (!blogPosts) {
         return translatedErrorResponse<Blog>(
@@ -80,12 +90,22 @@ export class BlogService {
     }
   }
 
-  async getAllInactiveBlogs() {
+  async getAllInactiveBlogs(
+    orderBy: string,
+    order: string,
+  ) {
     const locale = this.request['language'];
+
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
     try {
       const blogPosts = await this.blogRepository.find({
         where: { status: BlogStatus.INACTIVE },
-        relations: ['blog_categories']
+        relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder
+        },
       });
 
       if (!blogPosts) {
