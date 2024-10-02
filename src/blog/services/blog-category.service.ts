@@ -11,6 +11,7 @@ import {
   translatedErrorResponse,
   translatedSuccessResponse,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
+import { checkBlogCategoryUniqueness } from 'src/helpers/validations/service-helper-functions/blog-helper-functions';
 
 export class BlogCategoryService {
   constructor(
@@ -110,6 +111,13 @@ export class BlogCategoryService {
           null,
         );
       }
+
+      await checkBlogCategoryUniqueness(
+        queryRunner,
+        categoryDto.category,
+        this.i18n,
+        locale
+      );
 
       const newCateogry = new BlogCategory();
       newCateogry.category = categoryDto.category;
