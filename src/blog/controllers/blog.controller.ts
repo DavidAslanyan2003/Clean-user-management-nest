@@ -53,7 +53,7 @@ export class BlogController {
     return this.blogService.getAllBlogs(orderBy, order, short);
   }
 
-  @Get('inactives')
+  @Get('list/inactives')
   @ApiOkResponse({
     status: HttpStatus.CREATED,
     description: RESPONSE_MESSAGES.GET_BLOG_POSTS_SUCCESS,
@@ -72,6 +72,27 @@ export class BlogController {
     @Query('order') order?: string,
   ) {
     return this.blogService.getAllInactiveBlogs(orderBy, order);
+  }
+
+  @Get('list/drafts')
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_SUCCESS,
+    type: Blog,
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_FAIL,
+  })
+  @ApiOperation({
+    summary: 'Get all draft blogs',
+    description: 'Endpoint to get all draft blogs',
+  })
+  async getAllDraftBlogs(
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllDraftBlogs(orderBy, order);
   }
 
   @Get()

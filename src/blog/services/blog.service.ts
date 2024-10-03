@@ -143,6 +143,59 @@ export class BlogService {
     }
   }
 
+  async getAllDraftBlogs(
+    orderBy: string,
+    order: string,
+  ) {
+    const locale = this.request['language'];
+
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
+    try {
+      const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.DRAFT },
+        relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder
+        },
+      });
+
+      if (!blogPosts) {
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'NO_BLOG_POSTS',
+          null,
+        );
+      }
+
+      let filteredBlogPosts = [];
+      for (const blogPost of blogPosts) {
+        const blogPostResult = await this.filterByLanguage(blogPost, locale);
+        if (blogPost.updated_at) {
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
+        }
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+      
+        filteredBlogPosts.push(blogPostResult); 
+      }
+
+      return translatedSuccessResponse<{
+        filteredBlogPosts: Blog[];
+      }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
+        filteredBlogPosts: filteredBlogPosts,
+      });
+    } catch(error) {
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOGS_GET_FAIL',
+        error,
+      );
+    }
+  }
+
   async getBlog(
     blogId?: string,
     categoryId?: string,
