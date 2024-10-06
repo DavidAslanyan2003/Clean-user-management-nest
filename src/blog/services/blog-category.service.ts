@@ -73,17 +73,11 @@ export class BlogCategoryService {
         );
       }
 
-      let filteredCategories = [];
-      categories.forEach(async (category) => {
-        const categoryResult = await this.filterByLanguage(category, locale);
-        filteredCategories.push(categoryResult);
-      });
-
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCHED',
-        filteredCategories,
+        categories,
       );
     } catch (error) {
       return translatedErrorResponse<BlogCategory>(
