@@ -16,13 +16,17 @@ export const createDataSourceOptions = (
   password: configService.get<string>('POSTGRES_PASSWORD'),
   database: configService.get<string>('POSTGRES_DB'),
   synchronize: false,
-  logging: !!configService.get<boolean>('TYPEORM_LOGGING'),
+  logging: true,
   entities: [join(__dirname, '/../**/*.entity{.ts,.js}')],
   migrations: [join(__dirname, '/../database/migrations/*{.ts,.js}')],
   migrationsTableName: 'migrations',
   migrationsRun: false,
   ssl: {
     rejectUnauthorized: false,
+  },
+  extra: {
+    max: 20,
+    connectionTimeoutMillis: 20000,
   },
 });
 

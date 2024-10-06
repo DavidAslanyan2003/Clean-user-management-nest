@@ -19,7 +19,6 @@ import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
 import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
 
-
 export class BlogService {
   constructor(
     @InjectRepository(Blog)
@@ -43,7 +42,7 @@ export class BlogService {
 
     try {
       const blogPosts = await queryRunner.manager.getRepository(Blog).find({
-        relations: ['blog_categories']
+        relations: ['blog_categories'],
       });
       if (!blogPosts) {
         return translatedErrorResponse<Blog>(
