@@ -1,7 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from '../entities/blog.entity';
 import { Repository } from 'typeorm';
-import { BlogStatus, BlogUpdateStatus } from '../../helpers/enums/blogStatus.enum';
+import {
+  BlogStatus,
+  BlogUpdateStatus,
+} from '../../helpers/enums/blogStatus.enum';
 import { LanguageEnum } from '../../helpers/enums/language.enum';
 import { convertDates } from '../../helpers/validations/service-helper-functions/convertDates';
 import { User } from '../../user/user.entity';
@@ -14,7 +17,7 @@ import {
   translatedErrorResponse,
   translatedSuccessResponse,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
-import { BadRequestException, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
 import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
@@ -32,17 +35,19 @@ export class BlogService {
     private readonly i18n: I18nService,
   ) {}
 
-  async getAllBlogs(short?: boolean) {
-    const queryRunner =
-      this.blogRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
+  async getAllBlogs(orderBy: string, order: string, short?: boolean) {
     const locale = this.request['language'];
 
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
     try {
-      const blogPosts = await queryRunner.manager.getRepository(Blog).find({
+      const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.ACTIVE },
         relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder,
+        },
       });
       if (!blogPosts) {
         return translatedErrorResponse<Blog>(
@@ -53,21 +58,20 @@ export class BlogService {
         );
       }
 
-      let filteredBlogPosts = [];
-      blogPosts.forEach(async (blogPost) => {
+      const filteredBlogPosts = [];
+      for (const blogPost of blogPosts) {
         const blogPostResult = await this.filterByLanguage(blogPost, locale);
         if (blogPost.updated_at) {
           blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
         }
         blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+
         if (short) {
           delete blogPostResult.description;
         }
 
-        if (blogPostResult.status === BlogStatus.ACTIVE) {
-          filteredBlogPosts.push(blogPostResult);
-        }
-      });
+        filteredBlogPosts.push(blogPostResult);
+      }
 
       return translatedSuccessResponse<{
         filteredBlogPosts: Blog[];
@@ -81,8 +85,106 @@ export class BlogService {
         'BLOGS_GET_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
+    }
+  }
+
+  async getAllInactiveBlogs(orderBy: string, order: string) {
+    const locale = this.request['language'];
+
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
+    try {
+      const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.INACTIVE },
+        relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder,
+        },
+      });
+
+      if (!blogPosts) {
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'NO_BLOG_POSTS',
+          null,
+        );
+      }
+
+      const filteredBlogPosts = [];
+      for (const blogPost of blogPosts) {
+        const blogPostResult = await this.filterByLanguage(blogPost, locale);
+        if (blogPost.updated_at) {
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
+        }
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+
+        filteredBlogPosts.push(blogPostResult);
+      }
+
+      return translatedSuccessResponse<{
+        filteredBlogPosts: Blog[];
+      }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
+        filteredBlogPosts: filteredBlogPosts,
+      });
+    } catch (error) {
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOGS_GET_FAIL',
+        error,
+      );
+    }
+  }
+
+  async getAllDraftBlogs(orderBy: string, order: string) {
+    const locale = this.request['language'];
+
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
+    try {
+      const blogPosts = await this.blogRepository.find({
+        where: { status: BlogStatus.DRAFT },
+        relations: ['blog_categories'],
+        order: {
+          [orderBy]: sortOrder,
+        },
+      });
+
+      if (!blogPosts) {
+        return translatedErrorResponse<Blog>(
+          this.i18n,
+          locale,
+          'NO_BLOG_POSTS',
+          null,
+        );
+      }
+
+      const filteredBlogPosts = [];
+      for (const blogPost of blogPosts) {
+        const blogPostResult = await this.filterByLanguage(blogPost, locale);
+        if (blogPost.updated_at) {
+          blogPostResult.updated_at = convertDates(blogPost.updated_at, locale);
+        }
+        blogPostResult.created_at = convertDates(blogPost.created_at, locale);
+
+        filteredBlogPosts.push(blogPostResult);
+      }
+
+      return translatedSuccessResponse<{
+        filteredBlogPosts: Blog[];
+      }>(this.i18n, locale, 'BLOGS_GET_SUCCESS', {
+        filteredBlogPosts: filteredBlogPosts,
+      });
+    } catch (error) {
+      return translatedErrorResponse<Blog>(
+        this.i18n,
+        locale,
+        'BLOGS_GET_FAIL',
+        error,
+      );
     }
   }
 
@@ -110,6 +212,7 @@ export class BlogService {
           (blogPost.status !== BlogStatus.ACTIVE &&
             blogPost.status !== BlogStatus.DRAFT)
         ) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -155,7 +258,7 @@ export class BlogService {
           )
           .getMany();
 
-        let filteredBlogPosts = [];
+        const filteredBlogPosts = [];
         blogPosts.forEach(async (blogPost) => {
           const blogPostResult = await this.filterByLanguage(blogPost, locale);
           if (blogPost.updated_at) {
@@ -190,6 +293,7 @@ export class BlogService {
         });
 
         if (!user) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -199,6 +303,7 @@ export class BlogService {
         }
 
         if (user.blogs.length === 0) {
+          await queryRunner.rollbackTransaction();
           return translatedErrorResponse<Blog>(
             this.i18n,
             locale,
@@ -207,7 +312,7 @@ export class BlogService {
           );
         }
 
-        let filteredBlogPosts = [];
+        const filteredBlogPosts = [];
         user.blogs.forEach(async (blogPost) => {
           const blogPostResult = await this.filterByLanguage(blogPost, locale);
           if (blogPost.updated_at) {
@@ -234,8 +339,6 @@ export class BlogService {
           filteredBlogPosts,
         );
       }
-
-      throw new BadRequestException();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return translatedErrorResponse<Blog>(
@@ -544,7 +647,10 @@ export class BlogService {
     };
   }
 
-  async updateBlogStatus(blogPostId: string, updateStatusDto: UpdateBlogStatusDto) {
+  async updateBlogStatus(
+    blogPostId: string,
+    updateStatusDto: UpdateBlogStatusDto,
+  ) {
     const queryRunner =
       this.blogRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
