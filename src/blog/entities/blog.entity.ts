@@ -110,7 +110,7 @@ export class Blog {
   @IsOptional()
   image_small: string;
 
-  @Column({ type: 'varchar', array: true, nullable: true})
+  @Column({ type: 'varchar', array: true, nullable: true })
   images: string[];
 
   @ApiProperty({

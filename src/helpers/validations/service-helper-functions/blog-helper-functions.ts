@@ -1,9 +1,8 @@
-import { BadRequestException } from "@nestjs/common";
-import { I18nService } from "nestjs-i18n";
-import { BlogCategory } from "src/blog/entities/blog-category.entity";
-import { ERROR_FILE_PATH } from "src/helpers/constants/constants";
-import { QueryRunner } from "typeorm";
-
+import { BadRequestException } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+import { BlogCategory } from 'src/blog/entities/blog-category.entity';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { QueryRunner } from 'typeorm';
 
 export async function checkBlogCategoryUniqueness(
   queryRunner: QueryRunner,
@@ -17,7 +16,10 @@ export async function checkBlogCategoryUniqueness(
     .createQueryBuilder('blogCategory');
 
   Object.entries(name).forEach(([key, value]) => {
-    queryBuilder.andWhere(`blogCategory.category ->> :key = :value`, { key, value });
+    queryBuilder.andWhere(`blogCategory.category ->> :key = :value`, {
+      key,
+      value,
+    });
   });
 
   if (id) {

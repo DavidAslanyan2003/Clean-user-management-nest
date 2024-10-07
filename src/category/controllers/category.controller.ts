@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Param,
   Patch,
@@ -23,6 +24,7 @@ import { CustomResponse } from '../../helpers/response/custom-response.dto';
 import { UpdateStatusDto } from '../dtos/update-status.dto';
 import { CATEGORY_NOT_FOUND } from '../../helpers/constants/constants';
 import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
+import { ERROR_MESSAGE } from 'src/helpers/constants/status';
 
 @Controller('api/v1/category')
 @ApiTags('Categories')
@@ -46,7 +48,15 @@ export class CategoryController {
   async create(
     @Body() createCategoryDto: CategoryDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.createCategory(createCategoryDto);
+    const response = await this.categoryService.createCategory(
+      createCategoryDto,
+    );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Get()
@@ -72,12 +82,18 @@ export class CategoryController {
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
-    return this.categoryService.getActiveCategories(
+    const response = await this.categoryService.getActiveCategories(
       page,
       limit,
       orderBy,
       order,
     );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Get('name/:name')
@@ -105,13 +121,19 @@ export class CategoryController {
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
-    return this.categoryService.getCategoryByName(
+    const response = await this.categoryService.getCategoryByName(
       page,
       limit,
       orderBy,
       order,
       name,
     );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Get('/inactive')
@@ -137,12 +159,18 @@ export class CategoryController {
     @Query('orderBy') orderBy?: string,
     @Query('order') order?: string,
   ): Promise<CustomResponse<{ categories: Category[]; total: number }>> {
-    return this.categoryService.getInactiveCategories(
+    const response = await this.categoryService.getInactiveCategories(
       page,
       limit,
       orderBy,
       order,
     );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Get(':id')
@@ -164,7 +192,16 @@ export class CategoryController {
     @Param('id', CheckUUIDPipe) id: string,
     @Query('allLanguages') allLanguages?: string,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.getCategoryById(id, allLanguages);
+    const response = await this.categoryService.getCategoryById(
+      id,
+      allLanguages,
+    );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Put(':id')
@@ -186,7 +223,16 @@ export class CategoryController {
     @Param('id', CheckUUIDPipe) id: string,
     @Body() updateCategoryDto: CategoryDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.updateCategory(id, updateCategoryDto);
+    const response = await this.categoryService.updateCategory(
+      id,
+      updateCategoryDto,
+    );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 
   @Patch(':id/status')
@@ -208,6 +254,15 @@ export class CategoryController {
     @Param('id', CheckUUIDPipe) id: string,
     @Body() updateStatusDto: UpdateStatusDto,
   ): Promise<CustomResponse<Category>> {
-    return this.categoryService.updateStatus(id, updateStatusDto);
+    const response = await this.categoryService.updateStatus(
+      id,
+      updateStatusDto,
+    );
+
+    if (response.status === ERROR_MESSAGE) {
+      throw new HttpException(response, 400);
+    }
+
+    return response;
   }
 }
