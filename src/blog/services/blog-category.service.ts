@@ -27,7 +27,9 @@ export class BlogCategoryService {
     const locale = this.request['language'];
 
     try {
-      const singleCategory = await this.categoryRepository.findOne({ where: { id: categoryId } });
+      const singleCategory = await this.categoryRepository.findOne({
+        where: { id: categoryId },
+      });
 
       if (
         !singleCategory ||
@@ -54,7 +56,7 @@ export class BlogCategoryService {
         'CATEGORIES_FETCH_FAIL',
         error,
       );
-    } 
+    }
   }
 
   async getAllBlogCategories() {
@@ -110,7 +112,7 @@ export class BlogCategoryService {
         queryRunner,
         categoryDto.category,
         this.i18n,
-        locale
+        locale,
       );
 
       const newCateogry = new BlogCategory();

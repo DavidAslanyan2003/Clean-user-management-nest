@@ -9,9 +9,8 @@ export const createMockBlogCategoryDto = (
     category: {
       en: faker.string.sample(100),
       hy: faker.string.sample(100),
-      ru: faker.string.sample(100)
+      ru: faker.string.sample(100),
     },
-    ...overrides
+    ...overrides,
   };
 };
- 

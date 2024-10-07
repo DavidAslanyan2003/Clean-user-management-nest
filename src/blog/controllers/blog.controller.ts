@@ -25,7 +25,6 @@ import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
 import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
 
-
 @Controller('api/v1/blog')
 @ApiTags('Blog')
 export class BlogController {
@@ -197,8 +196,7 @@ export class BlogController {
   })
   async deleteBlogPost(@Param('id', CheckUUIDPipe) id: string) {
     return this.blogService.deleteBlog(id);
-  };
-
+  }
 
   @Patch(':id/status')
   @ApiOkResponse({
@@ -216,7 +214,7 @@ export class BlogController {
   })
   async updateStatus(
     @Param('id', CheckUUIDPipe) id: string,
-    @Body() updateStatusDto: UpdateBlogStatusDto
+    @Body() updateStatusDto: UpdateBlogStatusDto,
   ) {
     return this.blogService.updateBlogStatus(id, updateStatusDto);
   }
