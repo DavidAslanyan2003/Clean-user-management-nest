@@ -316,7 +316,9 @@ export class MediaService {
 
       const result = await this.s3.send(command);
 
-      const files = result.Contents?.map((file) => file.Key) || [];
+      const files =
+        result.Contents?.map((file) => `${this.s3Url}${file.Key}`) || [];
+
       return translatedSuccessResponse<void>(
         this.i18n,
         locale,
