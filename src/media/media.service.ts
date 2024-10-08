@@ -296,4 +296,31 @@ export class MediaService {
       );
     }
   }
+
+  async getFileByUserId(size: string, clientId: number): Promise<any> {
+    const prefix = `event-images-test/${clientId}/${size}/`;
+    try {
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucket,
+        Prefix: prefix,
+      });
+
+      const result = await this.s3.send(command);
+
+      const files = result.Contents?.map((file) => file.Key) || [];
+      return translatedSuccessResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_FETCH_SUCCESS_MESSAGE',
+        files,
+      );
+    } catch (error) {
+      return translatedErrorResponse<void>(
+        this.i18n,
+        this.request['language'],
+        'FILE_FETCH_ERROR_MESSAGE',
+        error,
+      );
+    }
+  }
 }

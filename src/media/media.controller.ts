@@ -7,9 +7,9 @@ import {
   HttpStatus,
   HttpCode,
   Delete,
-  Query,
   Req,
   Param,
+  Get,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { imagesUploadBodySchema } from './validation-schema/image-upload.schema';
@@ -124,5 +124,26 @@ export class MediaController {
   ): Promise<CustomResponse<void>> {
     //99 is auth userId, now it hardcoded
     return await this.mediaService.deleteByPrefix(fileIdentifier, 99);
+  }
+
+  @Get(':size')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get media files by prefix' })
+  @ApiParam({
+    name: 'size',
+    required: true,
+    description: 'The size of the file',
+  })
+  @ApiResponse({
+    status: HttpStatus.FOUND,
+    description: 'Files have been successfully fetched.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Failed to get files.',
+  })
+  async get(@Param('size') size: string): Promise<CustomResponse<any>> {
+    //99 is auth userId, now it hardcoded
+    return await this.mediaService.getFileByUserId(size, 99);
   }
 }

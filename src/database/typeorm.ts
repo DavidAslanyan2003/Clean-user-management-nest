@@ -21,9 +21,9 @@ export const createDataSourceOptions = (
   migrations: [join(__dirname, '/../database/migrations/*{.ts,.js}')],
   migrationsTableName: 'migrations',
   migrationsRun: false,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  // ssl: {
+  //   rejectUnauthorized: false,
+  // },
   extra: {
     max: 20,
     connectionTimeoutMillis: 20000,

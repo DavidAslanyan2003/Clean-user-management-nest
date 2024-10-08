@@ -29,6 +29,7 @@
   "FILE_UPLOAD_ERROR_MESSAGE": "Չհաջողվեց վերբեռնել ֆայլերը:",
   "FREE_SPACE_ERROR_MESSAGE": "Ազատ տարածք չկա!",
   "FILE_DELETE_ERROR_MESSAGE": "Չհաջողվեց ջնջել տվյալ ֆայլը:",
+  "FILE_FETCH_ERROR_MESSAGE": "Չհաջողվեց բեռնել ֆայլերը:",
   "BLOGS_GET_FAIL": "Չհաջողվեց ստանալ բոլոր բլոգները",
   "BLOG_NOT_FOUND": "Բլոգի գրառումը չի գտնվել",
   "USER_NOT_FOUND" : "Օգտատերը չի գտնվել",
