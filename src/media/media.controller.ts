@@ -144,6 +144,6 @@ export class MediaController {
   })
   async get(@Param('size') size: string): Promise<CustomResponse<any>> {
     //99 is auth userId, now it hardcoded
-    return await this.mediaService.getFileByUserId(size, 99);
+    return await this.mediaService.getFiles(size, 99);
   }
 }

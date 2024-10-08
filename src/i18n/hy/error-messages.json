@@ -47,5 +47,6 @@
   "CATEGORY_DELETE_FAIL": "Չհաջողվեց ջնջել կատեգորիան",
   "CATEGORY_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիան",
   "CATEGORIES_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիաները",
-  "CATEGORY_NOT_FOUND": "Կատեգորիան չի գտնվել"
+  "CATEGORY_NOT_FOUND": "Կատեգորիան չի գտնվել",
+  "INVALID_SIZE": "Անվավեր չափ"
 }

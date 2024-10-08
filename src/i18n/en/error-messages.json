@@ -47,5 +47,6 @@
     "CATEGORY_DELETE_FAIL": "Failed to delete category",
     "CATEGORY_FETCH_FAIL": "Failed to fetch category",
     "CATEGORIES_FETCH_FAIL": "Failed to fetch categories",
-    "CATEGORY_NOT_FOUND": "Category not found"
+    "CATEGORY_NOT_FOUND": "Category not found",
+    "INVALID_SIZE": "Invalid size"
 }
