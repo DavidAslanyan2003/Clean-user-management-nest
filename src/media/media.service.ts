@@ -308,6 +308,7 @@ export class MediaService {
         }),
       );
     }
+
     try {
       const command = new ListObjectsV2Command({
         Bucket: this.bucket,
@@ -317,7 +318,12 @@ export class MediaService {
       const result = await this.s3.send(command);
 
       const files =
-        result.Contents?.map((file) => `${this.s3Url}${file.Key}`) || [];
+        result.Contents?.sort((a, b) => {
+          if (a.LastModified && b.LastModified) {
+            return a.LastModified.getTime() - b.LastModified.getTime();
+          }
+          return 0;
+        }).map((file) => `${this.s3Url}${file.Key}`) || [];
 
       return translatedSuccessResponse<void>(
         this.i18n,
