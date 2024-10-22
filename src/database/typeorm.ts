@@ -34,5 +34,3 @@ const configService = new ConfigService();
 export const AppDataSource = new DataSource(
   createDataSourceOptions(configService),
 );
-
-console.log(AppDataSource);

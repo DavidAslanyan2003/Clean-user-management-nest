@@ -45,6 +45,21 @@ services:
     networks:
       - myapp-network
 
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    ports:
+      - "8085:8081"
+    environment:
+      REDIS_HOSTS: redis
+      REDIS_HOST: redis
+      REDIS_PORT: redis:${REDIS_CONTAINER_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      HTTP_USER: root
+      HTTP_PASSWORD: root
+    networks:
+      - myapp-network
+
 networks:
   myapp-network:
     driver: bridge
