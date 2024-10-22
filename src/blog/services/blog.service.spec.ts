@@ -1,15 +1,14 @@
-import { createMockBlogDto } from "../../helpers/constants/mock-blog-data";
-import { BlogDto } from "../dtos/blog.dto";
-import { Blog } from "../entities/blog.entity";
-import { BlogService } from "./blog.service";
-import { TestingModule } from "@nestjs/testing";
+import { createMockBlogDto } from '../../helpers/constants/mock-blog-data';
+import { BlogDto } from '../dtos/blog.dto';
+import { Blog } from '../entities/blog.entity';
+import { BlogService } from './blog.service';
+import { TestingModule } from '@nestjs/testing';
 import { setupTestModule } from '../../../test/test.module';
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { QueryRunner, Repository } from "typeorm";
-import { BlogStatus } from "../../helpers/enums/blogStatus.enum";
-import { UpdateBlogDto } from "../dtos/update-blog.dto";
-import { updateMockBlogDto } from "../../helpers/constants/mock-update-blog-data";
-
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { QueryRunner, Repository } from 'typeorm';
+import { BlogStatus } from '../../helpers/enums/blogStatus.enum';
+import { UpdateBlogDto } from '../dtos/update-blog.dto';
+import { updateMockBlogDto } from '../../helpers/constants/mock-update-blog-data';
 
 let mockBlog: Blog;
 const mockBlogDto: BlogDto = createMockBlogDto();
@@ -43,13 +42,12 @@ describe('BlogService', () => {
     expect(service).toBeDefined();
   });
 
-
   describe('createBlog', () => {
     it('should create a new blog', async () => {
       const userId = '60bbd60c-ce41-4a71-bd60-ee61648a1bcf';
       const response = await service.createBlog(mockBlogDto, userId);
       mockBlog = response.data;
-      
+
       const expectedObject = {
         created_at: mockBlog.created_at,
         views_count: 0,
@@ -63,7 +61,7 @@ describe('BlogService', () => {
         image_small: mockBlogDto.imageSmall,
         updated_at: null,
         status: BlogStatus.DRAFT,
-        id: mockBlog.id
+        id: mockBlog.id,
       };
 
       const returnedObject = {
@@ -79,10 +77,10 @@ describe('BlogService', () => {
         image_small: mockBlog.image_small,
         updated_at: mockBlog.updated_at,
         status: mockBlog.status,
-        id: mockBlog.id
+        id: mockBlog.id,
       };
       expect(returnedObject).toEqual(expectedObject);
-    })
+    });
   });
 
   describe('updateBlog', () => {
@@ -103,7 +101,7 @@ describe('BlogService', () => {
         image_small: mockUpdateBlogDto.imageSmall,
         updated_at: mockBlog.updated_at,
         status: BlogStatus.DRAFT,
-        id: mockBlog.id
+        id: mockBlog.id,
       };
 
       const returnedObject = {
@@ -119,14 +117,13 @@ describe('BlogService', () => {
         image_small: mockBlog.image_small,
         updated_at: mockBlog.updated_at,
         status: mockBlog.status,
-        id: mockBlog.id
+        id: mockBlog.id,
       };
 
       expect(returnedObject).toEqual(expectedObject);
-    })
+    });
   });
 
-  
   describe('publishBlog', () => {
     it('Should publish a blog', async () => {
       const response = await service.publishBlog(mockBlog.id);
@@ -134,7 +131,7 @@ describe('BlogService', () => {
 
       const expectedObject = {
         id: mockBlog.id,
-        user_id: "60bbd60c-ce41-4a71-bd60-ee61648a1bcf",
+        user_id: '60bbd60c-ce41-4a71-bd60-ee61648a1bcf',
         slug: mockBlog.slug,
         title: mockUpdateBlogDto.title.en,
         short_description: mockUpdateBlogDto.shortDescription.en,
@@ -144,12 +141,12 @@ describe('BlogService', () => {
         image_large: mockUpdateBlogDto.imageLarge,
         image_small: mockUpdateBlogDto.imageSmall,
         views_count: mockBlog.views_count,
-        status: BlogStatus.ACTIVE
+        status: BlogStatus.ACTIVE,
       };
- 
+
       const returnedObject = {
         id: mockBlog.id,
-        user_id: "60bbd60c-ce41-4a71-bd60-ee61648a1bcf",
+        user_id: '60bbd60c-ce41-4a71-bd60-ee61648a1bcf',
         slug: mockBlog.slug,
         title: mockBlog.title,
         short_description: mockBlog.short_description,
@@ -159,13 +156,12 @@ describe('BlogService', () => {
         image_large: mockBlog.image_large,
         image_small: mockBlog.image_small,
         views_count: mockBlog.views_count,
-        status: mockBlog.status
+        status: mockBlog.status,
       };
 
       expect(returnedObject).toEqual(expectedObject);
-    })
+    });
   });
-
 
   describe('getAllBlogs', () => {
     it('Should return an array of all active blogs', async () => {
@@ -185,11 +181,10 @@ describe('BlogService', () => {
           }),
           message: 'All blogs have been fetched successfully!',
           error: null,
-        })
+        }),
       );
     });
   });
-
 
   describe('getBlogByBlogId', () => {
     it('Should return a single blog', async () => {
@@ -199,17 +194,16 @@ describe('BlogService', () => {
       expect(response).toEqual(
         expect.objectContaining({
           data: expect.objectContaining({
-                ...restOfMockBlog,
-                created_at: expect.any(String),
-                updated_at: expect.any(String),
-              }),
+            ...restOfMockBlog,
+            created_at: expect.any(String),
+            updated_at: expect.any(String),
+          }),
           message: 'Blog post fetched',
           error: null,
-        })
+        }),
       );
     });
   });
-
 
   describe('getBlogsByUserId', () => {
     it('Should return an array of blogs with the same user id', async () => {
@@ -218,20 +212,19 @@ describe('BlogService', () => {
 
       expect(response).toEqual(
         expect.objectContaining({
-          data:  expect.arrayContaining([
-              expect.objectContaining({
-                ...restOfMockBlog,
-                created_at: expect.any(String),
-                updated_at: expect.any(String),
-              }),
-            ]),
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              ...restOfMockBlog,
+              created_at: expect.any(String),
+              updated_at: expect.any(String),
+            }),
+          ]),
           message: 'Blog post fetched',
           error: null,
-        })
+        }),
       );
     });
   });
-  
 
   describe('deleteBlog', () => {
     it('Should delete a blog', async () => {
@@ -240,7 +233,7 @@ describe('BlogService', () => {
 
       const expectedObject = {
         id: mockBlog.id,
-        user_id: "60bbd60c-ce41-4a71-bd60-ee61648a1bcf",
+        user_id: '60bbd60c-ce41-4a71-bd60-ee61648a1bcf',
         slug: mockBlog.slug,
         title: mockUpdateBlogDto.title.en,
         short_description: mockUpdateBlogDto.shortDescription.en,
@@ -250,12 +243,12 @@ describe('BlogService', () => {
         image_large: mockUpdateBlogDto.imageLarge,
         image_small: mockUpdateBlogDto.imageSmall,
         views_count: mockBlog.views_count,
-        status: BlogStatus.DELETED
+        status: BlogStatus.DELETED,
       };
 
       const returnedObject = {
         id: mockBlog.id,
-        user_id: "60bbd60c-ce41-4a71-bd60-ee61648a1bcf",
+        user_id: '60bbd60c-ce41-4a71-bd60-ee61648a1bcf',
         slug: mockBlog.slug,
         title: mockBlog.title,
         short_description: mockBlog.short_description,
@@ -265,10 +258,10 @@ describe('BlogService', () => {
         image_large: mockBlog.image_large,
         image_small: mockBlog.image_small,
         views_count: mockBlog.views_count,
-        status: mockBlog.status
+        status: mockBlog.status,
       };
 
       expect(returnedObject).toEqual(expectedObject);
-    })
+    });
   });
-})
+});
