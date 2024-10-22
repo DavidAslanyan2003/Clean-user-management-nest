@@ -37,13 +37,17 @@ services:
     image: redis:latest
     restart: always
     ports:
-      - "6379:6379"
+      - "${REDIS_LOCAL_PORT}:${REDIS_CONTAINER_PORT}"
+    env_file:
+      - .env.${NODE_ENV}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - myapp-network
 
 networks:
   myapp-network:
-    external: true
+    driver: bridge
 
 volumes:
   db_data:
