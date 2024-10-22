@@ -20,6 +20,13 @@ import {
   CategoryStatus,
 } from '../../helpers/constants/status';
 import { REQUEST } from '@nestjs/core';
+import { UpdateCategoriesCacheCommand } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.service';
+import {
+  generateActiveCategoriesCacheKey,
+  generateCategoriesWithGivenNameCacheKey,
+  generateInactiveCategoriesCacheKey,
+} from '../../helpers/commander/categoryRedisServices/category-redis-helpers';
+import { RedisService } from '../../helpers/redis/redis.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CategoryService {
@@ -29,7 +36,10 @@ export class CategoryService {
     @Inject(REQUEST)
     private readonly request: Request,
     private readonly i18n: I18nService,
+    private readonly redisService: RedisService,
+    private readonly updateCategoriesCommand: UpdateCategoriesCacheCommand,
   ) {}
+
   async createCategory(
     newCategory: CategoryDto,
   ): Promise<CustomResponse<Category>> {
@@ -71,6 +81,8 @@ export class CategoryService {
         resultedCategory,
       );
 
+      await this.updateCategoriesCommand.run(['--active', '', '--named']);
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<Category>(
@@ -111,8 +123,24 @@ export class CategoryService {
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
     const locale = this.request['language'];
+    const cacheKey = generateActiveCategoriesCacheKey(
+      page,
+      limit,
+      orderBy,
+      sortOrder,
+      locale,
+    );
 
     try {
+      const cachedCategories = await this.redisService.getCache(cacheKey);
+
+      if (cachedCategories) {
+        return translatedSuccessResponse<{
+          categories: Category[];
+          total: number;
+        }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', cachedCategories);
+      }
+
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
@@ -127,6 +155,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.redisService.setCache(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -169,11 +202,28 @@ export class CategoryService {
     orderBy = orderBy || 'id';
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
+    const locale = this.request['language'];
+    const cacheKey = generateCategoriesWithGivenNameCacheKey(
+      page,
+      limit,
+      orderBy,
+      sortOrder,
+      locale,
+      name,
+    );
+
     name = name.replaceAll('-', ' ');
 
-    const locale = this.request['language'];
-
     try {
+      const cachedCategories = await this.redisService.getCache(cacheKey);
+
+      if (cachedCategories) {
+        return translatedSuccessResponse<{
+          categories: Category[];
+          total: number;
+        }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', cachedCategories);
+      }
+
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
@@ -191,6 +241,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.redisService.setCache(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -278,8 +333,24 @@ export class CategoryService {
     const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
 
     const locale = this.request['language'];
+    const cacheKey = generateInactiveCategoriesCacheKey(
+      page,
+      limit,
+      orderBy,
+      sortOrder,
+      locale,
+    );
 
     try {
+      const cachedCategories = await this.redisService.getCache(cacheKey);
+
+      if (cachedCategories) {
+        return translatedSuccessResponse<{
+          categories: Category[];
+          total: number;
+        }>(this.i18n, locale, 'CATEGORY_FETCHED_SUCCESS', cachedCategories);
+      }
+
       const [categories, total] = await queryRunner.manager
         .getRepository(Category)
         .createQueryBuilder('category')
@@ -294,6 +365,11 @@ export class CategoryService {
         acc.push(fliterCategoryByLanguage(locale, category));
         return acc;
       }, []);
+
+      await this.redisService.setCache(cacheKey, {
+        categories: localizedCategory,
+        total,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -357,6 +433,8 @@ export class CategoryService {
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
 
+      await this.updateCategoriesCommand.run(['--active', '', '--named']);
+
       await queryRunner.commitTransaction();
 
       return translatedSuccessResponse<Category>(
@@ -409,6 +487,8 @@ export class CategoryService {
         newCategoryEntity,
       );
       const localizedCategory = fliterCategoryByLanguage(locale, savedCategory);
+
+      await this.updateCategoriesCommand.run(['', '--inactive', '']);
 
       await queryRunner.commitTransaction();
 
