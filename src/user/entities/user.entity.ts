@@ -5,12 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { AccessToken } from './access-token.entity';
-import { DeviceUser } from './device-user.entity';
 import { RefreshToken } from './refresh-token.entity';
-import { VerificationCode } from './verificationCode.entity';
+import { VerificationCode } from './verification-code.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Device } from './device.entity';
 
 @Entity('user')
 export class User {
@@ -90,8 +91,8 @@ export class User {
   @OneToMany(() => AccessToken, (accessToken) => accessToken.user)
   accessTokens: AccessToken[];
 
-  @OneToMany(() => DeviceUser, (deviceUser) => deviceUser.user)
-  deviceUsers: DeviceUser[];
+  @ManyToMany(() => Device, (device) => device.users)
+  devices: Device[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];

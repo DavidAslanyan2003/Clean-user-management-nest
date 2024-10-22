@@ -5,10 +5,12 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { AccessToken } from './access-token.entity';
-import { DeviceUser } from './device-user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from './user.entity';
 
 @Entity('device')
 export class Device {
@@ -82,6 +84,11 @@ export class Device {
   @OneToMany(() => AccessToken, (accessToken) => accessToken.device)
   accessTokens: AccessToken[];
 
-  @OneToMany(() => DeviceUser, (deviceUser) => deviceUser.device)
-  deviceUsers: DeviceUser[];
+  @ManyToMany(() => User, (user) => user.devices)
+  @JoinTable({
+    name: 'user_devices',
+    joinColumn: { name: 'device_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  users: User[];
 }

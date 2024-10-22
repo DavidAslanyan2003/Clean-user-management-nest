@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migration1729615217471 implements MigrationInterface {
-  name = 'Migration1729615217471';
+export class Migration1729616954264 implements MigrationInterface {
+  name = 'Migration1729616954264';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -9,9 +9,6 @@ export class Migration1729615217471 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "blog_categories" DROP CONSTRAINT "FK_5ec8c5775ab43ef27089ed84fed"`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "device_user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, "deviceId" uuid, CONSTRAINT "PK_ae7154510495c7ddda951b07a07" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "device" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "device_identifier" character varying(255) NOT NULL, "device_name" character varying(255), "device_location" character varying(255), "last_ip_address" character varying(255), "last_activity" character varying(255), "push_notification_token" character varying(255), "app_version" character varying(255), "is_device_active" boolean NOT NULL DEFAULT true, "device_type" character varying(255) NOT NULL, "last_login" TIMESTAMP NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_7d4c065ecdd0d2b3261fb161378" UNIQUE ("device_identifier"), CONSTRAINT "PK_2dc10972aa4e27c01378dad2c72" PRIMARY KEY ("id"))`,
@@ -27,6 +24,15 @@ export class Migration1729615217471 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE TABLE "verification_code" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(10) NOT NULL, "status" "public"."verification_code_status_enum" NOT NULL, "sent_at" TIMESTAMP NOT NULL, "registration_method" character varying(255) NOT NULL, "profile_url" character varying(255) NOT NULL, "expires_at" TIMESTAMP NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "user_devices" ("device_id" uuid NOT NULL, "user_id" uuid NOT NULL, CONSTRAINT "PK_69b11f34c0f681c815fb6971018" PRIMARY KEY ("device_id", "user_id"))`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_7c0755b2e06094d9dfb353a377" ON "user_devices" ("device_id") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_28bd79e1b3f7c1168f0904ce24" ON "user_devices" ("user_id") `,
     );
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "name"`);
     await queryRunner.query(
@@ -81,12 +87,6 @@ export class Migration1729615217471 implements MigrationInterface {
       `ALTER TABLE "user" ADD "updated_at" TIMESTAMP NOT NULL DEFAULT now()`,
     );
     await queryRunner.query(
-      `ALTER TABLE "device_user" ADD CONSTRAINT "FK_9c03713cd611b1e24df976af4b6" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "device_user" ADD CONSTRAINT "FK_6018ac770878d4081298a603358" FOREIGN KEY ("deviceId") REFERENCES "device"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "access_token" ADD CONSTRAINT "FK_9949557d0e1b2c19e5344c171e9" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -107,9 +107,21 @@ export class Migration1729615217471 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "blog_categories" ADD CONSTRAINT "FK_5ec8c5775ab43ef27089ed84fed" FOREIGN KEY ("blogId") REFERENCES "blog"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "user_devices" ADD CONSTRAINT "FK_7c0755b2e06094d9dfb353a3772" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user_devices" ADD CONSTRAINT "FK_28bd79e1b3f7c1168f0904ce241" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "user_devices" DROP CONSTRAINT "FK_28bd79e1b3f7c1168f0904ce241"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user_devices" DROP CONSTRAINT "FK_7c0755b2e06094d9dfb353a3772"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "blog_categories" DROP CONSTRAINT "FK_5ec8c5775ab43ef27089ed84fed"`,
     );
@@ -130,12 +142,6 @@ export class Migration1729615217471 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "access_token" DROP CONSTRAINT "FK_9949557d0e1b2c19e5344c171e9"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "device_user" DROP CONSTRAINT "FK_6018ac770878d4081298a603358"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "device_user" DROP CONSTRAINT "FK_9c03713cd611b1e24df976af4b6"`,
     );
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "updated_at"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "created_at"`);
@@ -163,6 +169,13 @@ export class Migration1729615217471 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "user" ADD "name" character varying NOT NULL`,
     );
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_28bd79e1b3f7c1168f0904ce24"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_7c0755b2e06094d9dfb353a377"`,
+    );
+    await queryRunner.query(`DROP TABLE "user_devices"`);
     await queryRunner.query(`DROP TABLE "verification_code"`);
     await queryRunner.query(
       `DROP TYPE "public"."verification_code_status_enum"`,
@@ -170,7 +183,6 @@ export class Migration1729615217471 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "refresh_token"`);
     await queryRunner.query(`DROP TABLE "access_token"`);
     await queryRunner.query(`DROP TABLE "device"`);
-    await queryRunner.query(`DROP TABLE "device_user"`);
     await queryRunner.query(
       `ALTER TABLE "blog_categories" ADD CONSTRAINT "FK_5ec8c5775ab43ef27089ed84fed" FOREIGN KEY ("blogId") REFERENCES "blog"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
