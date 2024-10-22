@@ -1,6 +1,7 @@
 {
     "FILE_UPLOAD_SUCCESS_MESSAGE": "Файлы успешно загружены!",
     "FILE_DELETE_SUCCESS_MESSAGE": "Файл успешно удален!",
+    "FILE_FETCH_SUCCESS_MESSAGE": "Файлы успешно загружены!",
     "CATEGORY_CREATED_SUCCESS": "Категория успешно создана!",
     "CATEGORY_FETCHED_SUCCESS": "Категория успешно получена!",
     "BLOGS_GET_SUCCESS": "Все блоги были успешно получены!",

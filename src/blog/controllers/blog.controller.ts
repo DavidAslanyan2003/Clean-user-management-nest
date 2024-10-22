@@ -8,6 +8,7 @@ import {
   Param,
   Put,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -22,6 +23,7 @@ import { Blog } from '../entities/blog.entity';
 import { BlogDto } from '../dtos/blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { CheckUUIDPipe } from '../../helpers/validations/pipes/check-uuid-pipe';
+import { UpdateBlogStatusDto } from '../dtos/update-blog-status.dto';
 
 @Controller('api/v1/blog')
 @ApiTags('Blog')
@@ -42,8 +44,54 @@ export class BlogController {
     summary: 'Get all blogs',
     description: 'Endpoint to get all blogs',
   })
-  async getAllBlogPosts(@Query('short') short?: boolean) {
-    return this.blogService.getAllBlogs(short);
+  async getAllBlogPosts(
+    @Query('short') short?: boolean,
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllBlogs(orderBy, order, short);
+  }
+
+  @Get('list/inactives')
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_SUCCESS,
+    type: Blog,
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_FAIL,
+  })
+  @ApiOperation({
+    summary: 'Get all inacitve blogs',
+    description: 'Endpoint to get all inactive blogs',
+  })
+  async getAllInacitveBlogs(
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllInactiveBlogs(orderBy, order);
+  }
+
+  @Get('list/drafts')
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_SUCCESS,
+    type: Blog,
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: RESPONSE_MESSAGES.GET_BLOG_POSTS_FAIL,
+  })
+  @ApiOperation({
+    summary: 'Get all draft blogs',
+    description: 'Endpoint to get all draft blogs',
+  })
+  async getAllDraftBlogs(
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order?: string,
+  ) {
+    return this.blogService.getAllDraftBlogs(orderBy, order);
   }
 
   @Get()
@@ -148,5 +196,26 @@ export class BlogController {
   })
   async deleteBlogPost(@Param('id', CheckUUIDPipe) id: string) {
     return this.blogService.deleteBlog(id);
+  }
+
+  @Patch(':id/status')
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: RESPONSE_MESSAGES.BLOG_POST_UPDATED,
+    type: Blog,
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: RESPONSE_MESSAGES.INVALID_REQUEST,
+  })
+  @ApiOperation({
+    summary: 'Update the status of a blog post',
+    description: 'Endpoint to update a blog post',
+  })
+  async updateStatus(
+    @Param('id', CheckUUIDPipe) id: string,
+    @Body() updateStatusDto: UpdateBlogStatusDto,
+  ) {
+    return this.blogService.updateBlogStatus(id, updateStatusDto);
   }
 }

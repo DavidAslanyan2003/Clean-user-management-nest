@@ -11,6 +11,7 @@ import {
   translatedErrorResponse,
   translatedSuccessResponse,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
+import { checkBlogCategoryUniqueness } from 'src/helpers/validations/service-helper-functions/blog-helper-functions';
 
 export class BlogCategoryService {
   constructor(
@@ -23,16 +24,12 @@ export class BlogCategoryService {
   ) {}
 
   async getBlogCategory(categoryId: string) {
-    const queryRunner =
-      this.categoryRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     const locale = this.request['language'];
 
     try {
-      const singleCategory = await queryRunner.manager
-        .getRepository(BlogCategory)
-        .findOne({ where: { id: categoryId } });
+      const singleCategory = await this.categoryRepository.findOne({
+        where: { id: categoryId },
+      });
 
       if (
         !singleCategory ||
@@ -46,43 +43,28 @@ export class BlogCategoryService {
         );
       }
 
-      const filteredCategory = await this.filterByLanguage(
-        singleCategory,
-        locale,
-      );
-      await queryRunner.commitTransaction();
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORY_FETCHED',
-        filteredCategory,
+        singleCategory,
       );
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-
       return translatedErrorResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCH_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
     }
   }
 
   async getAllBlogCategories() {
-    const queryRunner =
-      this.categoryRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     const locale = this.request['language'];
 
     try {
       const conditions = { where: { status: BlogCategoryStatus.ACTIVE } };
-      const categories = await queryRunner.manager
-        .getRepository(BlogCategory)
-        .find(conditions);
+      const categories = await this.categoryRepository.find(conditions);
 
       if (!categories) {
         return translatedErrorResponse<BlogCategory>(
@@ -93,29 +75,19 @@ export class BlogCategoryService {
         );
       }
 
-      let filteredCategories = [];
-      categories.forEach(async (category) => {
-        const categoryResult = await this.filterByLanguage(category, locale);
-        filteredCategories.push(categoryResult);
-      });
-
-      await queryRunner.commitTransaction();
       return translatedSuccessResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCHED',
-        filteredCategories,
+        categories,
       );
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       return translatedErrorResponse<BlogCategory>(
         this.i18n,
         locale,
         'CATEGORIES_FETCH_FAIL',
         error,
       );
-    } finally {
-      await queryRunner.release();
     }
   }
 
@@ -135,6 +107,13 @@ export class BlogCategoryService {
           null,
         );
       }
+
+      await checkBlogCategoryUniqueness(
+        queryRunner,
+        categoryDto.category,
+        this.i18n,
+        locale,
+      );
 
       const newCateogry = new BlogCategory();
       newCateogry.category = categoryDto.category;

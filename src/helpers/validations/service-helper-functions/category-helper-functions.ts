@@ -84,8 +84,15 @@ export async function checkNameUniqueness(
     .getRepository(Category)
     .createQueryBuilder('category');
 
-  Object.entries(name).forEach(([key, value]) => {
-    queryBuilder.andWhere(`category.name ->> :key = :value`, { key, value });
+  const conditions = Object.entries(name).map(([key, value], index) => {
+    return `category.name ->> :key${index} = :value${index}`;
+  });
+
+  conditions.forEach((condition, index) => {
+    queryBuilder.orWhere(condition, {
+      [`key${index}`]: Object.keys(name)[index],
+      [`value${index}`]: Object.values(name)[index],
+    });
   });
 
   if (id) {

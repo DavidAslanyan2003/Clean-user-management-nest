@@ -24,6 +24,7 @@ export const updateMockBlogDto = (
     categories: ['58bf3938-ff33-479b-a216-88edec5cc91e'],
     imageLarge: faker.image.url(),
     imageSmall: faker.image.url(),
+    images: [faker.image.url()],
     ...overrides,
   };
 };
