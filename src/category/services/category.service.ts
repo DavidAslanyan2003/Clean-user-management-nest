@@ -156,10 +156,13 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.redisService.setCache(cacheKey, {
-        categories: localizedCategory,
-        total,
-      });
+      await this.redisService.setCache(
+        cacheKey,
+        JSON.stringify({
+          categories: localizedCategory,
+          total,
+        }),
+      );
 
       await queryRunner.commitTransaction();
 
@@ -242,10 +245,13 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.redisService.setCache(cacheKey, {
-        categories: localizedCategory,
-        total,
-      });
+      await this.redisService.setCache(
+        cacheKey,
+        JSON.stringify({
+          categories: localizedCategory,
+          total,
+        }),
+      );
 
       await queryRunner.commitTransaction();
 
@@ -366,10 +372,13 @@ export class CategoryService {
         return acc;
       }, []);
 
-      await this.redisService.setCache(cacheKey, {
-        categories: localizedCategory,
-        total,
-      });
+      await this.redisService.setCache(
+        cacheKey,
+        JSON.stringify({
+          categories: localizedCategory,
+          total,
+        }),
+      );
 
       await queryRunner.commitTransaction();
 

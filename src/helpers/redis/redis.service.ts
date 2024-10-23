@@ -24,13 +24,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client;
   }
 
-  async getCache(key: string): Promise<any> {
+  async getCache(key: string): Promise<Record<string, any>> {
     const client = this.getClient();
     const data = await client.get(key);
+
     return data ? JSON.parse(data) : null;
   }
 
-  async setCache(key: string, value: any): Promise<void> {
+  async setCache(key: string, value: string): Promise<void> {
     const client = this.getClient();
     await client.set(key, value);
   }
