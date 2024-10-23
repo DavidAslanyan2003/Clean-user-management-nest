@@ -35,7 +35,7 @@ export class BlogService {
     private readonly i18n: I18nService,
   ) {}
 
-  async getAllBlogs(orderBy: string, order: string, short?: boolean) {
+  async getAllBlogs(orderBy?: string, order?: string, short?: boolean) {
     const locale = this.request['language'];
 
     orderBy = orderBy || 'id';
