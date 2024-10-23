@@ -9,10 +9,10 @@ services:
     depends_on:
       - postgres
       - redis
+    env_file:
+      - .env.${NODE_ENV}  
     ports:
       - "${APP_PORT}:3000"
-    env_file:
-      - .env.${NODE_ENV}
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -36,10 +36,10 @@ services:
   redis:
     image: redis:latest
     restart: always
-    ports:
-      - "${REDIS_LOCAL_PORT}:${REDIS_CONTAINER_PORT}"
     env_file:
       - .env.${NODE_ENV}
+    ports:
+      - "${REDIS_LOCAL_PORT}:${REDIS_CONTAINER_PORT}"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
