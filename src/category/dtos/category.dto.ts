@@ -31,7 +31,7 @@ export class CategoryDto {
   description: Record<string, string>;
 
   @ApiProperty({
-    example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
+    example: 'https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category image url',
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })
@@ -39,7 +39,7 @@ export class CategoryDto {
   categoryImage: string;
 
   @ApiProperty({
-    example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
+    example: 'https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
   @IsNotEmpty({ message: `${ERROR_FILE_PATH}.IS_EMPTY` })

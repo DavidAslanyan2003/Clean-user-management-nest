@@ -68,14 +68,14 @@ export class Device {
   last_login: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was created',
+    description: 'Timestamp when the table was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was last updated',
+    description: 'Timestamp when the table was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

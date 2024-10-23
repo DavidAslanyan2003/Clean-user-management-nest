@@ -12,6 +12,7 @@ import { RefreshToken } from './refresh-token.entity';
 import { VerificationCode } from './verification-code.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Device } from './device.entity';
+import { UserFee } from './user-fee.entity';
 
 @Entity('user')
 export class User {
@@ -69,14 +70,14 @@ export class User {
   deletion_reason: string;
 
   @ApiProperty({
-    description: 'Timestamp when the device was created',
+    description: 'Timestamp when the table was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was last updated',
+    description: 'Timestamp when the table was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -96,4 +97,7 @@ export class User {
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];
+
+  @OneToMany(() => UserFee, (fees) => fees.user)
+  fees: UserFee[];
 }

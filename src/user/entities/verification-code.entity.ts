@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -16,6 +17,7 @@ export class VerificationCode {
   id: string;
 
   @ManyToOne(() => User, (user) => user.verificationCodes)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ApiProperty({ description: 'Verification code' })
@@ -46,14 +48,14 @@ export class VerificationCode {
   expires_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was created',
+    description: 'Timestamp when the table was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was last updated',
+    description: 'Timestamp when the table was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

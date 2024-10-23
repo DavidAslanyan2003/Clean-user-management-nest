@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Device } from './device.entity';
@@ -17,9 +18,11 @@ export class RefreshToken {
   id: string;
 
   @ManyToOne(() => User, (user) => user.refreshTokens)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Device, { nullable: true })
+  @JoinColumn({ name: 'device_id' })
   device: Device;
 
   @ApiProperty({ description: 'Refresh token value' })
@@ -38,14 +41,14 @@ export class RefreshToken {
   is_active: boolean;
 
   @ApiProperty({
-    description: 'Timestamp when the device was created',
+    description: 'Timestamp when the table was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was last updated',
+    description: 'Timestamp when the table was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
