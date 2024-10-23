@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Device } from './device.entity';
@@ -17,9 +18,11 @@ export class AccessToken {
   id: string;
 
   @ManyToOne(() => User, (user) => user.accessTokens)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Device, (device) => device.accessTokens, { nullable: true })
+  @JoinColumn({ name: 'device_id' })
   device: Device;
 
   @ApiProperty({ description: 'Access token value' })
@@ -38,14 +41,14 @@ export class AccessToken {
   is_active: boolean;
 
   @ApiProperty({
-    description: 'Timestamp when the device was created',
+    description: 'Timestamp when the record was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the device was last updated',
+    description: 'Timestamp when the record was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

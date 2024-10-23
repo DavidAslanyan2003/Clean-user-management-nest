@@ -53,14 +53,14 @@ export class Category {
   status: CategoryStatus;
 
   @ApiProperty({
-    example: '<https://s3.amazonaws.com/bucket-name/path-to-image>',
+    example: 'https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category image url',
   })
   @Column({ type: 'varchar', nullable: false })
   category_image: string;
 
   @ApiProperty({
-    example: '<https://s3.amazonaws.com/bucket-name/path-to-image',
+    example: 'https://s3.amazonaws.com/bucket-name/path-to-image',
     description: 'Category icon url',
   })
   @Column({ type: 'varchar', nullable: false })
