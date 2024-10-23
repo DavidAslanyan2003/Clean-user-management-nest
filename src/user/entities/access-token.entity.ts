@@ -41,14 +41,14 @@ export class AccessToken {
   is_active: boolean;
 
   @ApiProperty({
-    description: 'Timestamp when the table was created',
+    description: 'Timestamp when the record was created',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the table was last updated',
+    description: 'Timestamp when the record was last updated',
     default: () => 'CURRENT_TIMESTAMP',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
