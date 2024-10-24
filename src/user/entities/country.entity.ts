@@ -1,36 +1,29 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('user_fee')
-export class UserFee {
+@Entity('country')
+export class Country {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
+    type: 'string',
     example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
-    description: 'User fee ID',
     format: 'uuid',
   })
-  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.fees)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @Column({ type: 'varchar', length: 255, unique: true })
+  @ApiProperty({ type: 'string', example: 'Armenia' })
+  name: string;
 
-  @ApiProperty({ description: 'Type of fee', nullable: false })
-  @Column({ type: 'enum', enum: [] })
-  fee_type: string;
-
-  @ApiProperty({ description: 'Fee amount', nullable: false })
-  @Column({ type: 'int' })
-  amount: number;
+  @Column({ type: 'varchar', length: 255, unique: true })
+  @ApiProperty({ type: 'string', example: '374' })
+  code: string;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

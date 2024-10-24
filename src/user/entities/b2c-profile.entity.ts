@@ -1,36 +1,53 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
+import { City } from './city.entity';
+import { Country } from './country.entity';
 
-@Entity('user_fee')
-export class UserFee {
+@Entity('b2c_profile')
+export class B2CProfile {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
+    type: 'string',
     example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
-    description: 'User fee ID',
     format: 'uuid',
   })
-  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.fees)
+  @OneToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ApiProperty({ description: 'Type of fee', nullable: false })
-  @Column({ type: 'enum', enum: [] })
-  fee_type: string;
+  @Column({ type: 'int', default: 0 })
+  @ApiProperty({ type: 'int', default: 0 })
+  loyalty_points: number;
 
-  @ApiProperty({ description: 'Fee amount', nullable: false })
+  @Column({ type: 'int', default: 0 })
+  @ApiProperty({ type: 'int', default: 0 })
+  upcoming_events_count: number;
+
   @Column({ type: 'int' })
-  amount: number;
+  @ApiProperty({ type: 'int' })
+  following_list: number;
+
+  @ManyToOne(() => Country)
+  @JoinColumn({ name: 'country_id' })
+  @ApiProperty({ type: () => Country })
+  country: Country;
+
+  @ManyToOne(() => City)
+  @JoinColumn({ name: 'city_id' })
+  @ApiProperty({ type: () => City })
+  city: City;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',
