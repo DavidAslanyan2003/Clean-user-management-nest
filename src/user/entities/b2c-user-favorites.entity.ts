@@ -10,10 +10,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { B2BProfile } from './b2b-profile.entity';
-import {
-  UserFavoriteType,
-  UserFavoriteStatus,
-} from '../../helpers/enums/user.enum';
+import { UserFavoriteTypeEnum } from '../enums/user-favorite-type.enum';
+import { UserFavoriteStatusEnum } from '../enums/user-favorite-status.enum';
 
 @Entity('b2c_user_favorites')
 export class B2CUserFavorites {
@@ -25,12 +23,12 @@ export class B2CUserFavorites {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'enum', enum: UserFavoriteType })
+  @Column({ type: 'enum', enum: UserFavoriteTypeEnum })
   @ApiProperty({
     type: 'enum',
-    enum: UserFavoriteType,
+    enum: UserFavoriteTypeEnum,
   })
-  type: string;
+  type: UserFavoriteTypeEnum;
 
   // @ManyToOne(() => Event)
   // @JoinColumn({ name: 'event_id' })
@@ -41,9 +39,9 @@ export class B2CUserFavorites {
   @JoinColumn({ name: 'b2b_profile_id' })
   b2bProfile: B2BProfile;
 
-  @Column({ type: 'enum', enum: UserFavoriteStatus })
-  @ApiProperty({ type: 'enum', enum: UserFavoriteStatus })
-  status: UserFavoriteStatus;
+  @Column({ type: 'enum', enum: UserFavoriteStatusEnum })
+  @ApiProperty({ type: 'enum', enum: UserFavoriteStatusEnum })
+  status: UserFavoriteStatusEnum;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migration1729782239911 implements MigrationInterface {
-  name = 'Migration1729782239911';
+export class Migration1729784694757 implements MigrationInterface {
+  name = 'Migration1729784694757';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -17,7 +17,10 @@ export class Migration1729782239911 implements MigrationInterface {
       `CREATE TABLE "access_token" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "token" text NOT NULL, "expires_at" TIMESTAMP NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, "device_id" uuid, CONSTRAINT "PK_f20f028607b2603deabd8182d12" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "refresh_token" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "token" text NOT NULL, "expires_at" TIMESTAMP NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, "device_id" uuid, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`,
+      `CREATE TYPE "public"."verification_code_status_enum" AS ENUM('active', 'inactive', 'verified')`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "verification_code" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(10) NOT NULL, "status" "public"."verification_code_status_enum" NOT NULL, "sent_at" TIMESTAMP NOT NULL, "registration_method" character varying(255) NOT NULL, "profile_url" character varying(255) NOT NULL, "expires_at" TIMESTAMP NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TYPE "public"."user_fee_fee_type_enum" AS ENUM('fixed', 'percentage', 'tiered')`,
@@ -41,10 +44,7 @@ export class Migration1729782239911 implements MigrationInterface {
       `CREATE TABLE "b2c_user_favorites" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "type" "public"."b2c_user_favorites_type_enum" NOT NULL, "status" "public"."b2c_user_favorites_status_enum" NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, "b2b_profile_id" uuid, CONSTRAINT "PK_e7f01a95771d026b3e5a6ab6840" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "public"."verification_code_status_enum" AS ENUM('active', 'inactive', 'verified')`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "verification_code" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(10) NOT NULL, "status" "public"."verification_code_status_enum" NOT NULL, "sent_at" TIMESTAMP NOT NULL, "registration_method" character varying(255) NOT NULL, "profile_url" character varying(255) NOT NULL, "expires_at" TIMESTAMP NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "refresh_token" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "token" text NOT NULL, "expires_at" TIMESTAMP NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, "device_id" uuid, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "city" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_b222f51ce26f7e5ca86944a6739" PRIMARY KEY ("id"))`,
@@ -114,7 +114,7 @@ export class Migration1729782239911 implements MigrationInterface {
       `ALTER TABLE "user" ADD "user_type" "public"."user_user_type_enum" NOT NULL`,
     );
     await queryRunner.query(
-      `CREATE TYPE "public"."user_status_enum" AS ENUM('Active', 'Unverified', 'Deleted', 'Blocked')`,
+      `CREATE TYPE "public"."user_status_enum" AS ENUM('Aative', 'unverified', 'deleted', 'blocked')`,
     );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "status" "public"."user_status_enum" NOT NULL`,
@@ -138,10 +138,7 @@ export class Migration1729782239911 implements MigrationInterface {
       `ALTER TABLE "access_token" ADD CONSTRAINT "FK_013745f31593970f8b6f412388a" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_d0158ce1ea156acae12df627894" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "verification_code" ADD CONSTRAINT "FK_20dc9f8d86616620881be140833" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "user_fee" ADD CONSTRAINT "FK_d65961bfb7279d25b7e41a67bf4" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -156,7 +153,10 @@ export class Migration1729782239911 implements MigrationInterface {
       `ALTER TABLE "b2c_user_favorites" ADD CONSTRAINT "FK_0235676d1d86650aa7ebfd5e2b8" FOREIGN KEY ("b2b_profile_id") REFERENCES "b2b_profile"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "verification_code" ADD CONSTRAINT "FK_20dc9f8d86616620881be140833" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_d0158ce1ea156acae12df627894" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "b2c_profile" ADD CONSTRAINT "FK_61c63605b17c73230c2c43691c8" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -222,7 +222,10 @@ export class Migration1729782239911 implements MigrationInterface {
       `ALTER TABLE "b2c_profile" DROP CONSTRAINT "FK_61c63605b17c73230c2c43691c8"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "verification_code" DROP CONSTRAINT "FK_20dc9f8d86616620881be140833"`,
+      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_d0158ce1ea156acae12df627894"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4"`,
     );
     await queryRunner.query(
       `ALTER TABLE "b2c_user_favorites" DROP CONSTRAINT "FK_0235676d1d86650aa7ebfd5e2b8"`,
@@ -237,10 +240,7 @@ export class Migration1729782239911 implements MigrationInterface {
       `ALTER TABLE "user_fee" DROP CONSTRAINT "FK_d65961bfb7279d25b7e41a67bf4"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_d0158ce1ea156acae12df627894"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4"`,
+      `ALTER TABLE "verification_code" DROP CONSTRAINT "FK_20dc9f8d86616620881be140833"`,
     );
     await queryRunner.query(
       `ALTER TABLE "access_token" DROP CONSTRAINT "FK_013745f31593970f8b6f412388a"`,
@@ -293,10 +293,7 @@ export class Migration1729782239911 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "b2c_delivery_address"`);
     await queryRunner.query(`DROP TABLE "b2c_profile"`);
     await queryRunner.query(`DROP TABLE "city"`);
-    await queryRunner.query(`DROP TABLE "verification_code"`);
-    await queryRunner.query(
-      `DROP TYPE "public"."verification_code_status_enum"`,
-    );
+    await queryRunner.query(`DROP TABLE "refresh_token"`);
     await queryRunner.query(`DROP TABLE "b2c_user_favorites"`);
     await queryRunner.query(
       `DROP TYPE "public"."b2c_user_favorites_status_enum"`,
@@ -310,7 +307,10 @@ export class Migration1729782239911 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "user_fee"`);
     await queryRunner.query(`DROP TYPE "public"."user_fee_fee_type_enum"`);
-    await queryRunner.query(`DROP TABLE "refresh_token"`);
+    await queryRunner.query(`DROP TABLE "verification_code"`);
+    await queryRunner.query(
+      `DROP TYPE "public"."verification_code_status_enum"`,
+    );
     await queryRunner.query(`DROP TABLE "access_token"`);
     await queryRunner.query(`DROP TABLE "device"`);
     await queryRunner.query(
