@@ -13,6 +13,7 @@ import { VerificationCode } from './verification-code.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Device } from './device.entity';
 import { UserFee } from './user-fee.entity';
+import { B2CUserFavorites } from './b2c-user-favorites.entity';
 
 @Entity('user')
 export class User {
@@ -106,4 +107,7 @@ export class User {
 
   @OneToMany(() => UserFee, (fees) => fees.user)
   fees: UserFee[];
+
+  @OneToMany(() => B2CUserFavorites, (favorites) => favorites.user)
+  favorites: B2CUserFavorites[];
 }

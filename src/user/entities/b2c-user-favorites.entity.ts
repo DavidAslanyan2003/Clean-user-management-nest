@@ -4,44 +4,42 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
-import { B2CDeliveryAddress } from './b2c-delivery-address.entity';
+import { B2BProfile } from './b2b-profile.entity';
 
-@Entity('b2c_profile')
-export class B2CProfile {
+@Entity('b2c_user_favorites')
+export class B2CUserFavorites {
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty({
-    type: 'string',
-    example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
-    format: 'uuid',
-  })
+  @ApiProperty({ type: 'string', format: 'uuid' })
   id: string;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.favorites)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'int', default: 0 })
-  @ApiProperty({ type: 'int', default: 0 })
-  loyalty_points: number;
+  @Column({ type: 'enum', enum: ['event', 'artist', 'venue', 'organizer'] })
+  @ApiProperty({
+    type: 'enum',
+    enum: ['event', 'artist', 'venue', 'organizer'],
+  })
+  type: string;
 
-  @Column({ type: 'int', default: 0 })
-  @ApiProperty({ type: 'int', default: 0 })
-  upcoming_events_count: number;
+  // @ManyToOne(() => Event)
+  // @JoinColumn({ name: 'event_id' })
+  // @ApiProperty({ type: () => Event, nullable: true })
+  // event: Event;
 
-  @Column({ type: 'int' })
-  @ApiProperty({ type: 'int' })
-  following_list: number;
+  @ManyToOne(() => B2BProfile, (profile) => profile.favorites)
+  @JoinColumn({ name: 'b2b_profile_id' })
+  b2bProfile: B2BProfile;
 
-  @ManyToOne(() => B2CDeliveryAddress, (delivery) => delivery.b2cProfile)
-  @JoinColumn({ name: 'delivery_id' })
-  @ApiProperty({ type: () => B2CDeliveryAddress })
-  deliveryAddress: B2CDeliveryAddress;
+  @Column({ type: 'enum', enum: ['active', 'deleted'] })
+  @ApiProperty({ type: 'string', enum: ['active', 'deleted'] })
+  status: 'active' | 'deleted';
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
+import { B2CUserFavorites } from './b2c-user-favorites.entity';
 
 @Entity('b2b_profile')
 export class B2BProfile {
@@ -126,4 +128,10 @@ export class B2BProfile {
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(
+    () => B2CUserFavorites,
+    (b2cUserFavorites) => b2cUserFavorites.b2bProfile,
+  )
+  favorites: B2CUserFavorites[];
 }

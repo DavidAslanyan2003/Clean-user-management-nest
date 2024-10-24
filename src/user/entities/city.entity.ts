@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { B2CDeliveryAddress } from './b2c-delivery-address.entity';
 
 @Entity('city')
 export class City {
@@ -36,4 +38,10 @@ export class City {
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(
+    () => B2CDeliveryAddress,
+    (delivaryAddress) => delivaryAddress.city,
+  )
+  delivaryAddress: B2CDeliveryAddress[];
 }
