@@ -9,6 +9,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { B2BProfile } from './b2b-profile.entity';
+import {
+  SubscriptionStatus,
+  SubscriptionType,
+} from '../../helpers/enums/user.enum';
 
 @Entity('subscription_detail')
 export class SubscriptionDetail {
@@ -24,12 +28,17 @@ export class SubscriptionDetail {
   @JoinColumn({ name: 'b2b_profile_id' })
   b2bProfile: B2BProfile;
 
-  @ApiProperty({ description: 'Subscription type', nullable: false })
+  @ApiProperty({
+    description: 'Subscription type',
+    nullable: false,
+    type: 'enum',
+    enum: SubscriptionType,
+  })
   @Column({
     type: 'enum',
-    enum: ['free', 'per event', 'premium', 'enterprise'],
+    enum: SubscriptionType,
   })
-  subscription_type: string;
+  subscription_type: SubscriptionType;
 
   @ApiProperty({ description: 'Subscription start date', nullable: false })
   @Column({ type: 'timestamp', nullable: false })
@@ -39,9 +48,14 @@ export class SubscriptionDetail {
   @Column({ type: 'timestamp', nullable: false })
   end_date: Date;
 
-  @ApiProperty({ description: 'Subscription status', nullable: false })
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'expired'] })
-  status: string;
+  @ApiProperty({
+    description: 'Subscription status',
+    nullable: false,
+    type: 'enum',
+    enum: SubscriptionStatus,
+  })
+  @Column({ type: 'enum', enum: SubscriptionStatus })
+  status: SubscriptionStatus;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

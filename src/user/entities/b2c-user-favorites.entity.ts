@@ -10,6 +10,10 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { B2BProfile } from './b2b-profile.entity';
+import {
+  UserFavoriteType,
+  UserFavoriteStatus,
+} from '../../helpers/enums/user.enum';
 
 @Entity('b2c_user_favorites')
 export class B2CUserFavorites {
@@ -21,10 +25,10 @@ export class B2CUserFavorites {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'enum', enum: ['event', 'artist', 'venue', 'organizer'] })
+  @Column({ type: 'enum', enum: UserFavoriteType })
   @ApiProperty({
     type: 'enum',
-    enum: ['event', 'artist', 'venue', 'organizer'],
+    enum: UserFavoriteType,
   })
   type: string;
 
@@ -37,9 +41,9 @@ export class B2CUserFavorites {
   @JoinColumn({ name: 'b2b_profile_id' })
   b2bProfile: B2BProfile;
 
-  @Column({ type: 'enum', enum: ['active', 'deleted'] })
-  @ApiProperty({ type: 'string', enum: ['active', 'deleted'] })
-  status: 'active' | 'deleted';
+  @Column({ type: 'enum', enum: UserFavoriteStatus })
+  @ApiProperty({ type: 'enum', enum: UserFavoriteStatus })
+  status: UserFavoriteStatus;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

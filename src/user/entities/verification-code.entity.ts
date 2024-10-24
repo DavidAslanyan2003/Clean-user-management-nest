@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { VerificationCodeStatus } from '../../helpers/enums/user.enum';
 
 @Entity('verification_code')
 export class VerificationCode {
@@ -30,10 +31,11 @@ export class VerificationCode {
 
   @ApiProperty({
     description: 'Status of the code',
-    enum: ['active', 'inactive', 'verified'],
+    type: 'enum',
+    enum: VerificationCodeStatus,
   })
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'verified'] })
-  status: string;
+  @Column({ type: 'enum', enum: VerificationCodeStatus })
+  status: VerificationCodeStatus;
 
   @ApiProperty({ description: 'Timestamp when the code was sent' })
   @Column({ type: 'timestamp' })

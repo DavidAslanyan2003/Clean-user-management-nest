@@ -9,6 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { FeeType } from '../../helpers/enums/user.enum';
 
 @Entity('user_fee')
 export class UserFee {
@@ -24,9 +25,14 @@ export class UserFee {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ApiProperty({ description: 'Type of fee', nullable: false })
-  @Column({ type: 'enum', enum: [] })
-  fee_type: string;
+  @ApiProperty({
+    description: 'Type of fee',
+    nullable: false,
+    type: 'enum',
+    enum: FeeType,
+  })
+  @Column({ type: 'enum', enum: FeeType })
+  fee_type: FeeType;
 
   @ApiProperty({ description: 'Fee amount', nullable: false })
   @Column({ type: 'int' })

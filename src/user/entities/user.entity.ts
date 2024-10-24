@@ -14,6 +14,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Device } from './device.entity';
 import { UserFee } from './user-fee.entity';
 import { B2CUserFavorites } from './b2c-user-favorites.entity';
+import { UserStatus, UserType } from '../../helpers/enums/user.enum';
 
 @Entity('user')
 export class User {
@@ -49,19 +50,20 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @ApiProperty({ description: 'Type of user' })
-  @Column({ type: 'enum', enum: ['b2b', 'b2c', 'both'] })
-  user_type: string;
+  @ApiProperty({ description: 'Type of user', type: 'enum', enum: UserType })
+  @Column({ type: 'enum', enum: UserType })
+  user_type: UserType;
 
   @ApiProperty({
     description: 'Status of the user',
-    enum: ['Active', 'Unverified', 'Deleted', 'Blocked'],
+    type: 'enum',
+    enum: UserStatus,
   })
   @Column({
     type: 'enum',
-    enum: ['Active', 'Unverified', 'Deleted', 'Blocked'],
+    enum: UserStatus,
   })
-  status: string;
+  status: UserStatus;
 
   @ApiProperty({ description: 'Preferred language of the user' })
   @Column({ type: 'varchar', length: 255 })

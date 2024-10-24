@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { B2CUserFavorites } from './b2c-user-favorites.entity';
+import { B2BStatus } from '../../helpers/enums/user.enum';
 
 @Entity('b2b_profile')
 export class B2BProfile {
@@ -97,12 +98,17 @@ export class B2BProfile {
   @Column({ type: 'text', nullable: true })
   bio: string;
 
-  @ApiProperty({ description: 'Profile status', nullable: false })
+  @ApiProperty({
+    description: 'Profile status',
+    nullable: false,
+    type: 'enum',
+    enum: B2BStatus,
+  })
   @Column({
     type: 'enum',
-    enum: ['active', 'pending', 'unverified', 'inactive', 'deleted'],
+    enum: B2BStatus,
   })
-  profile_status: string;
+  profile_status: B2BStatus;
 
   @ApiProperty({ description: 'Address', nullable: false })
   @Column({ type: 'varchar', length: 255 })
