@@ -13,6 +13,7 @@ import { VerificationCode } from './verification-code.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Device } from './device.entity';
 import { UserFee } from './user-fee.entity';
+import { UserRole } from './user-role.entity';
 
 @Entity('user')
 export class User {
@@ -100,4 +101,7 @@ export class User {
 
   @OneToMany(() => UserFee, (fees) => fees.user)
   fees: UserFee[];
+
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles: UserRole[];
 }
