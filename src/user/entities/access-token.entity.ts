@@ -13,7 +13,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('access_token')
 export class AccessToken {
-  @ApiProperty({ description: 'ID for the access token' })
+  @ApiProperty({
+    description: 'ID for the access token',
+    example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

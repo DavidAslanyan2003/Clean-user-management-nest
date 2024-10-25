@@ -13,10 +13,17 @@ import { VerificationCode } from './verification-code.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Device } from './device.entity';
 import { UserFee } from './user-fee.entity';
+import { B2CUserFavorites } from './b2c-user-favorites.entity';
+import { UserTypeEnum } from '../enums/user-type.enum';
+import { UserStatusEnum } from '../enums/user-status.enum';
 
 @Entity('user')
 export class User {
-  @ApiProperty({ description: 'ID for the user' })
+  @ApiProperty({
+    example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
+    description: 'ID for the user',
+    format: 'uuid',
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -44,19 +51,24 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @ApiProperty({ description: 'Type of user' })
-  @Column({ type: 'varchar', length: 255 })
-  user_type: string;
+  @ApiProperty({
+    description: 'Type of user',
+    type: 'enum',
+    enum: UserTypeEnum,
+  })
+  @Column({ type: 'enum', enum: UserTypeEnum })
+  user_type: UserTypeEnum;
 
   @ApiProperty({
     description: 'Status of the user',
-    enum: ['Active', 'Unverified', 'Deleted', 'Blocked'],
+    type: 'enum',
+    enum: UserStatusEnum,
   })
   @Column({
     type: 'enum',
-    enum: ['Active', 'Unverified', 'Deleted', 'Blocked'],
+    enum: UserStatusEnum,
   })
-  status: string;
+  status: UserStatusEnum;
 
   @ApiProperty({ description: 'Preferred language of the user' })
   @Column({ type: 'varchar', length: 255 })
@@ -72,6 +84,7 @@ export class User {
   @ApiProperty({
     description: 'Timestamp when the record was created',
     default: () => 'CURRENT_TIMESTAMP',
+    example: '2024-08-19T12:34:56Z',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -79,6 +92,7 @@ export class User {
   @ApiProperty({
     description: 'Timestamp when the record was last updated',
     default: () => 'CURRENT_TIMESTAMP',
+    example: '2024-08-19T12:34:56Z',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
@@ -100,4 +114,7 @@ export class User {
 
   @OneToMany(() => UserFee, (fees) => fees.user)
   fees: UserFee[];
+
+  @OneToMany(() => B2CUserFavorites, (favorites) => favorites.user)
+  favorites: B2CUserFavorites[];
 }
