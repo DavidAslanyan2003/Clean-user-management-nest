@@ -11,9 +11,9 @@ import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('user_roles')
-export class UserRole {
+export class UserRoles {
   @ApiProperty({
-    description: 'Unique identifier for the user role',
+    description: 'ID for the user role',
     example: 'a7cbb9b4-8d1b-4f90-97e7-3c72e5f66a7b',
   })
   @PrimaryGeneratedColumn('uuid')

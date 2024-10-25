@@ -1,48 +1,47 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  Column,
   ManyToOne,
+  JoinColumn,
+  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Device } from './device.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from './user.entity';
+import { B2CDeliveryAddress } from './b2c-delivery-address.entity';
 
-@Entity('refresh_token')
-export class RefreshToken {
+@Entity('b2c_profile')
+export class B2CProfile {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
+    type: 'string',
     example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
-    description: 'ID for the refresh token',
     format: 'uuid',
   })
-  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens)
+  @OneToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Device, { nullable: true })
-  @JoinColumn({ name: 'device_id' })
-  device: Device;
+  @Column({ type: 'int', default: 0 })
+  @ApiProperty({ type: 'int', default: 0 })
+  loyalty_points: number;
 
-  @ApiProperty({ description: 'Refresh token value' })
-  @Column({ type: 'text' })
-  token: string;
+  @Column({ type: 'int', default: 0 })
+  @ApiProperty({ type: 'int', default: 0 })
+  upcoming_events_count: number;
 
-  @ApiProperty({ description: 'Expiration timestamp of the token' })
-  @Column({ type: 'timestamp' })
-  expires_at: Date;
+  @Column({ type: 'int' })
+  @ApiProperty({ type: 'int' })
+  following_list: number;
 
-  @ApiProperty({
-    description: 'Indicates whether the token is currently active',
-    default: true,
-  })
-  @Column({ type: 'bool', default: true, nullable: false })
-  is_active: boolean;
+  @ManyToOne(() => B2CDeliveryAddress, (delivery) => delivery.b2cProfile)
+  @JoinColumn({ name: 'delivery_id' })
+  @ApiProperty({ type: () => B2CDeliveryAddress })
+  deliveryAddress: B2CDeliveryAddress;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

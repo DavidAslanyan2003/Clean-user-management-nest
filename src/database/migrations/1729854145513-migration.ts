@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migration1729773454789 implements MigrationInterface {
-  name = 'Migration1729773454789';
+export class Migration1729854145513 implements MigrationInterface {
+  name = 'Migration1729854145513';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -13,6 +13,8 @@ export class Migration1729773454789 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE "user_roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "role" text array NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" uuid, CONSTRAINT "PK_8acd5cf26ebd158416f477de799" PRIMARY KEY ("id"))`,
     );
+    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "name"`);
+    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "user_type"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "status"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "created_at"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "updated_at"`);
@@ -31,13 +33,8 @@ export class Migration1729773454789 implements MigrationInterface {
     );
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "phone"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "password"`);
-    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "user_type"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "language"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "deletion_reason"`);
-    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "name"`);
-    await queryRunner.query(
-      `ALTER TABLE "user" ADD "name" character varying NOT NULL`,
-    );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "first_name" character varying(255) NOT NULL`,
     );
@@ -66,7 +63,7 @@ export class Migration1729773454789 implements MigrationInterface {
       `ALTER TABLE "user" ADD "password" character varying(255) NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "user" ADD "user_type" character varying(255) NOT NULL`,
+      `ALTER TABLE "user" ADD "user_type" "public"."user_user_type_enum" NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "status" "public"."user_status_enum" NOT NULL`,
@@ -83,9 +80,8 @@ export class Migration1729773454789 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "user" ADD "updated_at" TIMESTAMP NOT NULL DEFAULT now()`,
     );
-    await queryRunner.query(`ALTER TABLE "user_fee" DROP COLUMN "fee_type"`);
     await queryRunner.query(
-      `ALTER TABLE "user_fee" ADD "fee_type" "public"."user_fee_fee_type_enum" NOT NULL`,
+      `ALTER TABLE "user" ADD "name" character varying NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "user_roles" ADD CONSTRAINT "FK_87b8888186ca9769c960e926870" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -108,10 +104,7 @@ export class Migration1729773454789 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "user_roles" DROP CONSTRAINT "FK_87b8888186ca9769c960e926870"`,
     );
-    await queryRunner.query(`ALTER TABLE "user_fee" DROP COLUMN "fee_type"`);
-    await queryRunner.query(
-      `ALTER TABLE "user_fee" ADD "fee_type" user_fee_fee_type_enum NOT NULL`,
-    );
+    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "name"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "updated_at"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "created_at"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "deletion_reason"`);
@@ -133,18 +126,11 @@ export class Migration1729773454789 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "username"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "last_name"`);
     await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "first_name"`);
-    await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "name"`);
-    await queryRunner.query(
-      `ALTER TABLE "user" ADD "name" character varying NOT NULL`,
-    );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "deletion_reason" character varying(255)`,
     );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "language" character varying(255) NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "user" ADD "user_type" character varying(255) NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "password" character varying(255) NOT NULL`,
@@ -181,6 +167,12 @@ export class Migration1729773454789 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "user" ADD "status" "public"."user_status_enum" NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user" ADD "user_type" "public"."user_user_type_enum" NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user" ADD "name" character varying NOT NULL`,
     );
     await queryRunner.query(`DROP TABLE "user_roles"`);
     await queryRunner.query(

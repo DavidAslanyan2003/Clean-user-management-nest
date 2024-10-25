@@ -10,10 +10,15 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
+import { B2CUserFavorites } from './b2c-user-favorites.entity';
+import { B2BStatusEnum } from '../enums/b2b-status.enum';
 
 @Entity('b2b_profile')
 export class B2BProfile {
-  @ApiProperty({ description: 'Profile ID' })
+  @ApiProperty({
+    description: 'Profile ID',
+    example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -93,12 +98,17 @@ export class B2BProfile {
   @Column({ type: 'text', nullable: true })
   bio: string;
 
-  @ApiProperty({ description: 'Profile status', nullable: false })
+  @ApiProperty({
+    description: 'Profile status',
+    nullable: false,
+    type: 'enum',
+    enum: B2BStatusEnum,
+  })
   @Column({
     type: 'enum',
-    enum: ['active', 'pending', 'unverified', 'inactive', 'deleted'],
+    enum: B2BStatusEnum,
   })
-  profile_status: string;
+  profile_status: B2BStatusEnum;
 
   @ApiProperty({ description: 'Address', nullable: false })
   @Column({ type: 'varchar', length: 255 })
@@ -124,4 +134,10 @@ export class B2BProfile {
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(
+    () => B2CUserFavorites,
+    (b2cUserFavorites) => b2cUserFavorites.b2bProfile,
+  )
+  favorites: B2CUserFavorites[];
 }

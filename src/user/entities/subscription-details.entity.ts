@@ -9,10 +9,16 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { B2BProfile } from './b2b-profile.entity';
+import { SubscriptionStatusEnum } from '../enums/subscription-status.enum';
+import { SubscriptionTypeEnum } from '../enums/subscription-type.enum';
 
 @Entity('subscription_detail')
 export class SubscriptionDetail {
-  @ApiProperty({ description: 'Subscription detail ID' })
+  @ApiProperty({
+    example: '1e4a89f1-efc1-4b5b-8fcb-27b9b62c7b45',
+    description: 'Subscription detail ID',
+    format: 'uuid',
+  })
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,12 +26,17 @@ export class SubscriptionDetail {
   @JoinColumn({ name: 'b2b_profile_id' })
   b2bProfile: B2BProfile;
 
-  @ApiProperty({ description: 'Subscription type', nullable: false })
+  @ApiProperty({
+    description: 'Subscription type',
+    nullable: false,
+    type: 'enum',
+    enum: SubscriptionTypeEnum,
+  })
   @Column({
     type: 'enum',
-    enum: ['free', 'per event', 'premium', 'enterprise'],
+    enum: SubscriptionTypeEnum,
   })
-  subscription_type: string;
+  subscription_type: SubscriptionTypeEnum;
 
   @ApiProperty({ description: 'Subscription start date', nullable: false })
   @Column({ type: 'timestamp', nullable: false })
@@ -35,13 +46,19 @@ export class SubscriptionDetail {
   @Column({ type: 'timestamp', nullable: false })
   end_date: Date;
 
-  @ApiProperty({ description: 'Subscription status', nullable: false })
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'expired'] })
-  status: string;
+  @ApiProperty({
+    description: 'Subscription status',
+    nullable: false,
+    type: 'enum',
+    enum: SubscriptionStatusEnum,
+  })
+  @Column({ type: 'enum', enum: SubscriptionStatusEnum })
+  status: SubscriptionStatusEnum;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',
     default: () => 'CURRENT_TIMESTAMP',
+    example: '2024-08-19T12:34:56Z',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -49,6 +66,7 @@ export class SubscriptionDetail {
   @ApiProperty({
     description: 'Timestamp when the record was last updated',
     default: () => 'CURRENT_TIMESTAMP',
+    example: '2024-08-19T12:34:56Z',
   })
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
