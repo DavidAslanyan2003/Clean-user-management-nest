@@ -23,6 +23,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { UpdateCategoriesCacheModule } from './helpers/commander/categoryRedisServices/add-categories-to-redis.module';
 import { RedisModule } from './helpers/redis/redis.module';
 import { FormsModule } from './forms/modules/forms.module';
+import { EventModule } from './event/modules/event.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FormsModule } from './forms/modules/forms.module';
     CategoryModule,
     FormsModule,
     UserModule,
+    EventModule,
     UpdateCategoriesCacheModule,
     ConfigModule.forRoot({
       isGlobal: true,

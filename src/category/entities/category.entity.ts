@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from '../../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { CategoryStatus } from '../../helpers/constants/status';
+import { Event } from '../../event/entities/event.entity';
 
 @Entity({ name: 'category' })
 export class Category {
@@ -83,4 +86,15 @@ export class Category {
   @ManyToOne(() => User, (user) => user.categories)
   @JoinColumn({ name: 'created_by' })
   user: User;
+
+  @ManyToMany(() => Event, (event) => event.categories)
+  @JoinTable({
+    name: 'event_category',
+    joinColumn: { name: 'category_id', referencedColumnName: 'id' },
+    inverseJoinColumn: {
+      name: 'event_id',
+      referencedColumnName: 'id',
+    },
+  })
+  events: Event[];
 }
