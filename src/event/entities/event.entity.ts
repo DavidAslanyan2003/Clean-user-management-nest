@@ -10,6 +10,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { FAQ } from './faq.entity';
 import { Tag } from './tag.entity';
@@ -31,6 +32,7 @@ export class Event {
     nullable: false,
   })
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ApiProperty({

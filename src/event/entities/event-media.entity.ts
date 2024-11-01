@@ -8,10 +8,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EventInstance } from './event-instance.entity';
+import { Event } from './event.entity';
 
 @Entity()
-export class Media {
+export class EventMedia {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     example: '8a7f8651-7a0f-4cb1-b93e-12a5142e34a4',
@@ -48,9 +48,9 @@ export class Media {
     example: '8a7f8651-7a0f-4cb1-b93e-12a5142e34a4',
     description: 'Associated event instance ID',
   })
-  @OneToOne(() => EventInstance)
+  @OneToOne(() => Event)
   @JoinColumn({ name: 'event_instance_id' })
-  eventInstance: EventInstance;
+  eventInstance: Event;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

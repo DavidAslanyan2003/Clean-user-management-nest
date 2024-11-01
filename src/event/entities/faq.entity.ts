@@ -28,18 +28,26 @@ export class FAQ {
   event: Event;
 
   @ApiProperty({
-    example: 'What is the event about?',
+    example: {
+      en: 'This is an introductory slot.',
+      hy: 'Սա ներածական հատված է։',
+      ru: 'Это вводный слот.',
+    },
     description: 'Question in the FAQ',
   })
-  @Column({ type: 'text', nullable: false })
-  question: string;
+  @Column({ type: 'jsonb', nullable: false })
+  question: Record<string, string>;
 
   @ApiProperty({
-    example: 'This event is about learning programming.',
+    example: {
+      en: 'This is an introductory slot.',
+      hy: 'Սա ներածական հատված է։',
+      ru: 'Это вводный слот.',
+    },
     description: 'Answer in the FAQ',
   })
-  @Column({ type: 'text', nullable: false })
-  answer: string;
+  @Column({ type: 'jsonb', nullable: false })
+  answer: Record<string, string>;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Agenda } from './agenda.entity';
 
@@ -23,6 +24,7 @@ export class Slot {
     description: 'ID of the associated Agenda',
   })
   @ManyToOne(() => Agenda, (agenda) => agenda.slots)
+  @JoinColumn({ name: 'agenda_id' })
   agenda: Agenda;
 
   @ApiProperty({ example: '10:00:00', description: 'Start time of the slot' })

@@ -8,9 +8,9 @@ import { BasicInfo } from '../entities/basic-info.entity';
 import { Agenda } from '../entities/agenda.entity';
 import { Slot } from '../entities/slot.entity';
 import { Tag } from '../entities/tag.entity';
-import { Media } from '../entities/media.entity';
 import { AuditLog } from '../entities/audit-log.entity';
 import { FAQ } from '../entities/faq.entity';
+import { EventMedia } from '../entities/event-media.entity';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { FAQ } from '../entities/faq.entity';
       Agenda,
       Slot,
       Tag,
-      Media,
+      EventMedia,
       AuditLog,
       FAQ,
     ]),
