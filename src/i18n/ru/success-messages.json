@@ -16,5 +16,8 @@
     "CATEGORY_DELETED": "Категория удалена",
     "CATEGORY_FETCHED": "Категория извлечена",
     "CATEGORIES_FETCHED": "Категории извлечены",
-    "CATEGORY_UPDATED_SUCCESS": "Категория успешно обновлена!"
+    "CATEGORY_UPDATED_SUCCESS": "Категория успешно обновлена!",
+    "SUCCESSED_CREATE_TAGS": "Теги успешно созданы!",
+    "SUCCESSED_CREATE_FAQS": "Часто задаваемые вопросы успешно созданы!",
+    "SUCCESSED_CREATE_EVENT": "Событие успешно создано!"
 }

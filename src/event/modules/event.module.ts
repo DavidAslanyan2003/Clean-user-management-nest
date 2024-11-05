@@ -11,6 +11,11 @@ import { Tag } from '../entities/tag.entity';
 import { AuditLog } from '../entities/audit-log.entity';
 import { FAQ } from '../entities/faq.entity';
 import { EventMedia } from '../entities/event-media.entity';
+import { EventController } from '../controllers/event.controller';
+import { EventService } from '../services/event.service';
+import { FaqService } from '../services/faq.service';
+import { TagService } from '../services/tag.service';
+import { RedisModule } from '../../helpers/redis/redis.module';
 
 @Module({
   imports: [
@@ -28,9 +33,10 @@ import { EventMedia } from '../entities/event-media.entity';
       AuditLog,
       FAQ,
     ]),
+    RedisModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [EventController],
+  providers: [EventService, FaqService, TagService],
   exports: [TypeOrmModule],
 })
 export class EventModule {}

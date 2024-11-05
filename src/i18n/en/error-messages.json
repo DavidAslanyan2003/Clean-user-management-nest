@@ -48,5 +48,10 @@
     "CATEGORY_FETCH_FAIL": "Failed to fetch category",
     "CATEGORIES_FETCH_FAIL": "Failed to fetch categories",
     "CATEGORY_NOT_FOUND": "Category not found",
-    "INVALID_SIZE": "Invalid size"
+    "INVALID_SIZE": "Invalid size",
+    "IS_NOT_JSON": "{property} should be a JSON.",
+    "INVALID_INPUT": "Invalid input!",
+    "FAILED_CREATE_TAGS": "Failed to create tags!",
+    "FAILED_CREATE_FAQS": "Failed to create FAQs!",
+    "FAILED_CREATE_EVENT": "Failed to create event!"
 }

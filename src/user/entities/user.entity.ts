@@ -17,6 +17,7 @@ import { B2CUserFavorites } from './b2c-user-favorites.entity';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { UserStatusEnum } from '../enums/user-status.enum';
 import { UserRoles } from './user-role.entity';
+import { Event } from '../../event/entities/event.entity';
 
 @Entity('user')
 export class User {
@@ -121,4 +122,7 @@ export class User {
 
   @OneToMany(() => UserRoles, (userRole) => userRole.user)
   userRoles: UserRoles[];
+
+  @OneToMany(() => Event, (event) => event.user)
+  events: Event[];
 }

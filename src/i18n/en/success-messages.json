@@ -16,5 +16,8 @@
     "CATEGORY_UPDATED": "Category updated",
     "CATEGORY_DELETED": "Category deleted",
     "CATEGORY_FETCHED": "Category fetched",
-    "CATEGORIES_FETCHED": "Categories fetched"
+    "CATEGORIES_FETCHED": "Categories fetched",
+    "SUCCESSED_CREATE_TAGS": "Tags created successfully!",
+    "SUCCESSED_CREATE_FAQS": "Faqs created successfully!",
+    "SUCCESSED_CREATE_EVENT": "Event created successfully!"
 }

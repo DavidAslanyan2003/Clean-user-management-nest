@@ -17,9 +17,12 @@ export function checkItemExistance(
   item: any,
   i18n: I18nService<Record<string, any>>,
   locale: string,
+  message?: string,
 ): void {
+  const errorMessageName = message || 'ITEM_NOT_FOUND';
+
   if (!item) {
-    const message = i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
+    const message = i18n.translate(`${ERROR_FILE_PATH}.${errorMessageName}`, {
       lang: locale,
     });
 

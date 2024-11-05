@@ -5,7 +5,7 @@ import { User } from '../../user/user.entity';
 import { CategoryService } from '../services/category.service';
 import { CategoryController } from '../controllers/category.controller';
 import { UpdateCategoriesCacheModule } from '../../helpers/commander/categoryRedisServices/add-categories-to-redis.module';
-import { RedisModule } from 'src/helpers/redis/redis.module';
+import { RedisModule } from '../../helpers/redis/redis.module';
 import { Event } from '../../event/entities/event.entity';
 
 @Module({

@@ -16,5 +16,8 @@
     "CATEGORY_DELETED": "Կատեգորիան ջնջված է",
     "CATEGORY_FETCHED": "Կատեգորիան բերված է",
     "CATEGORIES_FETCHED": "Կատեգորիաները բերված են",
-    "CATEGORY_UPDATED_SUCCESS": "Կատեգորիան հաջողությամբ թարմացվել է:"
+    "CATEGORY_UPDATED_SUCCESS": "Կատեգորիան հաջողությամբ թարմացվել է:",
+    "SUCCESSED_CREATE_TAGS": "Հաջողությամբ ստեղծվել են պիտակներ!",
+    "SUCCESSED_CREATE_FAQS": "ՀՏՀ-ները հաջողությամբ ստեղծվեցին!",
+    "SUCCESSED_CREATE_EVENT": "Միջոցառումը հաջողությամբ ստեղծվեց!"
 }

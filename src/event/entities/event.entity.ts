@@ -69,10 +69,10 @@ export class Event {
     type: () => [EventInstance],
   })
   @OneToMany(() => EventInstance, (eventInstance) => eventInstance.event)
-  eventInstances: [EventInstance];
+  eventInstances: EventInstance[];
 
   @ManyToMany(() => Category, (category) => category.events)
-  categories: Category;
+  categories: Category[];
 
   @ApiProperty({
     description: 'Timestamp when the record was created',
