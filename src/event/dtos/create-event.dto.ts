@@ -4,7 +4,7 @@ import { ERROR_FILE_PATH } from '../../helpers/constants/constants';
 import { IsValidLocaleRecord } from '../../helpers/validations/decorators/validate-locale-record';
 import { IsValidLocaleArrayRecord } from '../../helpers/validations/decorators/validate-locale-array';
 
-export class EventDetailsDto {
+export class CreateEventDetailsDto {
   @ApiProperty({
     description: 'Array of tag names associated with the event',
     example: ['Music', 'Pop', 'Dance'],
@@ -39,7 +39,7 @@ export class EventDetailsDto {
     type: [String],
     example: ['8a7f8651-7a0f-4cb1-b93e-12a5142e34a2'],
   })
-  @IsArray()
+  @IsArray({ message: `${ERROR_FILE_PATH}.IS_NOT_ARRAY` })
   @IsUUID('all', { each: true, message: `${ERROR_FILE_PATH}.ITEM_NOT_FOUND` })
   categories: string[];
 

@@ -53,5 +53,13 @@
     "INVALID_INPUT": "Invalid input!",
     "FAILED_CREATE_TAGS": "Failed to create tags!",
     "FAILED_CREATE_FAQS": "Failed to create FAQs!",
-    "FAILED_CREATE_EVENT": "Failed to create event!"
+    "FAILED_CREATE_EVENT": "Failed to create event!",
+    "INVALID_END_TIME": "End time must be after start time!",
+    "IS_BEFORE_TODAY": "{args.property} should be after today!",
+    "INVALID_TIME_FORMAT": "Invalid time format. Use HH:mm.",
+    "INVALID_TIME_ZONE": "Invalid time zone!",
+    "UNAVAILABLE_TIME": "Time is unavailable.",
+    "FAILED_CREATE_SLOTS": "Failed to create slots!",
+    "FAILED_CREATE_AGENDA": "Failed to create agenda!",
+    "FAILED_CREATE_EVENT_INSTANCE": "Failed to create event instance!"
 }

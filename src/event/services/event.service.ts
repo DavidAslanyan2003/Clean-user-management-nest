@@ -6,7 +6,7 @@ import { Event } from '../entities/event.entity';
 import { BasicInfo } from '../entities/basic-info.entity';
 import { REQUEST } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
-import { EventDetailsDto } from '../dtos/event-details.dto';
+import { CreateEventDetailsDto } from '../dtos/create-event.dto';
 import { CustomResponse } from '../../helpers/response/custom-response.dto';
 import { Category } from '../../category/entities/category.entity';
 import { TagService } from './tag.service';
@@ -37,18 +37,13 @@ export class EventService {
   ) {}
 
   async createEvent(
-    eventDetailsDto: EventDetailsDto,
+    eventDetailsDto: CreateEventDetailsDto,
     userId: string,
   ): Promise<CustomResponse<Event>> {
     const eventQueryRunner =
       this.eventRepository.manager.connection.createQueryRunner();
     await eventQueryRunner.connect();
     await eventQueryRunner.startTransaction();
-
-    const basicInfoQueryRunner =
-      this.basicInfoRepository.manager.connection.createQueryRunner();
-    await basicInfoQueryRunner.connect();
-    await basicInfoQueryRunner.startTransaction();
 
     const locale = this.request['language'];
     try {
@@ -77,10 +72,9 @@ export class EventService {
         new Date(),
       );
 
-      const tags = await Promise.all(
-        (
-          await this.tagService.createTags(eventDetailsDto.tagNames)
-        ).data,
+      const tags = await this.tagService.createTags(
+        eventDetailsDto.tagNames,
+        eventQueryRunner,
       );
 
       const event = eventQueryRunner.manager.getRepository(Event).create({
@@ -91,30 +85,30 @@ export class EventService {
         tags: tags,
       });
 
-      await Promise.all(
-        (
-          await this.faqService.createFaq(eventDetailsDto.FAQs, event)
-        ).data,
-      );
-
-      const eventBasicInfo = basicInfoQueryRunner.manager
-        .getRepository(BasicInfo)
-        .create({
-          event: { id: event.id },
-          event_title: eventDetailsDto.eventTitle,
-          event_description: eventDetailsDto.eventDescription,
-          version: 1,
-        });
-      await basicInfoQueryRunner.manager
-        .getRepository(BasicInfo)
-        .save(eventBasicInfo);
-
       const resultedEvent = await eventQueryRunner.manager
         .getRepository(Event)
         .save(event);
 
+      await this.faqService.createFaq(
+        eventDetailsDto.FAQs,
+        event.id,
+        eventQueryRunner,
+      );
+
+      const eventBasicInfo = eventQueryRunner.manager
+        .getRepository(BasicInfo)
+        .create({
+          event: event,
+          event_title: eventDetailsDto.eventTitle,
+          event_description: eventDetailsDto.eventDescription,
+          version: 1,
+        });
+
+      await eventQueryRunner.manager
+        .getRepository(BasicInfo)
+        .save(eventBasicInfo);
+
       await eventQueryRunner.commitTransaction();
-      await basicInfoQueryRunner.commitTransaction();
 
       return translatedSuccessResponse<Event>(
         this.i18n,
@@ -124,7 +118,6 @@ export class EventService {
       );
     } catch (error) {
       await eventQueryRunner.rollbackTransaction();
-      await basicInfoQueryRunner.rollbackTransaction();
 
       return translatedErrorResponse<Event>(
         this.i18n,
@@ -134,7 +127,6 @@ export class EventService {
       );
     } finally {
       await eventQueryRunner.release();
-      await basicInfoQueryRunner.release();
     }
   }
 }

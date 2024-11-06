@@ -53,5 +53,13 @@
   "INVALID_INPUT": "Սխալ մուտքագրում!",
   "FAILED_CREATE_TAGS": "Չհաջողվեց ստեղծել պիտակներ!",
   "FAILED_CREATE_FAQS": "Չհաջողվեց ստեղծել ՀՏՀ!",
-  "FAILED_CREATE_EVENT": "Չհաջողվեց ստեղծել իրադարձություն!"
+  "FAILED_CREATE_EVENT": "Չհաջողվեց ստեղծել իրադարձություն!",
+  "INVALID_END_TIME": "Ավարտի ժամը պետք է լինի մեկնարկի ժամանակից հետո!",
+  "IS_BEFORE_TODAY": "{args.property} պետք է լինի այսօրվանից հետո!",
+  "INVALID_TIME_FORMAT": "Ժամանակի անվավեր ձևաչափ: Օգտագործեք HH:mm:",
+  "INVALID_TIME_ZONE": "Սխալ ժամային գոտի!",
+  "UNAVAILABLE_TIME": "Ժամանակն անհասանելի է:",
+  "FAILED_CREATE_SLOTS": "Չհաջողվեց ստեղծել slots!",
+  "FAILED_CREATE_AGENDA": "Չհաջողվեց ստեղծել օրակարգ!",
+  "FAILED_CREATE_EVENT_INSTANCE": "Չհաջողվեց ստեղծել իրադարձության օրինակ!"
 }

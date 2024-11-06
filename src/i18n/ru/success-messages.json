@@ -19,5 +19,8 @@
     "CATEGORY_UPDATED_SUCCESS": "Категория успешно обновлена!",
     "SUCCESSED_CREATE_TAGS": "Теги успешно созданы!",
     "SUCCESSED_CREATE_FAQS": "Часто задаваемые вопросы успешно созданы!",
-    "SUCCESSED_CREATE_EVENT": "Событие успешно создано!"
+    "SUCCESSED_CREATE_EVENT": "Событие успешно создано!",
+    "SUCCESSED_CREATE_SLOTS": "Слоты успешно созданы!",
+    "SUCCESSED_CREATE_AGENDA": "Повестка дня успешно создана!",
+    "SUCCESSED_CREATE_EVENT_INSTANCE": "Экземпляр события успешно создан!"
 }

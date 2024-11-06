@@ -16,6 +16,11 @@ import { EventService } from '../services/event.service';
 import { FaqService } from '../services/faq.service';
 import { TagService } from '../services/tag.service';
 import { RedisModule } from '../../helpers/redis/redis.module';
+import { EventInstanceController } from '../controllers/event-instance.controller';
+import { EventInstanceService } from '../services/event-instance.service';
+import { AgendaService } from '../services/agenda.service';
+import { SlotService } from '../services/slot.service';
+import { Dates } from '../entities/dates.entity';
 
 @Module({
   imports: [
@@ -24,7 +29,7 @@ import { RedisModule } from '../../helpers/redis/redis.module';
       User,
       Event,
       EventInstance,
-      Date,
+      Dates,
       BasicInfo,
       Agenda,
       Slot,
@@ -35,8 +40,15 @@ import { RedisModule } from '../../helpers/redis/redis.module';
     ]),
     RedisModule,
   ],
-  controllers: [EventController],
-  providers: [EventService, FaqService, TagService],
+  controllers: [EventController, EventInstanceController],
+  providers: [
+    EventService,
+    FaqService,
+    TagService,
+    EventInstanceService,
+    AgendaService,
+    SlotService,
+  ],
   exports: [TypeOrmModule],
 })
 export class EventModule {}

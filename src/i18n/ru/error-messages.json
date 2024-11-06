@@ -53,5 +53,13 @@
     "INVALID_INPUT": "Неверный ввод!",
     "FAILED_CREATE_TAGS": "Не удалось создать теги!",
     "FAILED_CREATE_FAQS": "Не удалось создать часто задаваемые вопросы!",
-    "FAILED_CREATE_EVENT": "Не удалось создать событие!"
+    "FAILED_CREATE_EVENT": "Не удалось создать событие!",
+    "INVALID_END_TIME": "Время окончания должно быть позже времени начала!",
+    "IS_BEFORE_TODAY": "{args.property} должно быть после сегодняшнего дня!",
+    "INVALID_TIME_FORMAT": "Неверный формат времени. Используйте ЧЧ:мм.",
+    "INVALID_TIME_ZONE": "Неверный часовой пояс!",
+    "UNAVAILABLE_TIME": "Время недоступно.",
+    "FAILED_CREATE_SLOTS": "Не удалось создать слоты!",
+    "FAILED_CREATE_AGENDA": "Не удалось создать повестку дня!",
+    "FAILED_CREATE_EVENT_INSTANCE": "Не удалось создать экземпляр события!"
 }

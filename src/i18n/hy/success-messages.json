@@ -19,5 +19,8 @@
     "CATEGORY_UPDATED_SUCCESS": "Կատեգորիան հաջողությամբ թարմացվել է:",
     "SUCCESSED_CREATE_TAGS": "Հաջողությամբ ստեղծվել են պիտակներ!",
     "SUCCESSED_CREATE_FAQS": "ՀՏՀ-ները հաջողությամբ ստեղծվեցին!",
-    "SUCCESSED_CREATE_EVENT": "Միջոցառումը հաջողությամբ ստեղծվեց!"
+    "SUCCESSED_CREATE_EVENT": "Միջոցառումը հաջողությամբ ստեղծվեց!",
+    "SUCCESSED_CREATE_SLOTS": "Սլոթերը հաջողությամբ ստեղծվեցին!",
+    "SUCCESSED_CREATE_AGENDA": "Օրակարգը հաջողությամբ ստեղծվեց!",
+    "SUCCESSED_CREATE_EVENT_INSTANCE": "Իրադարձության օրինակը հաջողությամբ ստեղծվեց!"
 }
