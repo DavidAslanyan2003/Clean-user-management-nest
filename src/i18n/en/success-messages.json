@@ -22,5 +22,6 @@
     "SUCCESSED_CREATE_EVENT": "Event created successfully!",
     "SUCCESSED_CREATE_SLOTS": "Slots created successfully!",
     "SUCCESSED_CREATE_AGENDA": "Agenda created successfully!",
-    "SUCCESSED_CREATE_EVENT_INSTANCE": "Event instance created successfully!"
+    "SUCCESSED_CREATE_EVENT_INSTANCE": "Event instance created successfully!",
+    "SUCCESSED_CREATE_EVENT_MEDIA": "Event media created successfully!"
 }

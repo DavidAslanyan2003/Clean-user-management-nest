@@ -56,7 +56,7 @@ export class CreateSlotDto {
   description?: Record<string, string>;
 
   @IsOptional()
-  @IsString({ each: true, message: `${ERROR_FILE_PATH}.IS_NOT_STRING` })
+  @IsString({ message: `${ERROR_FILE_PATH}.IS_NOT_STRING` })
   @ApiProperty({
     example: 'Aram Khachaturian Concert Hall',
   })
@@ -77,7 +77,7 @@ export class CreateSlotDto {
   speakerProfession?: Record<string, string>;
 
   @IsOptional()
-  @IsString({ each: true, message: `${ERROR_FILE_PATH}.IS_NOT_STRING` })
+  @IsString({ message: `${ERROR_FILE_PATH}.IS_NOT_STRING` })
   @IsValidUrl()
   @ApiProperty({
     example: 'image url',

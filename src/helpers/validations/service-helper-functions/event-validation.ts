@@ -18,10 +18,8 @@ export async function getEventInstance(
     });
 
   if (!eventInstance) {
-    console.log('in event instance throw');
-
     throw new BadRequestException(
-      i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
+      i18n.translate(`${ERROR_FILE_PATH}.EVENT_INSTANCE_NOT_FOUND`, {
         lang: locale,
       }),
     );
@@ -41,10 +39,8 @@ export async function getEvent(
   });
 
   if (!event) {
-    console.log('in event throw');
-
     throw new BadRequestException(
-      i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
+      i18n.translate(`${ERROR_FILE_PATH}.EVENT_NOT_FOUND`, {
         lang: locale,
       }),
     );

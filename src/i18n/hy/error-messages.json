@@ -48,6 +48,9 @@
   "CATEGORY_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիան",
   "CATEGORIES_FETCH_FAIL": "Չհաջողվեց բեռնել կատեգորիաները",
   "CATEGORY_NOT_FOUND": "Կատեգորիան չի գտնվել",
+  "EVENT_NOT_FOUND": "Event-ը չի գտնվել",
+  "EVENT_INSTANCE_NOT_FOUND": "Event-ի օրինակը չի գտնվել",
+  "AGENDA_NOT_FOUND": "Օրակարգը չի գտնվել",
   "INVALID_SIZE": "Անվավեր չափ",
   "IS_NOT_JSON": "{property}-ը պետք է լինի JSON:",
   "INVALID_INPUT": "Սխալ մուտքագրում!",
@@ -61,5 +64,7 @@
   "UNAVAILABLE_TIME": "Ժամանակն անհասանելի է:",
   "FAILED_CREATE_SLOTS": "Չհաջողվեց ստեղծել slots!",
   "FAILED_CREATE_AGENDA": "Չհաջողվեց ստեղծել օրակարգ!",
-  "FAILED_CREATE_EVENT_INSTANCE": "Չհաջողվեց ստեղծել իրադարձության օրինակ!"
+  "FAILED_CREATE_EVENT_INSTANCE": "Չհաջողվեց ստեղծել իրադարձության օրինակ!",
+  "FAILED_CREATE_EVENT_MEDIA": "Չհաջողվեց ստեղծել իրադարձության մեդիա!",
+  "EVENT_MEDIA_EXISTS": "Տվյալ event-ը արդեն ունի մեդիա!"
 }

@@ -21,6 +21,8 @@ import { EventInstanceService } from '../services/event-instance.service';
 import { AgendaService } from '../services/agenda.service';
 import { SlotService } from '../services/slot.service';
 import { Dates } from '../entities/dates.entity';
+import { EventMediaService } from '../services/media.service';
+import { EventMediaController } from '../controllers/event-media.controller';
 
 @Module({
   imports: [
@@ -40,7 +42,7 @@ import { Dates } from '../entities/dates.entity';
     ]),
     RedisModule,
   ],
-  controllers: [EventController, EventInstanceController],
+  controllers: [EventController, EventInstanceController, EventMediaController],
   providers: [
     EventService,
     FaqService,
@@ -48,6 +50,7 @@ import { Dates } from '../entities/dates.entity';
     EventInstanceService,
     AgendaService,
     SlotService,
+    EventMediaService,
   ],
   exports: [TypeOrmModule],
 })

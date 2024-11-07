@@ -56,7 +56,7 @@ export async function getAgenda(
     console.log('in agenda throw');
 
     throw new BadRequestException(
-      i18n.translate(`${ERROR_FILE_PATH}.ITEM_NOT_FOUND`, {
+      i18n.translate(`${ERROR_FILE_PATH}.AGENDA_NOT_FOUND`, {
         lang: locale,
       }),
     );

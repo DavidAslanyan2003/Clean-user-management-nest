@@ -48,6 +48,9 @@
     "CATEGORY_FETCH_FAIL": "Failed to fetch category",
     "CATEGORIES_FETCH_FAIL": "Failed to fetch categories",
     "CATEGORY_NOT_FOUND": "Category not found",
+    "EVENT_NOT_FOUND": "Event not found",
+    "EVENT_INSTANCE_NOT_FOUND": "Event instance not found",
+    "AGENDA_NOT_FOUND": "Agenda not found",
     "INVALID_SIZE": "Invalid size",
     "IS_NOT_JSON": "{property} should be a JSON.",
     "INVALID_INPUT": "Invalid input!",
@@ -61,5 +64,7 @@
     "UNAVAILABLE_TIME": "Time is unavailable.",
     "FAILED_CREATE_SLOTS": "Failed to create slots!",
     "FAILED_CREATE_AGENDA": "Failed to create agenda!",
-    "FAILED_CREATE_EVENT_INSTANCE": "Failed to create event instance!"
+    "FAILED_CREATE_EVENT_INSTANCE": "Failed to create event instance!",
+    "FAILED_CREATE_EVENT_MEDIA": "Failed to create event media!",
+    "EVENT_MEDIA_EXISTS": "Given event already has media!"
 }

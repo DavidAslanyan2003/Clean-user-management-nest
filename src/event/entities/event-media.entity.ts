@@ -49,8 +49,8 @@ export class EventMedia {
     description: 'Associated event instance ID',
   })
   @OneToOne(() => Event)
-  @JoinColumn({ name: 'event_instance_id' })
-  eventInstance: Event;
+  @JoinColumn({ name: 'event_id' })
+  event: Event;
 
   @ApiProperty({
     description: 'Timestamp when the record was created',

@@ -22,5 +22,6 @@
     "SUCCESSED_CREATE_EVENT": "Միջոցառումը հաջողությամբ ստեղծվեց!",
     "SUCCESSED_CREATE_SLOTS": "Սլոթերը հաջողությամբ ստեղծվեցին!",
     "SUCCESSED_CREATE_AGENDA": "Օրակարգը հաջողությամբ ստեղծվեց!",
-    "SUCCESSED_CREATE_EVENT_INSTANCE": "Իրադարձության օրինակը հաջողությամբ ստեղծվեց!"
+    "SUCCESSED_CREATE_EVENT_INSTANCE": "Իրադարձության օրինակը հաջողությամբ ստեղծվեց!",
+    "SUCCESSED_CREATE_EVENT_MEDIA": "Իրադարձությունների մեդիան հաջողությամբ ստեղծվեց!"
 }

@@ -48,6 +48,9 @@
     "CATEGORY_FETCH_FAIL": "Не удалось получить категорию",
     "CATEGORIES_FETCH_FAIL": "Не удалось получить категории",
     "CATEGORY_NOT_FOUND": "Категория не найдена",
+    "EVENT_NOT_FOUND": "Event не найдено",
+    "EVENT_INSTANCE_NOT_FOUND": "Экземпляр события не найден",
+    "AGENDA_NOT_FOUND": "Повестка дня не найдена",
     "INVALID_SIZE": "Неверный размер",
     "IS_NOT_JSON": "{property} должно быть в формате JSON.",
     "INVALID_INPUT": "Неверный ввод!",
@@ -61,5 +64,7 @@
     "UNAVAILABLE_TIME": "Время недоступно.",
     "FAILED_CREATE_SLOTS": "Не удалось создать слоты!",
     "FAILED_CREATE_AGENDA": "Не удалось создать повестку дня!",
-    "FAILED_CREATE_EVENT_INSTANCE": "Не удалось создать экземпляр события!"
+    "FAILED_CREATE_EVENT_INSTANCE": "Не удалось создать экземпляр события!",
+    "FAILED_CREATE_EVENT_MEDIA": "Не удалось создать медиа-событие!",
+    "EVENT_MEDIA_EXISTS": "Данный event уже имеет медиа!"
 }
