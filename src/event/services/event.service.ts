@@ -104,9 +104,11 @@ export class EventService {
           version: 1,
         });
 
-      await eventQueryRunner.manager
+      const resultedEventBasicInfo = await eventQueryRunner.manager
         .getRepository(BasicInfo)
         .save(eventBasicInfo);
+
+      resultedEvent['basicInfo'] = resultedEventBasicInfo;
 
       await eventQueryRunner.commitTransaction();
 

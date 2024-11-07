@@ -9,18 +9,16 @@ import { Repository } from 'typeorm';
 import { CustomResponse } from 'src/helpers/response/custom-response.dto';
 import { CreateEventInstanceDto } from '../dtos/create-event-instance.dto';
 import {
-  checkItemExistance,
   translatedErrorResponse,
   translatedSuccessResponse,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
 import { AgendaService } from './agenda.service';
 import { CreateAgendaDto } from '../dtos/create-agenda.dto';
+import { getEvent } from 'src/helpers/validations/service-helper-functions/event-validation';
 
 @Injectable({ scope: Scope.REQUEST })
 export class EventInstanceService {
   constructor(
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
     @InjectRepository(EventInstance)
     private readonly eventInstanceRepository: Repository<EventInstance>,
     @InjectRepository(Dates)
@@ -42,13 +40,12 @@ export class EventInstanceService {
     const locale = this.request['language'];
 
     try {
-      const event = await this.eventRepository.manager
-        .getRepository(Event)
-        .findOne({
-          where: { id: eventInstanceDto.eventId },
-        });
-
-      checkItemExistance(event, this.i18n, locale);
+      const event = await getEvent(
+        eventInstanceDto.eventId,
+        this.i18n,
+        eventInstanceQueryRunner,
+        locale,
+      );
 
       const eventInstance = eventInstanceQueryRunner.manager
         .getRepository(EventInstance)

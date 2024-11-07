@@ -41,15 +41,15 @@ export class AgendaService {
       version: 1,
     });
 
-    await this.slotService.createSlots(
-      createAgendaDto.slots,
-      agenda.id,
-      queryRunner,
-    );
-
     const resultedAgenda = await queryRunner.manager
       .getRepository(Agenda)
       .save(agenda);
+
+    await this.slotService.createSlots(
+      createAgendaDto.slots,
+      resultedAgenda.id,
+      queryRunner,
+    );
 
     console.log(resultedAgenda);
 
