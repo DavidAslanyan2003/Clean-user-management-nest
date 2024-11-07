@@ -51,8 +51,6 @@ export class AgendaService {
       queryRunner,
     );
 
-    console.log(resultedAgenda);
-
     return resultedAgenda;
   }
 }
