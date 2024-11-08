@@ -1,11 +1,16 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
+import { MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
 import { Tag } from '../entities/tag.entity';
 import { REQUEST } from '@nestjs/core';
 import { RedisService } from '../../helpers/redis/redis.service';
 import { I18nService } from 'nestjs-i18n';
 import { checkTagName } from '../../helpers/validations/service-helper-functions/tag-validation';
+import { CustomResponse } from 'src/helpers/response/custom-response.dto';
+import {
+  translatedSuccessResponse,
+  translatedErrorResponse,
+} from 'src/helpers/validations/service-helper-functions/category-helper-functions';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TagService {
@@ -74,5 +79,88 @@ export class TagService {
     );
 
     return tags.length > 0 ? tags[0].split(':')[1] : null;
+  }
+
+  async getTags(
+    id?: string,
+    tagName?: string,
+    createdAt?: Date,
+  ): Promise<CustomResponse<Tag | Tag[]>> {
+    const locale = this.request['language'];
+
+    try {
+      if (id) {
+        const tag = await this.tagRepository.findOne({
+          where: { id: id },
+        });
+        return translatedSuccessResponse<Tag | Tag[]>(
+          this.i18n,
+          locale,
+          'SUCCESSED_FETCH_TAGS',
+          tag,
+        );
+      } else {
+        const searchingData: any = {};
+
+        if (tagName) searchingData.tag_name = tagName;
+        if (createdAt) {
+          searchingData.created_at = MoreThanOrEqual(createdAt);
+        }
+
+        const tags = await this.tagRepository.find({
+          where: searchingData,
+        });
+
+        return translatedSuccessResponse<Tag | Tag[]>(
+          this.i18n,
+          locale,
+          'SUCCESSED_FETCH_TAGS',
+          tags,
+        );
+      }
+    } catch (error) {
+      return translatedErrorResponse<Tag | Tag[]>(
+        this.i18n,
+        locale,
+        'FAILED_FETCH_TAGS',
+        error,
+      );
+    }
+  }
+
+  async getMatchingTags(prefix: string): Promise<CustomResponse<Tag[]>> {
+    const redisClient = this.redisService.getClient();
+    const matchingTags: { id: string; name: string }[] = [];
+
+    const startRange = `[${prefix}`;
+    const endRange = `[${prefix}\xff`;
+    const locale = this.request['language'];
+
+    try {
+      const entries = await redisClient.zrangebylex(
+        'tag_names',
+        startRange,
+        endRange,
+      );
+
+      for (const entry of entries) {
+        const [name, id] = entry.split(':');
+        matchingTags.push({ id, name });
+      }
+
+      return translatedSuccessResponse<Tag[]>(
+        this.i18n,
+        locale,
+        'SUCCESSED_FETCH_TAGS',
+        matchingTags,
+      );
+    } catch (error) {
+      return translatedErrorResponse<Tag[]>(
+        this.i18n,
+        locale,
+        'FAILED_FETCH_TAGS',
+        error,
+      );
+    }
   }
 }

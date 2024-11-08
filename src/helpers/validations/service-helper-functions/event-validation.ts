@@ -4,6 +4,7 @@ import { EventInstance } from '../../../event/entities/event-instance.entity';
 import { ERROR_FILE_PATH } from '../../../helpers/constants/constants';
 import { QueryRunner } from 'typeorm';
 import { Event } from '../../../event/entities/event.entity';
+import { BasicInfo } from 'src/event/entities/basic-info.entity';
 
 export async function getEventInstance(
   eventInstanceId: string,
@@ -47,4 +48,27 @@ export async function getEvent(
   }
 
   return event;
+}
+
+export async function getEventBasicInfo(
+  eventId: string,
+  i18n: I18nService,
+  queryRunner: QueryRunner,
+  locale: string,
+): Promise<BasicInfo> {
+  const eventBasicInfo = await queryRunner.manager
+    .getRepository(BasicInfo)
+    .findOne({
+      where: { event: { id: eventId } },
+    });
+
+  if (!eventBasicInfo) {
+    throw new BadRequestException(
+      i18n.translate(`${ERROR_FILE_PATH}.EVENT_BASIC_INFO_NOT_FOUND`, {
+        lang: locale,
+      }),
+    );
+  }
+
+  return eventBasicInfo;
 }

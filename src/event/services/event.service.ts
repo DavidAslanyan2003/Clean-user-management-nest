@@ -1,7 +1,7 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { Event } from '../entities/event.entity';
 import { BasicInfo } from '../entities/basic-info.entity';
 import { REQUEST } from '@nestjs/core';
@@ -17,6 +17,12 @@ import {
   checkItemExistance,
 } from '../../helpers/validations/service-helper-functions/category-helper-functions';
 import { slugifyText } from '../../helpers/validations/service-helper-functions/slugify';
+import {
+  getEvent,
+  getEventBasicInfo,
+} from 'src/helpers/validations/service-helper-functions/event-validation';
+import { ERROR_FILE_PATH } from 'src/helpers/constants/constants';
+import { CategoryService } from '../../category/services/category.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class EventService {
@@ -34,6 +40,7 @@ export class EventService {
     private readonly i18n: I18nService,
     private readonly tagService: TagService,
     private readonly faqService: FaqService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async createEvent(
@@ -129,6 +136,161 @@ export class EventService {
       );
     } finally {
       await eventQueryRunner.release();
+    }
+  }
+
+  async getEvent(
+    eventId: string,
+    allLanguages: string,
+  ): Promise<CustomResponse<Event>> {
+    const queryRunner =
+      this.eventRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const locale = this.request['language'];
+    const hasAllLanguages = allLanguages === 'true' ? true : false;
+
+    try {
+      let event: Event;
+
+      event = await queryRunner.manager.getRepository(Event).findOne({
+        where: { id: eventId },
+        relations: ['faqs', 'tags', 'categories'],
+      });
+
+      if (!event) {
+        throw new BadRequestException(
+          this.i18n.translate(`${ERROR_FILE_PATH}.EVENT_NOT_FOUND`, {
+            lang: locale,
+          }),
+        );
+      }
+
+      const eventBasicInfo = await getEventBasicInfo(
+        eventId,
+        this.i18n,
+        queryRunner,
+        locale,
+      );
+      event['basicInfo'] = eventBasicInfo;
+
+      if (!hasAllLanguages) {
+        const faqResponse = await this.faqService.getFaqs(event.id);
+
+        if (faqResponse.error) {
+          throw new BadRequestException(faqResponse.error);
+        }
+
+        event.faqs = faqResponse.data;
+      }
+      return translatedSuccessResponse<Event>(
+        this.i18n,
+        locale,
+        'SUCCESSED_FETCH_EVENT',
+        event,
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      return translatedErrorResponse<Event>(
+        this.i18n,
+        locale,
+        'FAILED_FETCH_EVENT',
+        error,
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async getEventList(
+    createdAt?: Date,
+    categoryId?: string,
+    userId?: string,
+    page?: number,
+    limit?: number,
+    orderBy?: string,
+    order?: string,
+  ): Promise<CustomResponse<Event[]>> {
+    const queryRunner =
+      this.eventRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const locale = this.request['language'];
+    page = page || 1;
+    limit = limit || 10;
+    const offset = (page - 1) * limit;
+    orderBy = orderBy || 'id';
+    const sortOrder = order === 'descend' ? 'DESC' : 'ASC';
+
+    try {
+      let events: Event[];
+
+      if (createdAt) {
+        events = await queryRunner.manager.getRepository(Event).find({
+          where: { created_at: MoreThanOrEqual(createdAt) },
+          relations: ['faqs', 'tags', 'categories'],
+          skip: offset,
+          take: limit,
+          order: {
+            [orderBy]: sortOrder as 'ASC' | 'DESC',
+          },
+        });
+      } else if (categoryId) {
+        events = await queryRunner.manager.getRepository(Event).find({
+          where: { categories: { id: In([categoryId]) } },
+          relations: ['faqs', 'tags', 'categories'],
+          skip: offset,
+          take: limit,
+          order: {
+            [orderBy]: sortOrder as 'ASC' | 'DESC',
+          },
+        });
+      } else if (userId) {
+        events = await queryRunner.manager.getRepository(Event).find({
+          where: { user: { id: userId } },
+          relations: ['faqs', 'tags', 'categories'],
+          skip: offset,
+          take: limit,
+          order: {
+            [orderBy]: sortOrder as 'ASC' | 'DESC',
+          },
+        });
+      } else {
+        events = await queryRunner.manager.getRepository(Event).find({
+          relations: ['faqs', 'tags', 'categories'],
+          skip: offset,
+          take: limit,
+          order: {
+            [orderBy]: sortOrder as 'ASC' | 'DESC',
+          },
+        });
+      }
+      if (!events) {
+        throw new BadRequestException(
+          this.i18n.translate(`${ERROR_FILE_PATH}.EVENT_NOT_FOUND`, {
+            lang: locale,
+          }),
+        );
+      }
+
+      return translatedSuccessResponse<Event[]>(
+        this.i18n,
+        locale,
+        'SUCCESSED_FETCH_EVENT',
+        events,
+      );
+    } catch (error) {
+      return translatedErrorResponse<Event[]>(
+        this.i18n,
+        locale,
+        'FAILED_FETCH_EVENT',
+        error,
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 }

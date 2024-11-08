@@ -50,6 +50,7 @@
     "CATEGORY_NOT_FOUND": "Категория не найдена",
     "EVENT_NOT_FOUND": "Event не найдено",
     "EVENT_INSTANCE_NOT_FOUND": "Экземпляр события не найден",
+    "EVENT_BASIC_INFO_NOT_FOUND": "Основная информация о событии не найдена",
     "AGENDA_NOT_FOUND": "Повестка дня не найдена",
     "INVALID_SIZE": "Неверный размер",
     "IS_NOT_JSON": "{property} должно быть в формате JSON.",
@@ -66,5 +67,7 @@
     "FAILED_CREATE_AGENDA": "Не удалось создать повестку дня!",
     "FAILED_CREATE_EVENT_INSTANCE": "Не удалось создать экземпляр события!",
     "FAILED_CREATE_EVENT_MEDIA": "Не удалось создать медиа-событие!",
-    "EVENT_MEDIA_EXISTS": "Данный event уже имеет медиа!"
+    "EVENT_MEDIA_EXISTS": "Данный event уже имеет медиа!",
+    "FAILED_FETCH_TAGS": "Не удалось получить тег(и)!",
+    "FAILED_FETCH_FAQS": "Не удалось получить часто задаваемые вопросы!"
 }

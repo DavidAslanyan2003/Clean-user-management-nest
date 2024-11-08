@@ -23,6 +23,10 @@ import { SlotService } from '../services/slot.service';
 import { Dates } from '../entities/dates.entity';
 import { EventMediaService } from '../services/media.service';
 import { EventMediaController } from '../controllers/event-media.controller';
+import { FaqController } from '../controllers/faq.controller';
+import { TagController } from '../controllers/tag.controller';
+import { CategoryService } from 'src/category/services/category.service';
+import { UpdateCategoriesCacheCommand } from 'src/helpers/commander/categoryRedisServices/add-categories-to-redis.service';
 
 @Module({
   imports: [
@@ -42,7 +46,13 @@ import { EventMediaController } from '../controllers/event-media.controller';
     ]),
     RedisModule,
   ],
-  controllers: [EventController, EventInstanceController, EventMediaController],
+  controllers: [
+    EventController,
+    EventInstanceController,
+    EventMediaController,
+    FaqController,
+    TagController,
+  ],
   providers: [
     EventService,
     FaqService,
@@ -51,6 +61,8 @@ import { EventMediaController } from '../controllers/event-media.controller';
     AgendaService,
     SlotService,
     EventMediaService,
+    CategoryService,
+    UpdateCategoriesCacheCommand,
   ],
   exports: [TypeOrmModule],
 })

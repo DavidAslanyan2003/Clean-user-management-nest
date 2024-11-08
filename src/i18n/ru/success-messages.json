@@ -23,5 +23,8 @@
     "SUCCESSED_CREATE_SLOTS": "Слоты успешно созданы!",
     "SUCCESSED_CREATE_AGENDA": "Повестка дня успешно создана!",
     "SUCCESSED_CREATE_EVENT_INSTANCE": "Экземпляр события успешно создан!",
-    "SUCCESSED_CREATE_EVENT_MEDIA": "Медиафайлы события успешно созданы!"
+    "SUCCESSED_CREATE_EVENT_MEDIA": "Медиафайлы события успешно созданы!",
+    "SUCCESSED_FETCH_TAGS": "Теги успешно получены!",
+    "SUCCESSED_FETCH_FAQS": "Часто задаваемые вопросы успешно получены!",
+    "SUCCESSED_FETCH_EVENT": "Событие успешно получено!"
 }

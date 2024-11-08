@@ -23,5 +23,8 @@
     "SUCCESSED_CREATE_SLOTS": "Slots created successfully!",
     "SUCCESSED_CREATE_AGENDA": "Agenda created successfully!",
     "SUCCESSED_CREATE_EVENT_INSTANCE": "Event instance created successfully!",
-    "SUCCESSED_CREATE_EVENT_MEDIA": "Event media created successfully!"
+    "SUCCESSED_CREATE_EVENT_MEDIA": "Event media created successfully!",
+    "SUCCESSED_FETCH_TAGS": "Tag(s) fetched successfully!",
+    "SUCCESSED_FETCH_FAQS": "FAQs fetched successfully!",
+    "SUCCESSED_FETCH_EVENT": "Event fetched successfully!"
 }

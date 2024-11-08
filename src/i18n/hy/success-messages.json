@@ -23,5 +23,8 @@
     "SUCCESSED_CREATE_SLOTS": "Սլոթերը հաջողությամբ ստեղծվեցին!",
     "SUCCESSED_CREATE_AGENDA": "Օրակարգը հաջողությամբ ստեղծվեց!",
     "SUCCESSED_CREATE_EVENT_INSTANCE": "Իրադարձության օրինակը հաջողությամբ ստեղծվեց!",
-    "SUCCESSED_CREATE_EVENT_MEDIA": "Իրադարձությունների մեդիան հաջողությամբ ստեղծվեց!"
+    "SUCCESSED_CREATE_EVENT_MEDIA": "Իրադարձությունների մեդիան հաջողությամբ ստեղծվեց!",
+    "SUCCESSED_FETCH_TAGS": "Պիտակ(ներ)ը հաջողությամբ բերվեց!",
+    "SUCCESSED_FETCH_FAQS": "ՀՏՀ-ները հաջողությամբ բերվեցին!",
+    "SUCCESSED_FETCH_EVENT": "Միջոցառումը հաջողությամբ բերվեց!"
 }
