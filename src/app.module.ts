@@ -11,30 +11,14 @@ import * as path from 'path';
 import { LocaleMiddleware } from './middlewares/locale.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppDataSource } from './database/typeorm';
-import { MediaModule } from './media/media.module';
-import { CategoryModule } from './category/modules/category.module';
-import { UserModule } from './user/user.module';
+import { AppDataSource } from './auth/infrastructure/database/typeorm';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
-import { BlogModule } from './blog/modules/blog.module';
-import { BlogCategoryModule } from './blog/modules/blog-category.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
-import { UpdateCategoriesCacheModule } from './helpers/commander/categoryRedisServices/add-categories-to-redis.module';
-import { RedisModule } from './helpers/redis/redis.module';
-import { FormsModule } from './forms/modules/forms.module';
-import { EventModule } from './event/modules/event.module';
+
 
 @Module({
   imports: [
-    BlogModule,
-    BlogCategoryModule,
-    CategoryModule,
-    FormsModule,
-    UserModule,
-    EventModule,
-    UpdateCategoriesCacheModule,
     ConfigModule.forRoot({
+      envFilePath: '.env',
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
@@ -52,15 +36,6 @@ import { EventModule } from './event/modules/event.module';
         new HeaderResolver(['content-language']),
       ],
     }),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
-      ttl: 0,
-    }),
-    MediaModule,
-    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

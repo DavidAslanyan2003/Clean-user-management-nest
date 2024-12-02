@@ -8,9 +8,8 @@ services:
     restart: always  
     depends_on:
       - postgres
-      - redis
     env_file:
-      - .env.${NODE_ENV}  
+      - .env  
     ports:
       - "${APP_PORT}:3000"
     volumes:
@@ -27,40 +26,11 @@ services:
     ports:
       - "5433:5432"
     env_file:
-      - .env.${NODE_ENV}
+      - .env
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - myapp-network  
-
-  redis:
-    image: redis:latest
-    restart: always
-    env_file:
-      - .env.${NODE_ENV}
-    ports:
-      - "${REDIS_LOCAL_PORT}:${REDIS_CONTAINER_PORT}"
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-    networks:
-      - myapp-network
-
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    restart: always
-    ports:
-      - "8085:8081"
-    env_file:
-      - .env.${NODE_ENV}  
-    environment:
-      REDIS_HOSTS: redis
-      REDIS_HOST: redis
-      REDIS_PORT: redis:${REDIS_CONTAINER_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      HTTP_USER: root
-      HTTP_PASSWORD: root
-    networks:
-      - myapp-network
 
 networks:
   myapp-network:
