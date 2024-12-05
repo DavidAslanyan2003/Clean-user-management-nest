@@ -1,27 +1,14 @@
-import { ReadUserResultDto } from "../../../application/commands/dtos/output/read-user-result.dto";
-import { UserDbModelService } from "../../../domain/services/user-db-model.service";
+import { QueryRunner } from "typeorm";
 import { IReadUserRepository } from "../../interfaces/read-user-repository.interface";
+import { User } from "src/auth/domain/entities/user.entity";
 
 
-export class ReadUserRepositoryHandler implements IReadUserRepository {
-  private readonly dbModelService: UserDbModelService;
+export class ReadUserRepositoryQueryHandler implements IReadUserRepository {
+  public async read(userId: string, queryRunner: QueryRunner): Promise<User | undefined> {
+    const savedUser = await queryRunner.manager.getRepository(User).findOne({
+      where: { id: userId }
+    });
 
-  public constructor(dbModelService: UserDbModelService) {
-    this.dbModelService = dbModelService;
-  }
-
-  public async read(userId: string): Promise<ReadUserResultDto | undefined> {
-    const savedUser = await this.dbModelService.findUserById(userId);
-
-    if (savedUser) {
-      return {
-        id: savedUser.id,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
-        created_at: savedUser.created_at,
-        updated_at: savedUser.updated_at,
-        email: savedUser.email,
-      }
-    }
+   return savedUser;
   }
 }

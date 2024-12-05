@@ -1,5 +1,6 @@
+import { QueryRunner } from "typeorm";
 import { UpdateUserResultDto } from "../../application/commands/dtos/output/update-user-result.dto";
 
 export interface IDeleteUserRepository {
-  save(userId: string): Promise<UpdateUserResultDto>
+  save(userId: string, queryRunner: QueryRunner): Promise<UpdateUserResultDto>
 }

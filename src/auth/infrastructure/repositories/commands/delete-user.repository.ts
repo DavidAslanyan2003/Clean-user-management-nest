@@ -1,37 +1,13 @@
-import { UpdateUserResultDto } from "../../../application/commands/dtos/output/update-user-result.dto";
-import { UserDbModelService } from "../../../domain/services/user-db-model.service";
-import { Email } from "../../../domain/value-objects/email.value-object";
-import { UserStatus } from "../../../presentation/enums/user-status.enum";
-import { IDeleteUserRepository } from "../../interfaces/delete-user-repository.interface";
+import { CreateUserResultDto } from "../../../application/commands/dtos/output/create-user-result.dto";
+import { User } from "../../../domain/entities/user.entity";
+import { QueryRunner } from "typeorm";
+import { IUpdateUserRepository } from "../../interfaces/update-user-repository.interface";
 
 
-export class DeleteUserRepositoryHandler implements IDeleteUserRepository {
-  private readonly dbModelService: UserDbModelService;
+export class DeleteUserRepositoryHandler implements IUpdateUserRepository {
+  public async save(createUserDto: User, queryRunner: QueryRunner): Promise<CreateUserResultDto> {
+    const savedUser = await queryRunner.manager.getRepository(User).save(createUserDto);
 
-  public constructor(dbModelService: UserDbModelService) {
-    this.dbModelService = dbModelService;
-  }
-
-  public async save(userId: string): Promise<UpdateUserResultDto> {
-    const updatedUserDto = {
-      id: userId,
-      firstName: "David",
-      lastName: "Aslanyan",
-      created_at: new Date,
-      updated_at: null,
-      password: 'david123',
-      status: UserStatus.DELETED,
-      email: Email.create('david@gmail.com')
-    };
-
-    const deletedUser = await this.dbModelService.saveUser(updatedUserDto);
-
-    return {
-      id: deletedUser.id,
-      firstName: deletedUser.firstName,
-      lastName: deletedUser.lastName,
-      email: deletedUser.email,
-      status: deletedUser.status
-    }
+    return savedUser;
   }
 }

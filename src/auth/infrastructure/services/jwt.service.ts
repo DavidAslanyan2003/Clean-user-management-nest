@@ -1,22 +1,15 @@
-import jwt from 'jsonwebtoken';
-import { User } from '../../domain/entities/user.entity';
+import * as jwt from 'jsonwebtoken';
 import { IJwtService } from '../interfaces/jwt-service.interface';
 
 export class JwtService implements IJwtService {
   private readonly secret: string;
-  private readonly expiresIn: string = '1h'; 
 
   constructor() {
     this.secret = process.env.JWT_SECRET || 'my-default-secret-key';
   }
 
-  public generateToken(user: User): string {
-    const payload = {
-      id: user.id,
-      email: user.email,
-    };
-
-    return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn });
+  public generateToken(userId: string): string {
+    return jwt.sign(userId, this.secret);
   }
 
   public verifyToken(token: string): any {

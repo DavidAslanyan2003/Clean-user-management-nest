@@ -1,49 +1,19 @@
-import { User } from "../../../domain/entities/user.entity";
-import { ICreateUserRepository } from "../../../infrastructure/interfaces/create-user-repository.interface";
-import { IJwtService } from "../../../infrastructure/interfaces/jwt-service.interface";
-import { ISaveAccessTokenRepository } from "../../../infrastructure/interfaces/save-access-token-repository.interface";
+import { ICreateUserService } from "src/auth/infrastructure/interfaces/create-user-service.interface";
 import { CreateUserCommand } from "../create-user.command";
 import { CreateUserResultDto } from "../dtos/output/create-user-result.dto";
+import { Inject } from "@nestjs/common";
+import { CreateUserService } from "src/auth/domain/services/create-user.service";
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-
-export class CreateUserHandler {
+@CommandHandler(CreateUserCommand)
+export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand> {
   public constructor(
-    private readonly userRepository: ICreateUserRepository,
-    private readonly saceAccessTokenRepository: ISaveAccessTokenRepository,
-    private readonly jwtService: IJwtService
+    @Inject(CreateUserService) private readonly createUserService: ICreateUserService
   ) {}
 
   public async execute(command: CreateUserCommand): Promise<CreateUserResultDto> {
+    const savedUser = await this.createUserService.createUser(command);
 
-    const user = new User(
-      command.firstName,
-      command.lastName,
-      command.email,
-      command.password
-    );
-
-    const savedUserResult = await this.userRepository.save(user);
-
-    if (!savedUserResult) {
-      throw new Error("Could not save user");
-    };
-
-    const accessToken = this.jwtService.generateToken(user);
-    const savedAccessToken = await this.saceAccessTokenRepository.save({
-      userId: user.id,
-      token: accessToken
-    });
-
-    if (!savedAccessToken) {
-      throw new Error("Could not save access token");
-    };
-
-    return {
-      id: savedUserResult.id,
-      firstName: savedUserResult.firstName,
-      lastName: savedUserResult.lastName,
-      email: savedUserResult.email,
-      status: savedUserResult.status
-    };
+    return savedUser;
   }
 }

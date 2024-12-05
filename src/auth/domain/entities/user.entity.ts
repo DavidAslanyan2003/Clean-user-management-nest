@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { UserStatus } from '../../presentation/enums/user-status.enum';
 import { Email } from '../value-objects/email.value-object';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserModel } from '../models/user.model';
 
 @Entity('users')
 export class User {
@@ -53,13 +54,17 @@ export class User {
     lastName: string,
     email: Email,
     password: string,
+    created_at?: Date | null,
     updated_at?: Date | null,
+    status?: UserStatus
   ) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = password;
+    this.created_at = created_at ?? null;
     this.updated_at = updated_at ?? null;
+    this.status = status;
   }
 };
 

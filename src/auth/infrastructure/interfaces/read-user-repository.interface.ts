@@ -1,5 +1,6 @@
-import { ReadUserResultDto } from "../../application/commands/dtos/output/read-user-result.dto";
+import { QueryRunner } from "typeorm";
+import { User } from "src/auth/domain/entities/user.entity";
 
 export interface IReadUserRepository {
-  read(userId: string): Promise<ReadUserResultDto | undefined>
+  read(userId: string, queryRunner: QueryRunner): Promise<User | undefined>
 }

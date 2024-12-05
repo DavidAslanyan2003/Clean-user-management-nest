@@ -1,25 +1,13 @@
-import { UpdateUserResultDto } from "../../../application/commands/dtos/output/update-user-result.dto";
+import { CreateUserResultDto } from "../../../application/commands/dtos/output/create-user-result.dto";
 import { User } from "../../../domain/entities/user.entity";
-import { UserDbModelService } from "../../../domain/services/user-db-model.service";
+import { QueryRunner } from "typeorm";
 import { IUpdateUserRepository } from "../../interfaces/update-user-repository.interface";
 
 
-
 export class UpdateUserRepositoryHandler implements IUpdateUserRepository {
-  private readonly dbModelService: UserDbModelService;
+  public async save(updateUserDto: User, queryRunner: QueryRunner): Promise<CreateUserResultDto> {
+    const savedUser = await queryRunner.manager.getRepository(User).save(updateUserDto);
 
-  public constructor(dbModelService: UserDbModelService) {
-    this.dbModelService = dbModelService;
-  }
-
-  public async save(updateUserDto: User): Promise<UpdateUserResultDto> {
-    const updatedUser = await this.dbModelService.saveUser(updateUserDto);
-
-    return {
-      id: updatedUser.id,
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      email: updatedUser.email,
-    }
+    return savedUser;
   }
 }

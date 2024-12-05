@@ -1,27 +1,19 @@
-import { IDeleteUserRepository } from "../../../infrastructure/interfaces/delete-user-repository.interface";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { DeleteUserCommand } from "../delete-user.command";
-import { CreateUserResultDto } from "../dtos/output/create-user-result.dto";
+import { IDeleteUserService } from "src/auth/infrastructure/interfaces/delete-user-service.interface";
+import { DeleteUserService } from "src/auth/domain/services/delete-user.service";
+import { Inject } from "@nestjs/common";
 
 
-export class DeleteUserHandler {
+@CommandHandler(DeleteUserCommand)
+export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserCommand>{
   public constructor(
-    private readonly userRepository: IDeleteUserRepository,
+    @Inject(DeleteUserService) private readonly deleteUserService: IDeleteUserService
   ) {}
 
-  public async execute(command: DeleteUserCommand): Promise<CreateUserResultDto> {
+  public async execute(command: DeleteUserCommand) {
+    const deletedUser = this.deleteUserService.deleteUser(command.userId);
 
-    const savedUserResult = await this.userRepository.save(command.userId);
-
-    if (!savedUserResult) {
-      throw new Error("Could not delete the user");
-    };
-
-    return {
-      id: savedUserResult.id,
-      firstName: savedUserResult.firstName,
-      lastName: savedUserResult.lastName,
-      email: savedUserResult.email,
-      status: savedUserResult.status
-    };
+    return deletedUser;
   }
 }
