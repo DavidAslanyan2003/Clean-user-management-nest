@@ -3,5 +3,5 @@ import { CreateUserDto } from "../../application/commands/dtos/input/create-user
 import { QueryRunner } from "typeorm";
 
 export interface ICreateUserRepository {
-  save(createUserDto: CreateUserDto, queryRunner: QueryRunner): Promise<CreateUserResultDto>
+  save(createUserDto: CreateUserDto): Promise<CreateUserResultDto>
 }

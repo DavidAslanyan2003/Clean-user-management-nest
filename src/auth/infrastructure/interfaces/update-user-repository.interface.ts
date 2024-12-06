@@ -3,5 +3,5 @@ import { UpdateUserDto } from "../../application/commands/dtos/input/update-user
 import { QueryRunner } from "typeorm";
 
 export interface IUpdateUserRepository {
-  save(updateUserDto: UpdateUserDto, queryRunner: QueryRunner): Promise<UpdateUserResultDto>
+  save(updateUserDto: UpdateUserDto): Promise<UpdateUserResultDto>
 }

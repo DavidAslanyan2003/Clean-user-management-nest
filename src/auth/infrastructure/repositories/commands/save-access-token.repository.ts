@@ -12,6 +12,16 @@ export class SaveAccessTokenRepositoryHandler implements ISaveAccessTokenReposit
   ) {}
 
   public async save(saveAccessTokenDto: SaveAccessTokenDto): Promise<any> {
+    const { userId, token } = saveAccessTokenDto;
+    const savedToken = await this.accessTokenRepository.findOne({where: { userId: userId }});
+
+    if (savedToken) {
+      savedToken.token = token;
+      await this.accessTokenRepository.save(savedToken);
+
+      return savedToken;
+    }
+
     const savedAccessToken = await this.accessTokenRepository.save(saveAccessTokenDto);
 
     return savedAccessToken;

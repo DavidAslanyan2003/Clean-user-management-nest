@@ -17,7 +17,7 @@ export const createDataSourceOptions = (
     database: configService.get<string>('POSTGRES_DB'),
     synchronize: false,
     logging: true,
-    entities: [join(__dirname, '../../**/*.entity{.ts,.js}')],
+    entities: [join(__dirname, '../../../**/*.entity{.ts,.js}')],
     migrations: [join(__dirname, '/../database/migrations/*{.ts,.js}')],
     migrationsTableName: 'migrations',
     migrationsRun: false,

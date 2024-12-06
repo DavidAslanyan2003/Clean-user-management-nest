@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, InternalServerErrorException, Param, Delete, Inject } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, InternalServerErrorException, Param, Delete, Inject, Post } from '@nestjs/common';
 import { CustomResponse } from 'src/helpers/custom-response';
 import { STATUS } from '../enums/status.enum';
 import { CheckUUIDPipe } from 'src/helpers/validations/pipes/check-uuid-pipe';
@@ -7,27 +7,27 @@ import { IUserManagementService } from 'src/auth/infrastructure/interfaces/creat
 import { UserManagementService } from 'src/auth/domain/services/user-management.service';
 
 
-@Controller('auth') 
-export class DeleteUserController {
+@Controller('auth/logout') 
+export class LogoutUserController {
   public constructor(
     @Inject(UserManagementService) private readonly userManagementService: IUserManagementService
   ) {}
 
-  @Delete("/:id")
+  @Post("/:id")
   @HttpCode(HttpStatus.CREATED)
   async updateUser(
     @Param('id', CheckUUIDPipe) id: string,
   ): Promise<CustomResponse> {
     try {
       const command = new DeleteUserCommand(id);
-      const result = await this.userManagementService.deleteUser(command.userId);
+      const result = await this.userManagementService.logoutUser(command.userId);
 
       const customResponse = new CustomResponse(
         HttpStatus.CREATED,
         STATUS.SUCCESS,
         result,
         '',
-        'User deleted successfully'
+        'User logged out successfully'
       );
 
       return customResponse;
@@ -37,7 +37,7 @@ export class DeleteUserController {
         STATUS.ERROR,
         '',
         error.message || error,
-        'Failed to delete user'
+        'Failed to logout'
       );
 
       throw new InternalServerErrorException(customResponse.toJSON());

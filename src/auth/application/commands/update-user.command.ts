@@ -1,5 +1,5 @@
 import { Email } from "../../domain/value-objects/email.value-object";
-import { IUpdateUserCommand } from "./interfaces/update-user-command.interface";
+import { IUpdateUserCommand } from "./interfaces/update-user-command.interface copy";
 
 export class UpdateUserCommand implements IUpdateUserCommand {
   constructor(

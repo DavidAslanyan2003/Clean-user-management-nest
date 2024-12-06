@@ -21,14 +21,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:single": "jest $FILE",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm -- migration:run -d src/auth/infrastructure/database/typeorm.ts",
-    "migration:generate": "npm run typeorm -- -d src/auth/infrastructure/database/typeorm.ts migration:generate src/auth/infrastructure/database/migrations/migration",
-    "migration:create": "npm run typeorm -- migration:create src/auth/infrastructure/database/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- migration:revert -d src/auth/infrastructure/database/typeorm.ts",
-    "db:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:create  -d src/auth/infrastructure/database/typeorm.ts",
+    "migration:run": "npm run typeorm -- migration:run -d src/core/infrastructure/database/typeorm.ts",
+    "migration:generate": "npm run typeorm -- -d src/core/infrastructure/database/typeorm.ts migration:generate src/core/infrastructure/database/migrations/migration",
+    "migration:create": "npm run typeorm -- migration:create src/core/infrastructure/database/migrations/$npm_config_name",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/core/infrastructure/database/typeorm.ts",
+    "db:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:create  -d src/core/infrastructure/database/typeorm.ts",
     "db:drop": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:drop",
-    "seed:run": "ts-node src/auth/infrastructure/database/seed.ts",
-    "seed:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create --name src/auth/infrastructure/database/seeds/$npm_config_name"
+    "seed:run": "ts-node src/core/infrastructure/database/seed.ts",
+    "seed:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create --name src/core/infrastructure/database/seeds/$npm_config_name"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.635.0",

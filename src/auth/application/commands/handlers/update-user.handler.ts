@@ -2,18 +2,18 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { UpdateUserResultDto } from "../dtos/output/update-user-result.dto";
 import { UpdateUserCommand } from "../update-user.command";
 import { Inject } from "@nestjs/common";
-import { UpdateUserService } from "src/auth/domain/services/update-user.service";
-import { IUpdateUserService } from "src/auth/infrastructure/interfaces/update-user-service.interface";
+import { UpdateUserRepositoryHandler } from "src/auth/infrastructure/repositories/commands/update-user.repository";
+import { IUpdateUserRepository } from "src/auth/infrastructure/interfaces/update-user-repository.interface";
 
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserCommand>  {
   public constructor(
-    @Inject(UpdateUserService) private readonly updateUserService: IUpdateUserService
+    @Inject(UpdateUserRepositoryHandler) private readonly userRepository: IUpdateUserRepository,
   ) {}
 
   public async execute(command: UpdateUserCommand): Promise<UpdateUserResultDto> {
-    const updatedUser = this.updateUserService.updateUser(command);
+    const updatedUser = this.userRepository.save(command);
 
     return updatedUser;
   }

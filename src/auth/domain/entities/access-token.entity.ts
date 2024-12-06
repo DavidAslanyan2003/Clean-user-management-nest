@@ -28,7 +28,7 @@ export class AccessToken {
 
   @ApiProperty({ example: 'Token', description: 'Token value of the access token' })
   @Column({ type: 'varchar', length: 255 })
-  public readonly token: string;
+  public token: string;
 
   @ApiProperty({
     example: '8a7f8651-7a0f-4cb1-b93e-12a5142e34a3',

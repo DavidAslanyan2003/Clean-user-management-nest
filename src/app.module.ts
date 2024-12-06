@@ -11,7 +11,7 @@ import * as path from 'path';
 import { LocaleMiddleware } from './middlewares/locale.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppDataSource } from './auth/infrastructure/database/typeorm';
+import { AppDataSource } from './core/infrastructure/database/typeorm';
 import { DEFAULT_LANGUAGE } from './helpers/constants/constants';
 import { UserModule } from './auth/presentation/modules/user.module';
 
