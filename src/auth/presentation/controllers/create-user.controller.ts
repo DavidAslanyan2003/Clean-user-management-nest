@@ -6,7 +6,7 @@ import { STATUS } from '../enums/status.enum';
 import { UserManagementService } from 'src/auth/domain/services/user-management.service';
 import { IUserManagementService } from 'src/auth/infrastructure/interfaces/create-user-service.interface';
 
-
+// Testing git workflow
 @Controller('auth') 
 export class CreateUserController {
   public constructor(
